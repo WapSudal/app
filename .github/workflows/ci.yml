@@ -1,0 +1,137 @@
+name: Flutter CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# 워크플로우 전체에 대한 기본 권한 설정 (최소 권한 원칙)
+permissions:
+  contents: read
+
+jobs:
+  # 오래된 아티팩트 제거
+  remove-old-artifacts:
+    name: Remove Old Artifacts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # 이 job만 actions write 권한 필요
+    permissions:
+      actions: write
+    # build job과 독립적으로 실행 (병렬화)
+    steps:
+    - name: Remove old artifacts
+      uses: c-hive/gha-remove-artifacts@v1
+      with:
+        age: '1 hour'
+        skip-tags: true
+        skip-recent: 12
+
+  # Android 릴리즈 빌드
+  build_android_release:
+    name: Build Android (Release)
+    # needs: analyze_and_test
+    # remove-old-artifacts와 독립적으로 실행 (병렬화)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # Android SDK 컴포넌트 사전 설치 (CMake 등)
+      - name: Setup Android SDK
+        run: |
+          # Ubuntu 24.04의 올바른 경로 사용
+          SDKMANAGER="${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -f "$SDKMANAGER" ]; then
+            echo "Warning: sdkmanager not found at expected location"
+            # CMake가 이미 설치되어 있는지 확인
+            if [ -d "${ANDROID_HOME}/cmake/3.22.1" ]; then
+              echo "CMake 3.22.1 already installed"
+              exit 0
+            fi
+          fi
+          yes | "$SDKMANAGER" --licenses 2>/dev/null || true
+          "$SDKMANAGER" "cmake;3.22.1" 2>/dev/null || echo "CMake installation skipped (may already exist)"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      # Gradle cache 추가
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.android/build-cache
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # .dart_tool 캐시 (build_runner 산출물 포함)
+      - name: Cache Dart Tool
+        uses: actions/cache@v4
+        with:
+          path: .dart_tool
+          key: ${{ runner.os }}-dart-tool-${{ hashFiles('pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-dart-tool-
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Run code generation
+        run: |
+          # 빌드 필터로 lib 디렉토리만 빌드
+          dart run build_runner build --delete-conflicting-outputs --build-filter="lib/**"
+
+      # - name: Create .env file
+      #   run: |
+      #     echo "API_BASE_URL=${{ vars.API_BASE_URL }}" >> .env
+
+      - name: Build Android APK (Release)
+        run: |
+          flutter build apk --release
+        env:
+          GRADLE_OPTS: -Dorg.gradle.daemon=true -Dorg.gradle.parallel=true -Dorg.gradle.caching=true -Dorg.gradle.workers.max=4 -Dkotlin.compiler.execution.strategy=in-process
+          JAVA_OPTS: -Xmx4g -XX:+UseParallelGC
+
+      - name: Upload Android APK (Release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk-release
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+  # 빌드 결과 요약
+  build_summary:
+    name: Build Summary
+    needs: [build_android_release]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Build Summary
+        run: |
+          echo "## 🚀 Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Android Build" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ needs.build_android_release.result }}" == "success" ]; then
+            echo "✅ **Success** - Android APK (Release) built successfully" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Failed** - Android APK (Release) build failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "- Android APK (Release)" >> $GITHUB_STEP_SUMMARY
