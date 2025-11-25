@@ -1,4 +1,4 @@
-package org.wapsudal.stroke_spoiler
+package org.wapsudal.strokespoiler
 
 import io.flutter.embedding.android.FlutterActivity
 
