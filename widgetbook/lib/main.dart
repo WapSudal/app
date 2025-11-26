@@ -33,6 +33,13 @@ class WidgetbookApp extends StatelessWidget {
           ),
         ),
       ],
+      appBuilder: (context, child) => MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          child: child,
+        ),
+      ),
     );
   }
 }

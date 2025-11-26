@@ -12,7 +12,7 @@ class AppIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return VectorGraphic(
-      loader: AssetBytesLoader(icon.path),
+      loader: AssetBytesLoader(icon.path, packageName: "stroke_spoiler"),
       width: size,
       height: size,
 
