@@ -47,6 +47,7 @@ class AppOutlinedButton extends StatelessWidget with AppButtonMixin {
           shape: buttonShape,
           padding: buttonPadding,
           textStyle: Theme.of(context).textTheme.labelLarge,
+          splashFactory: NoSplash.splashFactory,
         ),
         child: buildButtonContent(
           text: text,

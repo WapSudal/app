@@ -225,9 +225,9 @@ class _AppLinedDropdownState<T> extends State<AppLinedDropdown<T>>
                               turns: _isOpen ? 0.5 : 0,
                               duration: const Duration(milliseconds: 200),
                               child: Icon(
-                                Icons.keyboard_arrow_down_rounded,
+                                Icons.arrow_drop_down,
                                 color: _iconColor,
-                                size: 24,
+                                size: 28,
                               ),
                             ),
                           ],

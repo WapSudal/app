@@ -208,8 +208,8 @@ class _AppOutlinedDropdownState<T> extends State<AppOutlinedDropdown<T>>
                             width: FormFieldTokens.strokeWidth,
                           ),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: FormFieldTokens.outlinedHorizontalPadding,
+                        padding: const EdgeInsets.only(
+                          left: FormFieldTokens.outlinedHorizontalPadding,
                         ),
                         child: Row(
                           children: [
@@ -226,13 +226,25 @@ class _AppOutlinedDropdownState<T> extends State<AppOutlinedDropdown<T>>
                                     )
                                   : const SizedBox.shrink(),
                             ),
-                            AnimatedRotation(
-                              turns: _isOpen ? 0.5 : 0,
-                              duration: const Duration(milliseconds: 200),
-                              child: Icon(
-                                Icons.keyboard_arrow_down_rounded,
-                                color: _iconColor,
-                                size: 24,
+                            // 세로 구분선
+                            Container(
+                              width: FormFieldTokens.strokeWidth,
+                              height: FormFieldTokens.height,
+                              color: _borderColor,
+                            ),
+                            // 드롭다운 아이콘 영역 (50px에서 테두리 두께 제외)
+                            SizedBox(
+                              width: 50 - FormFieldTokens.strokeWidth * 2,
+                              child: Center(
+                                child: AnimatedRotation(
+                                  turns: _isOpen ? 0.5 : 0,
+                                  duration: const Duration(milliseconds: 200),
+                                  child: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: _iconColor,
+                                    size: 28,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
