@@ -85,25 +85,28 @@ mixin FloatingLabelMixin<T extends StatefulWidget>
     final double horizontalPadding = 4.0 * floatingLabelAnimation.value;
     final double backgroundOpacity = floatingLabelAnimation.value;
 
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Transform.translate(
-        offset: Offset(0, verticalOffset),
-        child: Transform.scale(
-          scale: scale,
-          alignment: Alignment.centerLeft,
-          child: Container(
-            color: AppColorScheme.white100.withValues(alpha: backgroundOpacity),
-            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-            child: Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'Pretendard',
-                fontSize: baseFontSize,
-                fontWeight: FontWeight.w500,
-                height: 20 / baseFontSize,
-                letterSpacing: -0.32,
-                color: labelColor,
+    return IgnorePointer(
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Transform.translate(
+          offset: Offset(0, verticalOffset),
+          child: Transform.scale(
+            scale: scale,
+            alignment: Alignment.centerLeft,
+            child: Container(
+              color:
+                  AppColorScheme.white100.withValues(alpha: backgroundOpacity),
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: baseFontSize,
+                  fontWeight: FontWeight.w500,
+                  height: 20 / baseFontSize,
+                  letterSpacing: -0.32,
+                  color: labelColor,
+                ),
               ),
             ),
           ),
@@ -130,23 +133,25 @@ mixin FloatingLabelMixin<T extends StatefulWidget>
     final double scale =
         1.0 - (1.0 - scaleFactor) * floatingLabelAnimation.value;
 
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Transform.translate(
-        offset: Offset(0, verticalOffset),
-        child: Transform.scale(
-          scale: scale,
-          alignment: Alignment.centerLeft,
-          // Lined style: 배경 없음
-          child: Text(
-            label,
-            style: TextStyle(
-              fontFamily: 'Pretendard',
-              fontSize: baseFontSize,
-              fontWeight: FontWeight.w500,
-              height: 20 / baseFontSize,
-              letterSpacing: -0.32,
-              color: labelColor,
+    return IgnorePointer(
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Transform.translate(
+          offset: Offset(0, verticalOffset),
+          child: Transform.scale(
+            scale: scale,
+            alignment: Alignment.centerLeft,
+            // Lined style: 배경 없음
+            child: Text(
+              label,
+              style: TextStyle(
+                fontFamily: 'Pretendard',
+                fontSize: baseFontSize,
+                fontWeight: FontWeight.w500,
+                height: 20 / baseFontSize,
+                letterSpacing: -0.32,
+                color: labelColor,
+              ),
             ),
           ),
         ),
