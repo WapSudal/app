@@ -6,7 +6,7 @@ import 'package:stroke_spoiler/core/presentation/widgets/app_button.dart';
 import 'package:stroke_spoiler/gen/assets.gen.dart';
 import 'package:stroke_spoiler/core/presentation/widgets/app_icon.dart';
 
-@widgetbook.UseCase(name: 'Default', type: AppButton)
+@widgetbook.UseCase(name: 'Button', type: AppButton)
 Widget buildAppButtonUseCase(BuildContext context) {
   return AppButton(
     text: 'Button',
