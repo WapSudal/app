@@ -94,8 +94,9 @@ mixin FloatingLabelMixin<T extends StatefulWidget>
             scale: scale,
             alignment: Alignment.centerLeft,
             child: Container(
-              color:
-                  AppColorScheme.white100.withValues(alpha: backgroundOpacity),
+              color: AppColorScheme.white100.withValues(
+                alpha: backgroundOpacity,
+              ),
               padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
               child: Text(
                 label,
