@@ -46,6 +46,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_launcher_icons: ^0.14.4
+  firebase_core: ^4.2.1
 
 dev_dependencies:
   flutter_test:
