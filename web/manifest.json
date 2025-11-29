@@ -1,11 +1,11 @@
 {
-    "name": "app",
-    "short_name": "app",
+    "name": "Stroke Spoiler",
+    "short_name": "Stroke Spoiler",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#ffffff",
-    "description": "A new Flutter project.",
+    "description": "Stroke prevention management app.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

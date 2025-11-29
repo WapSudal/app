@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="stroke_spoiler"
+        android:label="Stroke Spoiler"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity
