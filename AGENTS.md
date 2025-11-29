@@ -2,7 +2,7 @@
 
 This file provides guidance to AI Agents when working with code in this repository.
 
-중요! 참고: 현재 이 프로젝트는 세팅 중이며, 아래에 서술된 내용이 완전히 구현되지 않았을 수 있습니다. 아래 내용은 기존에 다른 완성된 프로젝트로부터 가져온 것이기 때문입니다. 아래와 같은 구조를 지향한다고 생각하면서 진행하세요.
+IMPORTANT! NOTE: This project is currently being set up, and the content described below may not have been fully implemented. This is due to the fact that the content below is from another completed project. Please proceed as if you are aiming for the structure below.
 
 ## Project Overview
 Stroke Spoiler - Prototype Mobile/Web cross-platform app for stroke prevention management.
@@ -61,8 +61,12 @@ lib/
 │   │   └── repositories/       # Common repository interfaces
 │   ├── presentation/
 │   │   └── widgets/            # Reusable widgets
-│   ├── providers/              # Global providers (Router, ApiClient, Storage, etc.)
+│   ├── router/                 # Router configuration
+│   │   └── router_provider.dart
 │   ├── network/                # API client and network configuration
+│   │   └── api_client_provider.dart
+│   ├── storage/                # Local storage
+│   │   └── storage_provider.dart
 │   ├── enums/                  # Global enums (UserRole, FarmType, etc.)
 │   ├── exceptions/             # Custom exception classes
 │   ├── theme/                  # App theme configuration
@@ -109,13 +113,19 @@ lib/
 ## Core Coding Rules
 
 ### 1. Import Rules
-- **Always use package paths** (no relative paths)
+- **Always use relative paths** for internal project imports (no package paths)
+- Use package paths only for external dependencies
   ```dart
-  // ✅ Correct
-  import 'package:bovivet/features/auth/domain/entities/auth_entity.dart';
-  
-  // ❌ Wrong
+  // ✅ Correct - Using relative paths for project files
   import '../domain/entities/auth_entity.dart';
+  import '../../core/utils/validators.dart';
+
+  // ❌ Wrong - Using package paths for project files
+  import 'package:app/features/auth/domain/entities/auth_entity.dart';
+
+  // ✅ Correct - Package paths for external dependencies
+  import 'package:flutter/material.dart';
+  import 'package:riverpod_annotation/riverpod_annotation.dart';
   ```
 
 ### 2. Freezed Usage Rules
@@ -291,7 +301,7 @@ lib/
   ```
 
 ### 9. Routing
-- Use GoRouter (`core/providers/router_provider.dart`)
+- Use GoRouter (`core/router/router_provider.dart`)
 - Use absolute paths (`/login`, `/mypage`, etc.)
 - Automatic redirect based on authentication state
 
@@ -465,6 +475,41 @@ lib/
     orElse: () async {},
   );
   ```
+
+### 15. Vector Graphics Usage (flutter_gen + vector_graphics)
+- **Use `flutter_gen` for auto-generated asset references**
+- **Use `vector_graphics` package for SVG rendering** (not `flutter_svg`)
+- NEVER directly load SVG files with string paths
+- Generated asset classes provide type-safe references
+  ```dart
+  // ✅ Correct - Using flutter_gen generated assets
+  import 'package:app/gen/assets.gen.dart';
+
+  // In Widget
+  Assets.icons.home.svg(
+    width: 24,
+    height: 24,
+    colorFilter: ColorFilter.mode(
+      Colors.black,
+      BlendMode.srcIn,
+    ),
+  )
+
+  // ❌ Wrong - Direct path string
+  SvgPicture.asset(
+    'assets/icons/home.svg',
+    width: 24,
+    height: 24,
+  )
+
+  // ❌ Wrong - Using flutter_svg package
+  import 'package:flutter_svg/flutter_svg.dart';
+  ```
+
+#### Configuration
+- SVG assets must be declared in `pubspec.yaml` under `flutter_gen`
+- Run `flutter pub get` to regenerate asset classes after adding new files
+- Generated files are located in `lib/gen/assets.gen.dart`
 
 ## Environment Setup
 

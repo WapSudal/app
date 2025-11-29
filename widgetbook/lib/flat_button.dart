@@ -14,7 +14,7 @@ Widget buildAppFlatButtonUseCase(BuildContext context) {
       label: 'Icon',
       labelBuilder: (value) => value.icon.path.split('/').last.split('.').first,
       options: Assets.icons.values
-          .map((icon) => AppIcon(icon, size: 16))
+          .map((icon) => AppIcon(icon, size: 16, packageName: 'stroke_spoiler'))
           .toList(),
     ),
     isLoading: context.knobs.boolean(label: 'Loading', initialValue: false),

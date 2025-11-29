@@ -7,12 +7,21 @@ class AppIcon extends StatelessWidget {
   final double size;
   final Color? color;
 
-  const AppIcon(this.icon, {super.key, this.size = 24.0, this.color});
+  /// Widgetbook에서 사용 시 'stroke_spoiler'로 설정
+  final String? packageName;
+
+  const AppIcon(
+    this.icon, {
+    super.key,
+    this.size = 24.0,
+    this.color,
+    this.packageName,
+  });
 
   @override
   Widget build(BuildContext context) {
     return VectorGraphic(
-      loader: AssetBytesLoader(icon.path, packageName: "stroke_spoiler"),
+      loader: AssetBytesLoader(icon.path, packageName: packageName),
       width: size,
       height: size,
 
