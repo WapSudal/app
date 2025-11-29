@@ -9,7 +9,7 @@ import 'package:stroke_spoiler/core/presentation/widgets/app_icon.dart';
 @widgetbook.UseCase(name: 'Outlined Button', type: AppOutlinedButton)
 Widget buildAppOutlinedButtonUseCase(BuildContext context) {
   return AppOutlinedButton(
-    text: 'Button',
+    text: context.knobs.string(label: 'Text', initialValue: 'Outlined Button'),
     icon: context.knobs.objectOrNull.dropdown<AppIcon>(
       label: 'Icon',
       labelBuilder: (value) => value.icon.path.split('/').last.split('.').first,

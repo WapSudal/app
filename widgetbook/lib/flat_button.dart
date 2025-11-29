@@ -9,7 +9,7 @@ import 'package:stroke_spoiler/core/presentation/widgets/app_icon.dart';
 @widgetbook.UseCase(name: 'Flat Button', type: AppFlatButton)
 Widget buildAppFlatButtonUseCase(BuildContext context) {
   return AppFlatButton(
-    text: 'Button',
+    text: context.knobs.string(label: 'Text', initialValue: 'Flat Button'),
     icon: context.knobs.objectOrNull.dropdown<AppIcon>(
       label: 'Icon',
       labelBuilder: (value) => value.icon.path.split('/').last.split('.').first,

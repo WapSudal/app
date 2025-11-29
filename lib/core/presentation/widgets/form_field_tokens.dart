@@ -29,6 +29,9 @@ abstract class FormFieldTokens {
   /// Outlined 스타일 수평 패딩: G4 (16px)
   static const double outlinedHorizontalPadding = 16.0;
 
+  /// Outlined 스타일 수직 패딩: G3 (12px)
+  static const double outlinedVerticalPadding = 12.0;
+
   // ===== Clear 버튼 =====
 
   /// Clear 버튼 크기: 28px

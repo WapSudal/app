@@ -6,6 +6,7 @@ import 'package:stroke_spoiler/core/presentation/widgets/app_outlined_text_field
 
 @widgetbook.UseCase(name: 'Outlined Textfield', type: AppOutlinedTextField)
 Widget buildAppOutlinedTextFieldUseCase(BuildContext context) {
+  final label = context.knobs.string(label: 'Label', initialValue: 'Label');
   final hasError = context.knobs.boolean(
     label: 'Show Error',
     initialValue: false,
@@ -29,6 +30,7 @@ Widget buildAppOutlinedTextFieldUseCase(BuildContext context) {
   );
 
   return _OutlinedTextFieldDemo(
+    label: label,
     hasError: hasError,
     isEnabled: isEnabled,
     isExpanded: isExpanded,
@@ -40,6 +42,7 @@ Widget buildAppOutlinedTextFieldUseCase(BuildContext context) {
 
 class _OutlinedTextFieldDemo extends StatefulWidget {
   const _OutlinedTextFieldDemo({
+    required this.label,
     required this.hasError,
     required this.isEnabled,
     required this.isExpanded,
@@ -48,6 +51,7 @@ class _OutlinedTextFieldDemo extends StatefulWidget {
     required this.readOnly,
   });
 
+  final String label;
   final bool hasError;
   final bool isEnabled;
   final bool isExpanded;
@@ -71,7 +75,7 @@ class _OutlinedTextFieldDemoState extends State<_OutlinedTextFieldDemo> {
   @override
   Widget build(BuildContext context) {
     return AppOutlinedTextField(
-      label: 'Label',
+      label: widget.label,
       controller: _controller,
       enabled: widget.isEnabled,
       errorText: widget.hasError ? 'Error message' : null,

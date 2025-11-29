@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 
-import 'package:stroke_spoiler/core/presentation/widgets/app_lined_text_field.dart';
+import 'package:stroke_spoiler/core/presentation/widgets/app_outlined_textarea.dart';
 
-@widgetbook.UseCase(name: 'Lined Textfield', type: AppLinedTextField)
-Widget buildAppLinedTextFieldUseCase(BuildContext context) {
-  final label = context.knobs.string(label: 'Label', initialValue: 'Label');
+@widgetbook.UseCase(name: 'Outlined Textarea', type: AppOutlinedTextArea)
+Widget buildAppOutlinedTextAreaUseCase(BuildContext context) {
+  final placeholder = context.knobs.string(
+    label: 'Placeholder',
+    initialValue: 'Placeholder',
+  );
   final hasError = context.knobs.boolean(
     label: 'Show Error',
     initialValue: false,
@@ -16,54 +19,51 @@ Widget buildAppLinedTextFieldUseCase(BuildContext context) {
     label: 'Expanded',
     initialValue: false,
   );
-  final obscureText = context.knobs.boolean(
-    label: 'Obscure Text (Password)',
-    initialValue: false,
-  );
-  final showClearButton = context.knobs.boolean(
-    label: 'Show Clear Button',
-    initialValue: true,
-  );
   final readOnly = context.knobs.boolean(
     label: 'Read Only',
     initialValue: false,
   );
+  final minLines = context.knobs.int.input(label: 'Min Lines', initialValue: 3);
+  final maxLines = context.knobs.intOrNull.input(
+    label: 'Max Lines (null = unlimited)',
+    initialValue: null,
+  );
 
-  return _LinedTextFieldDemo(
-    label: label,
+  return _OutlinedTextAreaDemo(
+    placeholder: placeholder,
     hasError: hasError,
     isEnabled: isEnabled,
     isExpanded: isExpanded,
-    obscureText: obscureText,
-    showClearButton: showClearButton,
     readOnly: readOnly,
+    minLines: minLines,
+    maxLines: maxLines,
   );
 }
 
-class _LinedTextFieldDemo extends StatefulWidget {
-  const _LinedTextFieldDemo({
-    required this.label,
+class _OutlinedTextAreaDemo extends StatefulWidget {
+  const _OutlinedTextAreaDemo({
+    required this.placeholder,
     required this.hasError,
     required this.isEnabled,
     required this.isExpanded,
-    required this.obscureText,
-    required this.showClearButton,
     required this.readOnly,
+    required this.minLines,
+    this.maxLines,
   });
 
-  final String label;
+  final String placeholder;
   final bool hasError;
   final bool isEnabled;
   final bool isExpanded;
-  final bool obscureText;
-  final bool showClearButton;
   final bool readOnly;
+  final int minLines;
+  final int? maxLines;
 
   @override
-  State<_LinedTextFieldDemo> createState() => _LinedTextFieldDemoState();
+  State<_OutlinedTextAreaDemo> createState() => _OutlinedTextAreaDemoState();
 }
 
-class _LinedTextFieldDemoState extends State<_LinedTextFieldDemo> {
+class _OutlinedTextAreaDemoState extends State<_OutlinedTextAreaDemo> {
   final _controller = TextEditingController();
 
   @override
@@ -74,15 +74,15 @@ class _LinedTextFieldDemoState extends State<_LinedTextFieldDemo> {
 
   @override
   Widget build(BuildContext context) {
-    return AppLinedTextField(
-      label: widget.label,
+    return AppOutlinedTextArea(
+      placeholder: widget.placeholder,
       controller: _controller,
       enabled: widget.isEnabled,
       errorText: widget.hasError ? 'Error message' : null,
       isExpanded: widget.isExpanded,
-      obscureText: widget.obscureText,
-      showClearButton: widget.showClearButton,
       readOnly: widget.readOnly,
+      minLines: widget.minLines,
+      maxLines: widget.maxLines,
     );
   }
 }

@@ -7,6 +7,7 @@ import 'package:stroke_spoiler/core/presentation/widgets/dropdown_menu.dart';
 
 @widgetbook.UseCase(name: 'Outlined Dropdown', type: AppOutlinedDropdown)
 Widget buildAppOutlinedDropdownUseCase(BuildContext context) {
+  final label = context.knobs.string(label: 'Label', initialValue: 'Label');
   final items = [
     const DropdownItem(value: 'option1', label: 'Menu Element 1'),
     const DropdownItem(value: 'option2', label: 'Menu Element 2'),
@@ -25,6 +26,7 @@ Widget buildAppOutlinedDropdownUseCase(BuildContext context) {
   );
 
   return _OutlinedDropdownDemo(
+    label: label,
     items: items,
     hasError: hasError,
     isEnabled: isEnabled,
@@ -34,12 +36,14 @@ Widget buildAppOutlinedDropdownUseCase(BuildContext context) {
 
 class _OutlinedDropdownDemo extends StatefulWidget {
   const _OutlinedDropdownDemo({
+    required this.label,
     required this.items,
     required this.hasError,
     required this.isEnabled,
     required this.isExpanded,
   });
 
+  final String label;
   final List<DropdownItem<String>> items;
   final bool hasError;
   final bool isEnabled;
@@ -60,7 +64,7 @@ class _OutlinedDropdownDemoState extends State<_OutlinedDropdownDemo> {
       onChanged: widget.isEnabled
           ? (value) => setState(() => selectedValue = value)
           : null,
-      label: 'Label',
+      label: widget.label,
       errorText: widget.hasError ? 'Selection Required' : null,
       isEnabled: widget.isEnabled,
       isExpanded: widget.isExpanded,
