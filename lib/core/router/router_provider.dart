@@ -3,8 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/onboarding/presentation/views/onboarding_view.dart';
+import '../../features/role_select/presentation/views/role_select_view.dart';
 import '../../features/splash/presentation/splash_screen.dart';
-import '../../main.dart';
 
 part 'router_provider.g.dart';
 
@@ -22,6 +22,11 @@ GoRouter router(Ref ref) {
         path: '/onboarding',
         name: 'onboarding',
         builder: (context, state) => const OnboardingView(),
+      ),
+      GoRoute(
+        path: '/role-select',
+        name: 'roleSelect',
+        builder: (context, state) => const RoleSelectView(),
       ),
       GoRoute(
         path: '/home',

@@ -45,6 +45,7 @@ dependencies:
   intl: ^0.20.2
   flutter_localizations:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -69,9 +70,13 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 flutter_gen:
+  assets:
+    exclude:
+      - assets/.DS_Store
+      
   output: lib/gen/ # 생성된 파일이 위치할 경로 (보통 lib/gen 또는 lib/generated)
-  line_length: 80
   integrations:
+    image: true # 이미지 자산에 대한 경로와 메타데이터를 포함하는 Assets 클래스 생성
     flutter_svg: true # flutter_svg와 호환되는 SvgGenImage 클래스를 생성해줌
 
 # The following section is specific to Flutter packages.
@@ -84,12 +89,19 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/app_icon.png
+    - assets/web_icon.png
     - assets/images/
+
     - path: assets/icons/
       transformers:
         - package: vector_graphics_compiler
 
     - path: assets/logos/
+      transformers:
+        - package: vector_graphics_compiler
+
+    - path: assets/role_icons/
       transformers:
         - package: vector_graphics_compiler
 

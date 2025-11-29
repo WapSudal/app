@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/presentation/widgets/app_icon.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../widgets/onboarding_content.dart';
@@ -73,7 +74,7 @@ class _OnboardingViewState extends State<OnboardingView> {
 
   void _onGoogleLoginPressed() {
     // TODO: Google 로그인 구현
-    debugPrint('Google 로그인 버튼 클릭');
+    context.go('/role-select');
   }
 
   @override
