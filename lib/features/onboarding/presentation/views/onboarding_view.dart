@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../../core/presentation/widgets/app_icon.dart';
 import '../../../../core/theme/color_scheme.dart';
+import '../../../../gen/assets.gen.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 import '../widgets/onboarding_content.dart';
 import '../widgets/page_indicator.dart';
-import '../../../../gen/assets.gen.dart';
 
 /// 온보딩 페이지 데이터 모델
 class OnboardingPageData {
@@ -22,14 +25,14 @@ class OnboardingPageData {
 /// 온보딩 화면
 ///
 /// 앱 초기 실행 시 표시되는 온보딩 페이지 (4개 페이지)
-class OnboardingView extends StatefulWidget {
+class OnboardingView extends ConsumerStatefulWidget {
   const OnboardingView({super.key});
 
   @override
-  State<OnboardingView> createState() => _OnboardingViewState();
+  ConsumerState<OnboardingView> createState() => _OnboardingViewState();
 }
 
-class _OnboardingViewState extends State<OnboardingView> {
+class _OnboardingViewState extends ConsumerState<OnboardingView> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
@@ -43,17 +46,17 @@ class _OnboardingViewState extends State<OnboardingView> {
     OnboardingPageData(
       title: 'AI 분석으로 위험도 예측',
       subtitle: 'AI 모델이 나의 데이터를 분석해\n현재 뇌졸중 위험도를 계산',
-      imagePath: 'assets/images/mock-1.png',
+      imagePath: 'assets/images/mock-2.png',
     ),
     OnboardingPageData(
       title: 'What-if 시뮬레이션 예측',
       subtitle: '건강 수치 변경 시 위험도 변화를\n미리 예측하여 안내',
-      imagePath: 'assets/images/mock-1.png',
+      imagePath: 'assets/images/mock-3.png',
     ),
     OnboardingPageData(
       title: '총알보다 빠른 실시간 알림',
       subtitle: '위험도 급상승 시 즉시 알림 전송\n가족/주치의와 데이터를 공유해 함께 모니터링',
-      imagePath: 'assets/images/mock-1.png',
+      imagePath: 'assets/images/mock-4.png',
     ),
   ];
 
@@ -72,14 +75,38 @@ class _OnboardingViewState extends State<OnboardingView> {
     }
   }
 
-  void _onGoogleLoginPressed() {
-    // TODO: Google 로그인 구현
-    context.go('/role-select');
+  Future<void> _onGoogleLoginPressed() async {
+    final success = await ref.read(authProvider.notifier).signInWithGoogle();
+
+    if (!mounted) return;
+
+    if (success) {
+      context.go('/role-select');
+    } else {
+      // 에러 메시지 표시
+      final errorMessage = ref.read(authProvider).errorMessage;
+      if (errorMessage != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red.shade600,
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        );
+        // 에러 메시지 초기화
+        ref.read(authProvider.notifier).clearError();
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final bool isLastPage = _currentPage == _pages.length - 1;
+    final authState = ref.watch(authProvider);
 
     return Scaffold(
       backgroundColor: AppColorScheme.white100,
@@ -116,7 +143,10 @@ class _OnboardingViewState extends State<OnboardingView> {
                 children: [
                   // 다음 또는 Google 로그인 버튼
                   if (isLastPage)
-                    _GoogleLoginButton(onPressed: _onGoogleLoginPressed)
+                    _GoogleLoginButton(
+                      onPressed: _onGoogleLoginPressed,
+                      isLoading: authState.isLoading,
+                    )
                   else
                     _NextButton(onPressed: _onNextPressed),
                   const SizedBox(height: 16),
@@ -218,9 +248,10 @@ class _NextButtonState extends State<_NextButton>
 
 /// Google 로그인 버튼 (파란 배경)
 class _GoogleLoginButton extends StatefulWidget {
-  const _GoogleLoginButton({required this.onPressed});
+  const _GoogleLoginButton({required this.onPressed, this.isLoading = false});
 
   final VoidCallback onPressed;
+  final bool isLoading;
 
   @override
   State<_GoogleLoginButton> createState() => _GoogleLoginButtonState();
@@ -266,9 +297,9 @@ class _GoogleLoginButtonState extends State<_GoogleLoginButton>
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTapDown: _onTapDown,
-      onTapUp: _onTapUp,
-      onTapCancel: _onTapCancel,
+      onTapDown: widget.isLoading ? null : _onTapDown,
+      onTapUp: widget.isLoading ? null : _onTapUp,
+      onTapCancel: widget.isLoading ? null : _onTapCancel,
       child: AnimatedBuilder(
         animation: _scaleAnimation,
         builder: (context, child) {
@@ -278,27 +309,40 @@ class _GoogleLoginButtonState extends State<_GoogleLoginButton>
           width: double.infinity,
           height: 54,
           decoration: BoxDecoration(
-            color: AppColorScheme.primaryColor,
+            color: widget.isLoading
+                ? AppColorScheme.primaryColor.withValues(alpha: 0.7)
+                : AppColorScheme.primaryColor,
             borderRadius: BorderRadius.circular(9999),
           ),
           alignment: Alignment.center,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AppIcon(
-                Assets.icons.google,
-                size: 22,
-                color: AppColorScheme.white100,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                'Google로 시작하기',
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: AppColorScheme.white100,
+          child: widget.isLoading
+              ? const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      AppColorScheme.white100,
+                    ),
+                  ),
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AppIcon(
+                      Assets.icons.google,
+                      size: 22,
+                      color: AppColorScheme.white100,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Google로 시작하기',
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: AppColorScheme.white100,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
         ),
       ),
     );

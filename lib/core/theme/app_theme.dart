@@ -9,6 +9,12 @@ class AppTheme {
       fontFamily: 'Pretendard',
       textTheme: AppTextTheme.textTheme,
       colorScheme: AppColorScheme.lightColorScheme,
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        },
+      ),
     );
   }
 }

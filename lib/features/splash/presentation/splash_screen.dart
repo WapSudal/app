@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/color_scheme.dart';
 import '../../../gen/assets.gen.dart';
+import '../../auth/data/providers/auth_data_providers.dart';
+import '../../auth/presentation/providers/auth_provider.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -46,17 +48,30 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     ]);
 
     if (mounted) {
-      // TODO: 로그인 상태에 따라 /home 또는 /onboarding으로 분기
-      context.go('/onboarding');
+      // 인증 상태에 따라 분기
+      final isAuthenticated = ref.read(isAuthenticatedProvider);
+
+      if (isAuthenticated) {
+        context.go('/role-select');
+      } else {
+        context.go('/onboarding');
+      }
     }
   }
 
   Future<void> _performInitialization() async {
-    // TODO: 실제 초기화 로직 구현
-    // - SharedPreferences 로드
-    // - 로그인 상태 체크
-    // - API 버전 확인
-    // - 필요한 데이터 프리로드
+    // 현재 로그인 상태 확인
+    try {
+      final repository = ref.read(authRepositoryProvider);
+      final currentUser = await repository.getCurrentUser();
+
+      if (currentUser != null) {
+        // 이미 로그인된 사용자가 있으면 AuthProvider 상태 업데이트
+        ref.read(authProvider.notifier);
+      }
+    } catch (e) {
+      // 초기화 실패 시 무시 (온보딩으로 이동)
+    }
   }
 
   @override

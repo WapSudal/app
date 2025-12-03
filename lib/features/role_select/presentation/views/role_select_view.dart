@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../auth/presentation/state/auth_state.dart';
 import '../../domain/entities/user_role.dart';
 import '../providers/role_select_provider.dart';
 import '../widgets/account_info_card.dart';
@@ -22,7 +24,7 @@ class RoleSelectView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(roleSelectProvider);
     final notifier = ref.read(roleSelectProvider.notifier);
-    final textTheme = Theme.of(context).textTheme;
+    final authState = ref.watch(authProvider);
 
     return Scaffold(
       backgroundColor: AppColorScheme.white100,
@@ -39,7 +41,7 @@ class RoleSelectView extends ConsumerWidget {
                     Assets.logos.logoWithText.svg(width: 153),
                     const SizedBox(height: 40),
                     // 계정 정보 카드
-                    _buildAccountInfo(),
+                    _buildAccountInfo(context, ref, authState),
                     const SizedBox(height: 52),
                     // 역할 선택 섹션
                     _buildRoleSelectSection(
@@ -60,14 +62,48 @@ class RoleSelectView extends ConsumerWidget {
   }
 
   /// 계정 정보 카드
-  Widget _buildAccountInfo() {
-    // TODO: 로그인 연동 후 실제 사용자 정보로 대체
-    return const AccountInfoCard(
-      name: '홍길동님',
-      email: 'example@gmail.com',
-      // 계정 전환 기능은 로그인 연동 후 구현
-      onSwitchAccount: null,
+  Widget _buildAccountInfo(
+    BuildContext context,
+    WidgetRef ref,
+    AuthState authState,
+  ) {
+    return AccountInfoCard(
+      name: authState.isAuthenticated ? '${authState.displayName}님' : '사용자님',
+      email: authState.email,
+      photoUrl: authState.photoUrl,
+      isLoading: authState.isLoading,
+      onSwitchAccount: authState.isLoading
+          ? null
+          : () => _onSwitchAccountPressed(context, ref),
     );
+  }
+
+  /// 계정 전환 버튼 클릭 처리
+  Future<void> _onSwitchAccountPressed(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final success = await ref.read(authProvider.notifier).switchAccount();
+
+    if (!context.mounted) return;
+
+    if (!success) {
+      final errorMessage = ref.read(authProvider).errorMessage;
+      if (errorMessage != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red.shade600,
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        );
+        ref.read(authProvider.notifier).clearError();
+      }
+    }
   }
 
   /// 역할 선택 섹션
