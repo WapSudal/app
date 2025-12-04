@@ -200,8 +200,8 @@ lib/
 - Use `Mutation` for one-off UI operations (form submissions, delete actions)
 - State classes should be immutable (`@freezed`)
 - **References**:
-  - See `docs/RIVERPOD_V3_BEST_PRACTICES.md` for comprehensive guidelines
-  - [Riverpod v3 Mutations (Official)](https://riverpod.dev/ko/docs/concepts2/mutations)
+  - See [Riverpod v3 Guide](docs/RIVERPOD_V3_BEST_PRACTICES.md) for comprehensive guidelines
+  - See [Riverpod v3 Mutations Guidelines](docs/RIVERPOD_V3_MUTATIONS.md) for Mutation usage
 
 #### AsyncNotifier Pattern (Recommended for API calls)
   ```dart

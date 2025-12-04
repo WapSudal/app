@@ -9,15 +9,18 @@
 ## Table of Contents
 
 1. [What are Mutations?](#what-are-mutations)
-2. [Problems Mutations Solve](#problems-mutations-solve)
-3. [Defining Mutations](#defining-mutations)
-4. [Mutation States](#mutation-states)
-5. [Using Mutations in UI](#using-mutations-in-ui)
-6. [Triggering Mutations](#triggering-mutations)
-7. [Scoped Mutations](#scoped-mutations)
-8. [Resetting Mutations](#resetting-mutations)
-9. [Best Practices](#best-practices)
-10. [Complete Examples](#complete-examples)
+2. [Mutations vs AsyncNotifier](#mutations-vs-asyncnotifier)
+3. [When to Use Mutations](#when-to-use-mutations)
+4. [Problems Mutations Solve](#problems-mutations-solve)
+5. [Defining Mutations](#defining-mutations)
+6. [Mutation States](#mutation-states)
+7. [Using Mutations in UI](#using-mutations-in-ui)
+8. [Triggering Mutations](#triggering-mutations)
+9. [Scoped Mutations](#scoped-mutations)
+10. [Resetting Mutations](#resetting-mutations)
+11. [Migration from AsyncNotifier](#migration-from-asyncnotifier)
+12. [Best Practices](#best-practices)
+13. [Complete Examples](#complete-examples)
 
 ---
 
@@ -30,6 +33,33 @@ Mutations are objects that enable the UI to react to state changes during side e
 - Show success/error messages after completion
 - Keep provider state clean from UI concerns
 - Prevent provider disposal during ongoing operations
+
+---
+
+## Mutations vs AsyncNotifier
+
+| Feature | AsyncNotifier | Mutation |
+|---------|---------------|----------|
+| **Purpose** | Manage persistent state | Handle one-off operations |
+| **State pollution** | Can pollute state with UI concerns | Keeps UI state separate |
+| **Best for** | Data that needs to persist | Form submissions, delete actions |
+| **Reset behavior** | Manual | Auto-resets on completion |
+| **Loading state** | Part of AsyncValue | Built-in MutationPending |
+
+---
+
+## When to Use Mutations
+
+✅ **Use Mutations for:**
+- Form submissions with loading/error feedback
+- Delete operations with UI feedback
+- One-off API calls that don't affect main state
+- Operations where you need temporary loading/error states
+
+❌ **Use AsyncNotifier for:**
+- Fetching and displaying data
+- Managing persistent state
+- Operations that update the main data model
 
 ---
 
@@ -113,6 +143,24 @@ switch (state) {
 if (state is MutationPending) {
   // Show loading
 }
+```
+
+### Mutation State Helpers
+
+```dart
+final state = ref.watch(addTodo);
+
+// State check properties
+bool isIdle = state.isIdle;       // Not yet called or reset
+bool isPending = state.isPending; // Currently executing
+bool hasError = state.hasError;   // Failed with error
+bool hasValue = state.hasValue;   // Succeeded with result
+
+// Access values with whenOrNull
+state.whenOrNull(
+  success: (result) => print('Result: $result'),
+  error: (error, _) => print('Error: $error'),
+);
 ```
 
 ---
@@ -285,6 +333,65 @@ ElevatedButton(
   onPressed: () => addTodo.reset(ref),
   child: const Text('Reset'),
 )
+```
+
+---
+
+## Migration from AsyncNotifier
+
+If you have UI-only loading states polluting your AsyncNotifier, consider migrating to Mutations:
+
+```dart
+// ❌ Before: Polluted state
+@freezed
+abstract class UserPageState with _$UserPageState {
+  const factory UserPageState({
+    required User? user,
+    @Default(false) bool isDeleting,  // UI-only state!
+    @Default(false) bool isSubmitting, // UI-only state!
+  }) = _UserPageState;
+}
+
+// ✅ After: Clean state + mutations
+@freezed
+abstract class UserPageState with _$UserPageState {
+  const factory UserPageState({
+    required User? user,
+  }) = _UserPageState;
+}
+
+// Separate mutations for actions
+final deleteUserMutation = Mutation<void>();
+final submitUserFormMutation = Mutation<User>();
+```
+
+### Combining Mutations with AsyncNotifier
+
+```dart
+// Mutation for the action
+final deleteUserMutation = Mutation.scoped<void, String>();
+
+// AsyncNotifier for the user list
+@riverpod
+class UserList extends _$UserList {
+  @override
+  Future<List<User>> build() async {
+    return ref.read(userRepositoryProvider).fetchAll();
+  }
+
+  void optimisticDelete(String userId) {
+    final current = state.value ?? [];
+    state = AsyncValue.data(
+      current.where((user) => user.id != userId).toList(),
+    );
+  }
+}
+
+// UI combines both
+deleteUserMutation(userId).run(ref, (tsx) async {
+  tsx.get(userListProvider.notifier).optimisticDelete(userId);
+  await tsx.get(userRepositoryProvider).delete(userId);
+});
 ```
 
 ---

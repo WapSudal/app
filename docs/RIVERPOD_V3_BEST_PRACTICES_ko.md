@@ -690,7 +690,8 @@ class ProductPage extends ConsumerWidget {
 
 ## 뮤테이션 (실험적 기능)
 
-**📚 공식 문서**: [Riverpod v3 뮤테이션](https://riverpod.dev/ko/docs/concepts2/mutations)
+**📚 공식 문서**: [Riverpod v3 뮤테이션](https://riverpod.dev/ko/docs/concepts2/mutations)  
+**📄 상세 가이드**: [RIVERPOD_V3_MUTATIONS.md](RIVERPOD_V3_MUTATIONS.md)
 
 ### 뮤테이션이란?
 
@@ -721,398 +722,33 @@ class ProductPage extends ConsumerWidget {
 - 영구적인 상태 관리
 - 주 데이터 모델을 업데이트하는 작업
 
-### 뮤테이션 상태
-
-뮤테이션은 네 가지 상태를 가질 수 있습니다:
-
-```dart
-sealed class MutationState<T> {
-  MutationIdle      // 아직 호출되지 않았거나 리셋됨
-  MutationPending   // 현재 실행 중
-  MutationError     // 오류와 함께 실패
-  MutationSuccess   // 결과와 함께 성공
-}
-```
-
-### 기본 사용법
-
-#### 1. 뮤테이션 정의
-
-```dart
-import 'package:riverpod/riverpod.dart';
-
-// 뮤테이션을 final 변수로 정의 (전역 또는 정적)
-final addTodo = Mutation<Todo>();
-final deleteTodo = Mutation<void>();
-final submitForm = Mutation<FormResult>();
-```
-
-#### 2. 뮤테이션 상태 수신
-
-```dart
-class TodoFormPage extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final addTodoState = ref.watch(addTodo);
-
-    return addTodoState.when(
-      idle: () => _buildForm(context, ref),
-      pending: () => Center(child: CircularProgressIndicator()),
-      success: (todo) => _buildSuccessView(todo),
-      error: (error, stackTrace) => _buildErrorView(error),
-    );
-  }
-}
-```
-
-#### 3. 뮤테이션 트리거
-
-```dart
-class TodoFormPage extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return ElevatedButton(
-      onPressed: () {
-        // 콜백으로 뮤테이션 트리거
-        addTodo.run(ref, (tsx) async {
-          // tsx.get()을 사용하여 Provider에 접근
-          final repository = tsx.get(todoRepositoryProvider);
-          final newTodo = Todo(title: '새로운 작업');
-
-          await repository.addTodo(newTodo);
-
-          // 뮤테이션의 제네릭 타입과 일치하는 값 반환
-          return newTodo;
-        });
-      },
-      child: Text('Todo 추가'),
-    );
-  }
-}
-```
-
-### 고급: 범위 지정 뮤테이션(Scoped Mutations)
-
-특정 항목에 대한 작업(예: 특정 todo 삭제)의 경우 범위 지정 뮤테이션을 사용합니다:
-
-```dart
-// 범위 지정 뮤테이션 정의
-final deleteTodoMutation = Mutation.scoped<void, String>();
-
-class TodoItem extends ConsumerWidget {
-  final Todo todo;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // 이 특정 todo에 대한 범위 지정 인스턴스 생성
-    final deleteMutation = deleteTodoMutation(todo.id);
-    final deleteState = ref.watch(deleteMutation);
-
-    return deleteState.when(
-      idle: () => IconButton(
-        icon: Icon(Icons.delete),
-        onPressed: () {
-          deleteMutation.run(ref, (tsx) async {
-            final repository = tsx.get(todoRepositoryProvider);
-            await repository.deleteTodo(todo.id);
-          });
-        },
-      ),
-      pending: () => CircularProgressIndicator(),
-      success: (_) => Icon(Icons.check, color: Colors.green),
-      error: (e, _) => Icon(Icons.error, color: Colors.red),
-    );
-  }
-}
-```
-
-### 패턴: 뮤테이션을 사용한 폼 제출
+### 빠른 예제
 
 ```dart
 // 뮤테이션 정의
-final submitLoginForm = Mutation<AuthResult>();
+final submitForm = Mutation<FormResult>();
 
-// 폼 위젯
-class LoginForm extends ConsumerStatefulWidget {
-  @override
-  ConsumerState<LoginForm> createState() => _LoginFormState();
-}
-
-class _LoginFormState extends ConsumerState<LoginForm> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    final submitState = ref.watch(submitLoginForm);
-
-    // 실패 시 오류 SnackBar 표시
-    ref.listen(submitLoginForm, (previous, next) {
-      next.whenOrNull(
-        error: (error, _) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('로그인 실패: $error'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        },
-        success: (result) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('로그인 성공!')),
-          );
-          // 홈으로 이동
-          context.go('/home');
-        },
-      );
-    });
-
-    return Column(
-      children: [
-        TextField(
-          controller: _emailController,
-          decoration: InputDecoration(labelText: '이메일'),
-          enabled: !submitState.isPending,
-        ),
-        TextField(
-          controller: _passwordController,
-          decoration: InputDecoration(labelText: '비밀번호'),
-          obscureText: true,
-          enabled: !submitState.isPending,
-        ),
-        SizedBox(height: 16),
-        ElevatedButton(
-          onPressed: submitState.isPending ? null : _handleSubmit,
-          child: submitState.isPending
-              ? CircularProgressIndicator()
-              : Text('로그인'),
-        ),
-      ],
-    );
-  }
-
-  void _handleSubmit() {
-    submitLoginForm.run(ref, (tsx) async {
-      final authRepository = tsx.get(authRepositoryProvider);
-
-      final result = await authRepository.login(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-
-      return result;
-    });
-  }
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-}
-```
-
-### 패턴: 낙관적 업데이트를 사용한 삭제
-
-```dart
-final deleteTodoMutation = Mutation.scoped<void, String>();
-
-class TodoListPage extends ConsumerWidget {
+// 위젯에서 사용
+class FormPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final todos = ref.watch(todoListProvider);
-
-    return todos.when(
-      data: (todoList) => ListView.builder(
-        itemCount: todoList.length,
-        itemBuilder: (ctx, idx) {
-          final todo = todoList[idx];
-          final deleteMutation = deleteTodoMutation(todo.id);
-          final deleteState = ref.watch(deleteMutation);
-
-          return ListTile(
-            title: Text(todo.title),
-            trailing: deleteState.when(
-              idle: () => IconButton(
-                icon: Icon(Icons.delete),
-                onPressed: () {
-                  deleteMutation.run(ref, (tsx) async {
-                    // 낙관적 업데이트: 목록에서 즉시 제거
-                    final notifier = tsx.get(todoListProvider.notifier);
-                    notifier.optimisticDelete(todo.id);
-
-                    try {
-                      final repository = tsx.get(todoRepositoryProvider);
-                      await repository.deleteTodo(todo.id);
-                    } catch (e) {
-                      // 실패 시 롤백
-                      notifier.refresh();
-                      rethrow;
-                    }
-                  });
-                },
-              ),
-              pending: () => SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
-              success: (_) => Icon(Icons.check, color: Colors.green),
-              error: (e, _) => Icon(Icons.error, color: Colors.red),
-            ),
-          );
-        },
-      ),
-      loading: () => Center(child: CircularProgressIndicator()),
-      error: (e, _) => ErrorView(error: e),
+    final state = ref.watch(submitForm);
+    
+    return ElevatedButton(
+      onPressed: state.isPending ? null : () {
+        submitForm.run(ref, (tsx) async {
+          return await tsx.get(repositoryProvider).submit(data);
+        });
+      },
+      child: state.isPending 
+          ? CircularProgressIndicator() 
+          : Text('제출'),
     );
   }
 }
 ```
 
-### 리셋 동작
-
-뮤테이션은 다음 경우에 자동으로 `MutationIdle`로 리셋됩니다:
-- 작업이 완료될 때 (성공 또는 오류)
-- 모든 리스너가 제거될 때
-
-수동 리셋:
-```dart
-// 뮤테이션 수동 리셋
-Mutation.reset(ref);
-```
-
-### 뮤테이션 헬퍼
-
-```dart
-// 뮤테이션 상태 확인
-final submitState = ref.watch(submitLoginForm);
-
-bool isIdle = submitState.isIdle;
-bool isPending = submitState.isPending;
-bool hasError = submitState.hasError;
-bool hasValue = submitState.hasValue;
-
-// 값 접근
-submitState.whenOrNull(
-  success: (result) => print('결과: $result'),
-  error: (error, _) => print('오류: $error'),
-);
-```
-
-### 모범 사례
-
-#### ✅ 할 일: UI 트리거 액션에 뮤테이션 사용
-
-```dart
-// ✅ 좋음 - 폼 제출
-final submitContactForm = Mutation<void>();
-
-ElevatedButton(
-  onPressed: () {
-    submitContactForm.run(ref, (tsx) async {
-      await tsx.get(contactRepositoryProvider).submit(formData);
-    });
-  },
-  child: Text('제출'),
-)
-```
-
-#### ✅ 할 일: 데이터 업데이트를 위해 AsyncNotifier와 결합
-
-```dart
-// 액션을 위한 뮤테이션
-final deleteUserMutation = Mutation.scoped<void, String>();
-
-// 사용자 목록을 위한 AsyncNotifier
-@riverpod
-class UserList extends _$UserList {
-  @override
-  Future<List<User>> build() async {
-    return ref.read(userRepositoryProvider).fetchAll();
-  }
-
-  void optimisticDelete(String userId) {
-    final current = state.value ?? [];
-    state = AsyncValue.data(
-      current.where((user) => user.id != userId).toList(),
-    );
-  }
-}
-
-// UI에서 둘 다 결합
-deleteUserMutation(userId).run(ref, (tsx) async {
-  tsx.get(userListProvider.notifier).optimisticDelete(userId);
-  await tsx.get(userRepositoryProvider).delete(userId);
-});
-```
-
-#### ❌ 하지 말 일: 데이터 가져오기에 뮤테이션 사용
-
-```dart
-// ❌ 나쁨 - 대신 AsyncNotifier 사용
-final fetchUsersMutation = Mutation<List<User>>();
-
-// ✅ 좋음 - AsyncNotifier 사용
-@riverpod
-class UserList extends _$UserList {
-  @override
-  Future<List<User>> build() async {
-    return ref.read(userRepositoryProvider).fetchAll();
-  }
-}
-```
-
-#### ❌ 하지 말 일: 상태에 뮤테이션 저장
-
-```dart
-// ❌ 나쁨 - 뮤테이션은 전역/정적이어야 함
-class MyWidget extends ConsumerWidget {
-  final mutation = Mutation<void>(); // ❌ 잘못됨!
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) { ... }
-}
-
-// ✅ 좋음 - 전역으로 정의
-final myMutation = Mutation<void>();
-
-class MyWidget extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(myMutation); // ✅ 올바름
-  }
-}
-```
-
-### AsyncNotifier에서 뮤테이션으로 마이그레이션
-
-AsyncNotifier에 UI 전용 로딩 상태가 오염되어 있는 경우:
-
-```dart
-// ❌ 이전: 오염된 상태
-@freezed
-class UserPageState with _$UserPageState {
-  const factory UserPageState({
-    required User? user,
-    @Default(false) bool isDeleting,  // UI 전용 상태!
-    @Default(false) bool isSubmitting, // UI 전용 상태!
-  }) = _UserPageState;
-}
-
-// ✅ 이후: 깔끔한 상태 + 뮤테이션
-@freezed
-class UserPageState with _$UserPageState {
-  const factory UserPageState({
-    required User? user,
-  }) = _UserPageState;
-}
-
-// 액션을 위한 별도 뮤테이션
-final deleteUserMutation = Mutation<void>();
-final submitUserFormMutation = Mutation<User>();
-```
+> **📖 상세한 사용법, 패턴 및 전체 예제는 [RIVERPOD_V3_MUTATIONS.md](RIVERPOD_V3_MUTATIONS.md)를 참조하세요**
 
 ---
 
@@ -1583,4 +1219,4 @@ class TodoList extends _$TodoList {
 
 ---
 
-*이 문서는 Claude Code가 Flutter 애플리케이션에서 Riverpod 기반 상태 관리를 구현할 때 참조해야 합니다.*
+*이 문서는 AI Agents가 Flutter 애플리케이션에서 Riverpod 기반 상태 관리를 구현할 때 참조해야 합니다.*

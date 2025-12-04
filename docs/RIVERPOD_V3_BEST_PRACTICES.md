@@ -690,7 +690,8 @@ class ProductPage extends ConsumerWidget {
 
 ## Mutations (Experimental)
 
-**📚 Official Documentation**: [Riverpod v3 Mutations](https://riverpod.dev/ko/docs/concepts2/mutations)
+**📚 Official Documentation**: [Riverpod v3 Mutations](https://riverpod.dev/ko/docs/concepts2/mutations)  
+**📄 Detailed Guide**: [RIVERPOD_V3_MUTATIONS.md](RIVERPOD_V3_MUTATIONS.md)
 
 ### What are Mutations?
 
@@ -721,398 +722,33 @@ class ProductPage extends ConsumerWidget {
 - Managing persistent state
 - Operations that update the main data model
 
-### Mutation States
-
-Mutations exist in four possible states:
-
-```dart
-sealed class MutationState<T> {
-  MutationIdle      // Not yet called or reset
-  MutationPending   // Currently executing
-  MutationError     // Failed with error available
-  MutationSuccess   // Succeeded with result available
-}
-```
-
-### Basic Usage
-
-#### 1. Define a Mutation
-
-```dart
-import 'package:riverpod/riverpod.dart';
-
-// Define mutation as a final variable (global or static)
-final addTodo = Mutation<Todo>();
-final deleteTodo = Mutation<void>();
-final submitForm = Mutation<FormResult>();
-```
-
-#### 2. Listen to Mutation State
-
-```dart
-class TodoFormPage extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final addTodoState = ref.watch(addTodo);
-
-    return addTodoState.when(
-      idle: () => _buildForm(context, ref),
-      pending: () => Center(child: CircularProgressIndicator()),
-      success: (todo) => _buildSuccessView(todo),
-      error: (error, stackTrace) => _buildErrorView(error),
-    );
-  }
-}
-```
-
-#### 3. Trigger Mutation
-
-```dart
-class TodoFormPage extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return ElevatedButton(
-      onPressed: () {
-        // Trigger mutation with callback
-        addTodo.run(ref, (tsx) async {
-          // Access providers using tsx.get()
-          final repository = tsx.get(todoRepositoryProvider);
-          final newTodo = Todo(title: 'New task');
-
-          await repository.addTodo(newTodo);
-
-          // Return value matching mutation's generic type
-          return newTodo;
-        });
-      },
-      child: Text('Add Todo'),
-    );
-  }
-}
-```
-
-### Advanced: Scoped Mutations
-
-For operations on specific items (like deleting a specific todo), use scoped mutations:
-
-```dart
-// Define scoped mutation
-final deleteTodoMutation = Mutation.scoped<void, String>();
-
-class TodoItem extends ConsumerWidget {
-  final Todo todo;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Create scoped instance for this specific todo
-    final deleteMutation = deleteTodoMutation(todo.id);
-    final deleteState = ref.watch(deleteMutation);
-
-    return deleteState.when(
-      idle: () => IconButton(
-        icon: Icon(Icons.delete),
-        onPressed: () {
-          deleteMutation.run(ref, (tsx) async {
-            final repository = tsx.get(todoRepositoryProvider);
-            await repository.deleteTodo(todo.id);
-          });
-        },
-      ),
-      pending: () => CircularProgressIndicator(),
-      success: (_) => Icon(Icons.check, color: Colors.green),
-      error: (e, _) => Icon(Icons.error, color: Colors.red),
-    );
-  }
-}
-```
-
-### Pattern: Form Submission with Mutations
+### Quick Example
 
 ```dart
 // Define mutation
-final submitLoginForm = Mutation<AuthResult>();
+final submitForm = Mutation<FormResult>();
 
-// Form widget
-class LoginForm extends ConsumerStatefulWidget {
-  @override
-  ConsumerState<LoginForm> createState() => _LoginFormState();
-}
-
-class _LoginFormState extends ConsumerState<LoginForm> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    final submitState = ref.watch(submitLoginForm);
-
-    // Show error SnackBar on failure
-    ref.listen(submitLoginForm, (previous, next) {
-      next.whenOrNull(
-        error: (error, _) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Login failed: $error'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        },
-        success: (result) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Login successful!')),
-          );
-          // Navigate to home
-          context.go('/home');
-        },
-      );
-    });
-
-    return Column(
-      children: [
-        TextField(
-          controller: _emailController,
-          decoration: InputDecoration(labelText: 'Email'),
-          enabled: !submitState.isPending,
-        ),
-        TextField(
-          controller: _passwordController,
-          decoration: InputDecoration(labelText: 'Password'),
-          obscureText: true,
-          enabled: !submitState.isPending,
-        ),
-        SizedBox(height: 16),
-        ElevatedButton(
-          onPressed: submitState.isPending ? null : _handleSubmit,
-          child: submitState.isPending
-              ? CircularProgressIndicator()
-              : Text('Login'),
-        ),
-      ],
-    );
-  }
-
-  void _handleSubmit() {
-    submitLoginForm.run(ref, (tsx) async {
-      final authRepository = tsx.get(authRepositoryProvider);
-
-      final result = await authRepository.login(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-
-      return result;
-    });
-  }
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-}
-```
-
-### Pattern: Delete with Optimistic Updates
-
-```dart
-final deleteTodoMutation = Mutation.scoped<void, String>();
-
-class TodoListPage extends ConsumerWidget {
+// Use in widget
+class FormPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final todos = ref.watch(todoListProvider);
-
-    return todos.when(
-      data: (todoList) => ListView.builder(
-        itemCount: todoList.length,
-        itemBuilder: (ctx, idx) {
-          final todo = todoList[idx];
-          final deleteMutation = deleteTodoMutation(todo.id);
-          final deleteState = ref.watch(deleteMutation);
-
-          return ListTile(
-            title: Text(todo.title),
-            trailing: deleteState.when(
-              idle: () => IconButton(
-                icon: Icon(Icons.delete),
-                onPressed: () {
-                  deleteMutation.run(ref, (tsx) async {
-                    // Optimistic update: remove from list immediately
-                    final notifier = tsx.get(todoListProvider.notifier);
-                    notifier.optimisticDelete(todo.id);
-
-                    try {
-                      final repository = tsx.get(todoRepositoryProvider);
-                      await repository.deleteTodo(todo.id);
-                    } catch (e) {
-                      // Rollback on failure
-                      notifier.refresh();
-                      rethrow;
-                    }
-                  });
-                },
-              ),
-              pending: () => SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
-              success: (_) => Icon(Icons.check, color: Colors.green),
-              error: (e, _) => Icon(Icons.error, color: Colors.red),
-            ),
-          );
-        },
-      ),
-      loading: () => Center(child: CircularProgressIndicator()),
-      error: (e, _) => ErrorView(error: e),
+    final state = ref.watch(submitForm);
+    
+    return ElevatedButton(
+      onPressed: state.isPending ? null : () {
+        submitForm.run(ref, (tsx) async {
+          return await tsx.get(repositoryProvider).submit(data);
+        });
+      },
+      child: state.isPending 
+          ? CircularProgressIndicator() 
+          : Text('Submit'),
     );
   }
 }
 ```
 
-### Reset Behavior
-
-Mutations automatically reset to `MutationIdle` when:
-- The operation completes (success or error)
-- All listeners are removed
-
-Manual reset:
-```dart
-// Reset mutation manually
-Mutation.reset(ref);
-```
-
-### Mutation Helpers
-
-```dart
-// Check mutation state
-final submitState = ref.watch(submitLoginForm);
-
-bool isIdle = submitState.isIdle;
-bool isPending = submitState.isPending;
-bool hasError = submitState.hasError;
-bool hasValue = submitState.hasValue;
-
-// Access values
-submitState.whenOrNull(
-  success: (result) => print('Result: $result'),
-  error: (error, _) => print('Error: $error'),
-);
-```
-
-### Best Practices
-
-#### ✅ DO: Use Mutations for UI-Triggered Actions
-
-```dart
-// ✅ Good - form submission
-final submitContactForm = Mutation<void>();
-
-ElevatedButton(
-  onPressed: () {
-    submitContactForm.run(ref, (tsx) async {
-      await tsx.get(contactRepositoryProvider).submit(formData);
-    });
-  },
-  child: Text('Submit'),
-)
-```
-
-#### ✅ DO: Combine with AsyncNotifier for Data Updates
-
-```dart
-// Mutation for the action
-final deleteUserMutation = Mutation.scoped<void, String>();
-
-// AsyncNotifier for the user list
-@riverpod
-class UserList extends _$UserList {
-  @override
-  Future<List<User>> build() async {
-    return ref.read(userRepositoryProvider).fetchAll();
-  }
-
-  void optimisticDelete(String userId) {
-    final current = state.value ?? [];
-    state = AsyncValue.data(
-      current.where((user) => user.id != userId).toList(),
-    );
-  }
-}
-
-// UI combines both
-deleteUserMutation(userId).run(ref, (tsx) async {
-  tsx.get(userListProvider.notifier).optimisticDelete(userId);
-  await tsx.get(userRepositoryProvider).delete(userId);
-});
-```
-
-#### ❌ DON'T: Use Mutations for Data Fetching
-
-```dart
-// ❌ Bad - use AsyncNotifier instead
-final fetchUsersMutation = Mutation<List<User>>();
-
-// ✅ Good - use AsyncNotifier
-@riverpod
-class UserList extends _$UserList {
-  @override
-  Future<List<User>> build() async {
-    return ref.read(userRepositoryProvider).fetchAll();
-  }
-}
-```
-
-#### ❌ DON'T: Store Mutations in State
-
-```dart
-// ❌ Bad - mutations should be global/static
-class MyWidget extends ConsumerWidget {
-  final mutation = Mutation<void>(); // ❌ Wrong!
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) { ... }
-}
-
-// ✅ Good - define globally
-final myMutation = Mutation<void>();
-
-class MyWidget extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(myMutation); // ✅ Correct
-  }
-}
-```
-
-### Migration from AsyncNotifier to Mutations
-
-If you have UI-only loading states polluting your AsyncNotifier:
-
-```dart
-// ❌ Before: Polluted state
-@freezed
-class UserPageState with _$UserPageState {
-  const factory UserPageState({
-    required User? user,
-    @Default(false) bool isDeleting,  // UI-only state!
-    @Default(false) bool isSubmitting, // UI-only state!
-  }) = _UserPageState;
-}
-
-// ✅ After: Clean state + mutations
-@freezed
-class UserPageState with _$UserPageState {
-  const factory UserPageState({
-    required User? user,
-  }) = _UserPageState;
-}
-
-// Separate mutations for actions
-final deleteUserMutation = Mutation<void>();
-final submitUserFormMutation = Mutation<User>();
-```
+> **📖 For detailed usage, patterns, and complete examples, see [RIVERPOD_V3_MUTATIONS.md](RIVERPOD_V3_MUTATIONS.md)**
 
 ---
 
@@ -1583,4 +1219,4 @@ class TodoList extends _$TodoList {
 
 ---
 
-*This document should be referenced by Claude Code when implementing Riverpod-based state management in Flutter applications.*
+*This document should be referenced by AI Agents when implementing Riverpod-based state management in Flutter applications.*
