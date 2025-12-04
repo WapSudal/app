@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/enums/user_role.dart';
+import '../../../../core/presentation/helpers/snackbar_helper.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
-import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../auth/data/providers/auth_data_providers.dart';
+import '../../../auth/presentation/providers/auth_mutations.dart';
+import '../../../auth/presentation/providers/auth_notifier.dart';
 import '../../../auth/presentation/state/auth_state.dart';
-import '../../domain/entities/user_role.dart';
-import '../providers/role_select_provider.dart';
+import '../../../user/domain/providers/user_domain_providers.dart';
+import '../../../user/presentation/providers/registered_user_notifier.dart';
+import '../providers/role_select_mutations.dart';
+import '../providers/role_select_notifier.dart';
 import '../widgets/account_info_card.dart';
 import '../widgets/role_select_button.dart';
 
@@ -22,9 +29,34 @@ class RoleSelectView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(roleSelectProvider);
-    final notifier = ref.read(roleSelectProvider.notifier);
     final authState = ref.watch(authProvider);
+    final switchAccountState = ref.watch(switchAccountMutation);
+    final confirmRoleState = ref.watch(confirmRoleMutation);
+
+    // 계정 전환 Mutation 상태 처리
+    ref.listen(switchAccountMutation, (previous, next) {
+      if (next case MutationError(:final error)) {
+        showErrorSnackBar(context, error);
+      }
+    });
+
+    // 역할 확정 Mutation 상태 처리
+    ref.listen(confirmRoleMutation, (previous, next) {
+      switch (next) {
+        case MutationSuccess():
+          if (context.mounted) {
+            context.go('/home');
+          }
+        case MutationError(:final error):
+          showErrorSnackBar(context, error);
+        default:
+          break;
+      }
+    });
+
+    final isLoading =
+        switchAccountState is MutationPending ||
+        confirmRoleState is MutationPending;
 
     return Scaffold(
       backgroundColor: AppColorScheme.white100,
@@ -41,14 +73,10 @@ class RoleSelectView extends ConsumerWidget {
                     Assets.logos.logoWithText.svg(width: 153),
                     const SizedBox(height: 40),
                     // 계정 정보 카드
-                    _buildAccountInfo(context, ref, authState),
+                    _buildAccountInfo(context, ref, authState, isLoading),
                     const SizedBox(height: 52),
                     // 역할 선택 섹션
-                    _buildRoleSelectSection(
-                      context,
-                      state.selectedRole,
-                      notifier,
-                    ),
+                    _buildRoleSelectSection(context, ref, isLoading),
                   ],
                 ),
               ),
@@ -66,51 +94,37 @@ class RoleSelectView extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     AuthState authState,
+    bool isLoading,
   ) {
     return AccountInfoCard(
       name: authState.isAuthenticated ? '${authState.displayName}님' : '사용자님',
       email: authState.email,
       photoUrl: authState.photoUrl,
-      isLoading: authState.isLoading,
-      onSwitchAccount: authState.isLoading
+      isLoading: isLoading,
+      onSwitchAccount: isLoading
           ? null
           : () => _onSwitchAccountPressed(context, ref),
     );
   }
 
   /// 계정 전환 버튼 클릭 처리
-  Future<void> _onSwitchAccountPressed(
-    BuildContext context,
-    WidgetRef ref,
-  ) async {
-    final success = await ref.read(authProvider.notifier).switchAccount();
+  void _onSwitchAccountPressed(BuildContext context, WidgetRef ref) {
+    switchAccountMutation.run(ref, (tsx) async {
+      final repository = tsx.get(authRepositoryProvider);
+      final user = await repository.switchAccount();
 
-    if (!context.mounted) return;
+      // 상태 업데이트
+      tsx.get(authProvider.notifier).updateUser(user);
 
-    if (!success) {
-      final errorMessage = ref.read(authProvider).errorMessage;
-      if (errorMessage != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage),
-            backgroundColor: Colors.red.shade600,
-            behavior: SnackBarBehavior.floating,
-            margin: const EdgeInsets.all(16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        );
-        ref.read(authProvider.notifier).clearError();
-      }
-    }
+      return user;
+    });
   }
 
   /// 역할 선택 섹션
   Widget _buildRoleSelectSection(
     BuildContext context,
-    UserRole? selectedRole,
-    RoleSelectNotifier notifier,
+    WidgetRef ref,
+    bool isLoading,
   ) {
     final textTheme = Theme.of(context).textTheme;
 
@@ -126,7 +140,7 @@ class RoleSelectView extends ConsumerWidget {
         ),
         const SizedBox(height: 12),
         // 역할 선택 버튼들
-        _buildRoleButtons(context, selectedRole, notifier),
+        _buildRoleButtons(context, ref, isLoading),
       ],
     );
   }
@@ -134,8 +148,8 @@ class RoleSelectView extends ConsumerWidget {
   /// 역할 선택 버튼 목록
   Widget _buildRoleButtons(
     BuildContext context,
-    UserRole? selectedRole,
-    RoleSelectNotifier notifier,
+    WidgetRef ref,
+    bool isLoading,
   ) {
     return Column(
       children: [
@@ -152,7 +166,9 @@ class RoleSelectView extends ConsumerWidget {
           title: UserRole.generalUser.displayName,
           description: UserRole.generalUser.description,
           showTopBorder: false,
-          onTap: () => _onRoleSelected(context, notifier, UserRole.generalUser),
+          onTap: isLoading
+              ? null
+              : () => _onRoleSelected(context, ref, UserRole.generalUser),
         ),
         // 가족 및 보호자
         RoleSelectButton(
@@ -167,7 +183,9 @@ class RoleSelectView extends ConsumerWidget {
           title: UserRole.guardian.displayName,
           description: UserRole.guardian.description,
           showTopBorder: true,
-          onTap: () => _onRoleSelected(context, notifier, UserRole.guardian),
+          onTap: isLoading
+              ? null
+              : () => _onRoleSelected(context, ref, UserRole.guardian),
         ),
         // 주치의
         RoleSelectButton(
@@ -179,26 +197,43 @@ class RoleSelectView extends ConsumerWidget {
           title: UserRole.doctor.displayName,
           description: UserRole.doctor.description,
           showTopBorder: true,
-          onTap: () => _onRoleSelected(context, notifier, UserRole.doctor),
+          onTap: isLoading
+              ? null
+              : () => _onRoleSelected(context, ref, UserRole.doctor),
         ),
       ],
     );
   }
 
   /// 역할 선택 시 처리
-  void _onRoleSelected(
-    BuildContext context,
-    RoleSelectNotifier notifier,
-    UserRole role,
-  ) async {
-    notifier.selectRole(role);
+  void _onRoleSelected(BuildContext context, WidgetRef ref, UserRole role) {
+    ref.read(roleSelectProvider.notifier).selectRole(role);
 
-    // 역할 선택 확정 및 다음 화면으로 이동
-    final success = await notifier.confirmRole();
-    if (success && context.mounted) {
-      // TODO: 역할에 따른 적절한 화면으로 이동
-      context.go('/home');
-    }
+    // 역할 선택 확정 Mutation 실행
+    confirmRoleMutation.run(ref, (tsx) async {
+      // Firebase Auth에서 현재 로그인된 사용자 정보 가져오기
+      final authState = tsx.get(authProvider);
+      final authUser = authState.user;
+
+      if (authUser == null) {
+        throw Exception('로그인이 필요합니다.');
+      }
+
+      // UseCase를 통해 사용자 등록
+      final registerUser = tsx.get(registerUserUseCaseProvider);
+      final user = await registerUser(
+        uid: authUser.uid,
+        email: authUser.email ?? '',
+        displayName: authUser.displayName,
+        photoUrl: authUser.photoUrl,
+        role: role,
+      );
+
+      // RegisteredUser 상태 업데이트
+      tsx.get(registeredUserProvider.notifier).updateUser(user);
+
+      return user;
+    });
   }
 
   /// 하단 안내 문구

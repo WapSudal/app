@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/presentation/helpers/snackbar_helper.dart';
 import '../../../../core/presentation/widgets/app_icon.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
-import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../auth/data/providers/auth_data_providers.dart';
+import '../../../auth/presentation/providers/auth_mutations.dart';
+import '../../../auth/presentation/providers/auth_notifier.dart';
 import '../widgets/onboarding_content.dart';
 import '../widgets/page_indicator.dart';
 
@@ -75,38 +79,38 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
     }
   }
 
-  Future<void> _onGoogleLoginPressed() async {
-    final success = await ref.read(authProvider.notifier).signInWithGoogle();
+  void _onGoogleLoginPressed() {
+    signInWithGoogleMutation.run(ref, (tsx) async {
+      final repository = tsx.get(authRepositoryProvider);
+      final user = await repository.signInWithGoogle();
 
-    if (!mounted) return;
+      // 상태 업데이트
+      tsx.get(authProvider.notifier).updateUser(user);
 
-    if (success) {
-      context.go('/role-select');
-    } else {
-      // 에러 메시지 표시
-      final errorMessage = ref.read(authProvider).errorMessage;
-      if (errorMessage != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage),
-            backgroundColor: Colors.red.shade600,
-            behavior: SnackBarBehavior.floating,
-            margin: const EdgeInsets.all(16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        );
-        // 에러 메시지 초기화
-        ref.read(authProvider.notifier).clearError();
-      }
-    }
+      return user;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final bool isLastPage = _currentPage == _pages.length - 1;
-    final authState = ref.watch(authProvider);
+    final signInState = ref.watch(signInWithGoogleMutation);
+
+    // Mutation 상태 변화 감지 및 처리
+    ref.listen(signInWithGoogleMutation, (previous, next) {
+      switch (next) {
+        case MutationSuccess():
+          if (mounted) {
+            context.go('/role-select');
+          }
+        case MutationError(:final error):
+          if (mounted) {
+            showErrorSnackBar(context, error);
+          }
+        default:
+          break;
+      }
+    });
 
     return Scaffold(
       backgroundColor: AppColorScheme.white100,
@@ -145,7 +149,7 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
                   if (isLastPage)
                     _GoogleLoginButton(
                       onPressed: _onGoogleLoginPressed,
-                      isLoading: authState.isLoading,
+                      isLoading: signInState is MutationPending,
                     )
                   else
                     _NextButton(onPressed: _onNextPressed),

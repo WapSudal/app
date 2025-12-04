@@ -24,8 +24,8 @@ class RoleSelectButton extends StatelessWidget {
   /// 역할 설명 (예: "스스로 정보를 관리할게요")
   final String description;
 
-  /// 탭 콜백
-  final VoidCallback onTap;
+  /// 탭 콜백 (null이면 비활성화)
+  final VoidCallback? onTap;
 
   /// 상단 구분선 표시 여부 (첫 번째 항목은 false)
   final bool showTopBorder;

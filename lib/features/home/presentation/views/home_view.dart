@@ -1,0 +1,146 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/experimental/mutation.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/enums/user_role.dart';
+import '../../../../core/presentation/helpers/snackbar_helper.dart';
+import '../../../auth/data/providers/auth_data_providers.dart';
+import '../../../auth/presentation/providers/auth_mutations.dart';
+import '../../../auth/presentation/providers/auth_notifier.dart';
+import '../../../user/presentation/providers/registered_user_notifier.dart';
+import '../providers/home_notifier.dart';
+import '../providers/home_state.dart';
+import 'widgets/doctor_home_content.dart';
+import 'widgets/general_user_home_content.dart';
+import 'widgets/guardian_home_content.dart';
+
+/// 홈 화면
+///
+/// Scenario B 패턴: 역할에 따라 다른 컨텐츠 위젯 표시
+/// 권한 플래그(canManagePatients, canAccessGuardianFeatures 등)로 UI 분기
+class HomeView extends ConsumerWidget {
+  const HomeView({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final homeState = ref.watch(homeProvider);
+    final registeredUserState = ref.watch(registeredUserProvider);
+    final user = registeredUserState.user;
+    final signOutState = ref.watch(signOutMutation);
+
+    // 로그아웃 Mutation 상태 처리
+    ref.listen(signOutMutation, (previous, next) {
+      switch (next) {
+        case MutationSuccess():
+          if (context.mounted) {
+            context.go('/onboarding');
+          }
+        case MutationError(:final error):
+          showErrorSnackBar(context, error);
+        default:
+          break;
+      }
+    });
+
+    final isLoading = signOutState is MutationPending;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(_getAppBarTitle(homeState.role)),
+        actions: [
+          // 프로필/설정 버튼
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () {
+              // TODO: 설정 페이지로 이동
+            },
+          ),
+          // 로그아웃 버튼
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: isLoading ? null : () => _showLogoutDialog(context, ref),
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _buildContent(context, homeState, user?.displayName),
+      ),
+    );
+  }
+
+  String _getAppBarTitle(UserRole role) {
+    switch (role) {
+      case UserRole.generalUser:
+        return '내 건강 관리';
+      case UserRole.guardian:
+        return '보호자 홈';
+      case UserRole.doctor:
+        return '의료진 홈';
+    }
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    HomeState homeState,
+    String? displayName,
+  ) {
+    // Scenario B: 권한 플래그에 따라 컨텐츠 위젯 분기
+    switch (homeState.role) {
+      case UserRole.generalUser:
+        return GeneralUserHomeContent(
+          displayName: displayName,
+          canManageOwnHealth: homeState.canManageOwnHealth,
+        );
+      case UserRole.guardian:
+        return GuardianHomeContent(
+          displayName: displayName,
+          canAccessGuardianFeatures: homeState.canAccessGuardianFeatures,
+        );
+      case UserRole.doctor:
+        return DoctorHomeContent(
+          displayName: displayName,
+          canManagePatients: homeState.canManagePatients,
+        );
+    }
+  }
+
+  void _showLogoutDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('로그아웃'),
+        content: const Text('정말 로그아웃 하시겠습니까?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('취소'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              _handleSignOut(ref);
+            },
+            child: const Text('로그아웃'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleSignOut(WidgetRef ref) {
+    signOutMutation.run(ref, (tsx) async {
+      // 사용자 데이터 초기화
+      await tsx.get(registeredUserProvider.notifier).clear();
+
+      // Firebase 로그아웃
+      final repository = tsx.get(authRepositoryProvider);
+      await repository.signOut();
+
+      // Auth 상태 초기화
+      tsx.get(authProvider.notifier).clearUser();
+    });
+  }
+}

@@ -87,7 +87,7 @@ lib/
         └── presentation/
             ├── views/          # UI screens (Widgets)
             ├── providers/      # State management providers
-            └── state/          # StateNotifier and State classes
+            └── widgets/        # Feature-specific reusable widgets
 ```
 
 ### Layer Responsibilities
@@ -106,8 +106,8 @@ lib/
 
 #### Presentation Layer
 - **views**: UI screens (`ConsumerWidget` or `ConsumerStatefulWidget`)
-- **state**: State classes (`@freezed`) and StateNotifier
-- **providers**: Riverpod providers (`@riverpod`)
+- **widgets**: Feature-specific reusable widgets
+- **providers**: Riverpod notifier providers (`@riverpod`) and state classes (`@freezed`)
 - Naming: `*View` (e.g., `LoginView`), `*State`, `*Notifier`
 
 ## Core Coding Rules
@@ -529,7 +529,7 @@ lib/
 - UseCase and Repository tests are required
 
 ## API Integration
-- Swagger documentation: `https://cat-informed-newt.ngrok-free.app/v3/api-docs`
+- Swagger documentation: **To be added**
 - **JSON API Specification**: The above URL contains the complete API specification in JSON format (OpenAPI/Swagger), which can be used to reference all backend endpoints, request/response schemas, and data models
 - Access/Refresh token pattern
 - Role-based access control (Farm, Hospital, Intern, Header, Admin)

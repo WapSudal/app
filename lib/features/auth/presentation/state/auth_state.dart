@@ -5,17 +5,16 @@ import '../../domain/entities/auth_user_entity.dart';
 part 'auth_state.freezed.dart';
 
 /// 인증 상태
+///
+/// Note: isLoading과 errorMessage는 Mutations로 분리됨
+/// - signInWithGoogleMutation: Google 로그인 상태
+/// - signOutMutation: 로그아웃 상태
+/// - switchAccountMutation: 계정 전환 상태
 @freezed
 abstract class AuthState with _$AuthState {
   const factory AuthState({
     /// 현재 로그인된 사용자 정보 (없으면 null)
     AuthUserEntity? user,
-
-    /// 로딩 중 여부 (로그인/로그아웃/계정전환 작업 중)
-    @Default(false) bool isLoading,
-
-    /// 에러 메시지 (있으면 표시 후 null로 초기화)
-    String? errorMessage,
   }) = _AuthState;
 }
 

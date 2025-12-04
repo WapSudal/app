@@ -40,4 +40,16 @@ extension UserRoleExtension on UserRole {
         return '지정 환자들을 관리하고 도와줄게요';
     }
   }
+
+  /// 권한 관련 플래그
+
+  /// 환자 목록 관리 가능 여부 (주치의 전용)
+  bool get canManagePatients => this == UserRole.doctor;
+
+  /// 보호자 기능 접근 가능 여부 (보호자 전용)
+  bool get canAccessGuardianFeatures => this == UserRole.guardian;
+
+  /// 자신의 건강 정보 관리 가능 여부 (일반 사용자, 보호자)
+  bool get canManageOwnHealth =>
+      this == UserRole.generalUser || this == UserRole.guardian;
 }
