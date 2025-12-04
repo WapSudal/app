@@ -516,7 +516,7 @@ lib/
 ### Required Files
 - `.env` file (root directory)
   ```
-  API_BASE_URL=https://cat-informed-newt.ngrok-free.app
+  API_BASE_URL=<your_api_base_url>
   ```
 
 ### VS Code Settings
