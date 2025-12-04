@@ -24,11 +24,16 @@ import '../widgets/role_select_button.dart';
 /// - 일반 사용자
 /// - 가족 및 보호자
 /// - 주치의
-class RoleSelectView extends ConsumerWidget {
+class RoleSelectView extends ConsumerStatefulWidget {
   const RoleSelectView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<RoleSelectView> createState() => _RoleSelectViewState();
+}
+
+class _RoleSelectViewState extends ConsumerState<RoleSelectView> {
+  @override
+  Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final switchAccountState = ref.watch(switchAccountMutation);
     final confirmRoleState = ref.watch(confirmRoleMutation);
@@ -73,16 +78,16 @@ class RoleSelectView extends ConsumerWidget {
                     Assets.logos.logoWithText.svg(width: 153),
                     const SizedBox(height: 40),
                     // 계정 정보 카드
-                    _buildAccountInfo(context, ref, authState, isLoading),
+                    _buildAccountInfo(authState, isLoading),
                     const SizedBox(height: 52),
                     // 역할 선택 섹션
-                    _buildRoleSelectSection(context, ref, isLoading),
+                    _buildRoleSelectSection(isLoading),
                   ],
                 ),
               ),
             ),
             // 하단 안내 문구
-            _buildFooter(context),
+            _buildFooter(),
           ],
         ),
       ),
@@ -90,12 +95,7 @@ class RoleSelectView extends ConsumerWidget {
   }
 
   /// 계정 정보 카드
-  Widget _buildAccountInfo(
-    BuildContext context,
-    WidgetRef ref,
-    AuthState authState,
-    bool isLoading,
-  ) {
+  Widget _buildAccountInfo(AuthState authState, bool isLoading) {
     return AccountInfoCard(
       name: authState.isAuthenticated ? '${authState.displayName}님' : '사용자님',
       email: authState.email,
@@ -121,11 +121,7 @@ class RoleSelectView extends ConsumerWidget {
   }
 
   /// 역할 선택 섹션
-  Widget _buildRoleSelectSection(
-    BuildContext context,
-    WidgetRef ref,
-    bool isLoading,
-  ) {
+  Widget _buildRoleSelectSection(bool isLoading) {
     final textTheme = Theme.of(context).textTheme;
 
     return Column(
@@ -140,17 +136,13 @@ class RoleSelectView extends ConsumerWidget {
         ),
         const SizedBox(height: 12),
         // 역할 선택 버튼들
-        _buildRoleButtons(context, ref, isLoading),
+        _buildRoleButtons(isLoading),
       ],
     );
   }
 
   /// 역할 선택 버튼 목록
-  Widget _buildRoleButtons(
-    BuildContext context,
-    WidgetRef ref,
-    bool isLoading,
-  ) {
+  Widget _buildRoleButtons(bool isLoading) {
     return Column(
       children: [
         // 일반 사용자
@@ -166,9 +158,7 @@ class RoleSelectView extends ConsumerWidget {
           title: UserRole.generalUser.displayName,
           description: UserRole.generalUser.description,
           showTopBorder: false,
-          onTap: isLoading
-              ? null
-              : () => _onRoleSelected(context, ref, UserRole.generalUser),
+          onTap: isLoading ? null : () => _onRoleSelected(UserRole.generalUser),
         ),
         // 가족 및 보호자
         RoleSelectButton(
@@ -183,9 +173,7 @@ class RoleSelectView extends ConsumerWidget {
           title: UserRole.guardian.displayName,
           description: UserRole.guardian.description,
           showTopBorder: true,
-          onTap: isLoading
-              ? null
-              : () => _onRoleSelected(context, ref, UserRole.guardian),
+          onTap: isLoading ? null : () => _onRoleSelected(UserRole.guardian),
         ),
         // 주치의
         RoleSelectButton(
@@ -197,16 +185,14 @@ class RoleSelectView extends ConsumerWidget {
           title: UserRole.doctor.displayName,
           description: UserRole.doctor.description,
           showTopBorder: true,
-          onTap: isLoading
-              ? null
-              : () => _onRoleSelected(context, ref, UserRole.doctor),
+          onTap: isLoading ? null : () => _onRoleSelected(UserRole.doctor),
         ),
       ],
     );
   }
 
   /// 역할 선택 시 처리
-  void _onRoleSelected(BuildContext context, WidgetRef ref, UserRole role) {
+  void _onRoleSelected(UserRole role) {
     ref.read(roleSelectProvider.notifier).selectRole(role);
 
     // 역할 선택 확정 Mutation 실행
@@ -237,7 +223,7 @@ class RoleSelectView extends ConsumerWidget {
   }
 
   /// 하단 안내 문구
-  Widget _buildFooter(BuildContext context) {
+  Widget _buildFooter() {
     final textTheme = Theme.of(context).textTheme;
 
     return Padding(

@@ -19,11 +19,16 @@ import 'widgets/guardian_home_content.dart';
 ///
 /// Scenario B 패턴: 역할에 따라 다른 컨텐츠 위젯 표시
 /// 권한 플래그(canManagePatients, canAccessGuardianFeatures 등)로 UI 분기
-class HomeView extends ConsumerWidget {
+class HomeView extends ConsumerStatefulWidget {
   const HomeView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends ConsumerState<HomeView> {
+  @override
+  Widget build(BuildContext context) {
     final homeState = ref.watch(homeProvider);
     final registeredUserState = ref.watch(registeredUserProvider);
     final user = registeredUserState.user;
@@ -59,14 +64,14 @@ class HomeView extends ConsumerWidget {
           // 로그아웃 버튼
           IconButton(
             icon: const Icon(Icons.logout),
-            onPressed: isLoading ? null : () => _showLogoutDialog(context, ref),
+            onPressed: isLoading ? null : () => _showLogoutDialog(),
           ),
         ],
       ),
       body: SafeArea(
         child: isLoading
             ? const Center(child: CircularProgressIndicator())
-            : _buildContent(context, homeState, user?.displayName),
+            : _buildContent(homeState, user?.displayName),
       ),
     );
   }
@@ -82,11 +87,7 @@ class HomeView extends ConsumerWidget {
     }
   }
 
-  Widget _buildContent(
-    BuildContext context,
-    HomeState homeState,
-    String? displayName,
-  ) {
+  Widget _buildContent(HomeState homeState, String? displayName) {
     // Scenario B: 권한 플래그에 따라 컨텐츠 위젯 분기
     switch (homeState.role) {
       case UserRole.generalUser:
@@ -107,7 +108,7 @@ class HomeView extends ConsumerWidget {
     }
   }
 
-  void _showLogoutDialog(BuildContext context, WidgetRef ref) {
+  void _showLogoutDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -121,7 +122,7 @@ class HomeView extends ConsumerWidget {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              _handleSignOut(ref);
+              _handleSignOut();
             },
             child: const Text('로그아웃'),
           ),
@@ -130,7 +131,7 @@ class HomeView extends ConsumerWidget {
     );
   }
 
-  void _handleSignOut(WidgetRef ref) {
+  void _handleSignOut() {
     signOutMutation.run(ref, (tsx) async {
       // 사용자 데이터 초기화
       await tsx.get(registeredUserProvider.notifier).clear();
