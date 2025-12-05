@@ -7,7 +7,9 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       fontFamily: 'Pretendard',
-      textTheme: AppTextTheme.textTheme,
+      textTheme: AppTextTheme.textTheme.apply(
+        fontFamilyFallback: const ['TossFace'],
+      ),
       colorScheme: AppColorScheme.lightColorScheme,
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: {

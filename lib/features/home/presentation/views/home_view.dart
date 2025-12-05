@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/enums/user_role.dart';
 import '../../../../core/presentation/helpers/snackbar_helper.dart';
+import '../../../../core/theme/color_scheme.dart';
+import '../../../../gen/assets.gen.dart';
 import '../../../auth/data/providers/auth_data_providers.dart';
 import '../../../auth/presentation/providers/auth_mutations.dart';
 import '../../../auth/presentation/providers/auth_notifier.dart';
@@ -51,40 +53,38 @@ class _HomeViewState extends ConsumerState<HomeView> {
     final isLoading = signOutState is MutationPending;
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF7F6FB), // dashboard/bg
       appBar: AppBar(
-        title: Text(_getAppBarTitle(homeState.role)),
+        backgroundColor: const Color(0xFFF7F6FB), // dashboard/bg
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: false,
+        title: Assets.logos.textLogo.svg(height: 14),
         actions: [
-          // 프로필/설정 버튼
+          // 알림 버튼
           IconButton(
-            icon: const Icon(Icons.settings_outlined),
+            icon: Assets.icons.alarm.svg(
+              width: 24,
+              height: 24,
+              colorFilter: ColorFilter.mode(
+                AppColorScheme.black100,
+                BlendMode.srcIn,
+              ),
+            ),
             onPressed: () {
-              // TODO: 설정 페이지로 이동
+              // TODO: 알림 페이지로 이동
             },
           ),
-          // 로그아웃 버튼
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: isLoading ? null : () => _showLogoutDialog(),
-          ),
+          const SizedBox(width: 8),
         ],
       ),
       body: SafeArea(
+        bottom: false,
         child: isLoading
             ? const Center(child: CircularProgressIndicator())
             : _buildContent(homeState, user?.displayName),
       ),
     );
-  }
-
-  String _getAppBarTitle(UserRole role) {
-    switch (role) {
-      case UserRole.generalUser:
-        return '내 건강 관리';
-      case UserRole.guardian:
-        return '보호자 홈';
-      case UserRole.doctor:
-        return '의료진 홈';
-    }
   }
 
   Widget _buildContent(HomeState homeState, String? displayName) {
