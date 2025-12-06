@@ -7,6 +7,21 @@ IMPORTANT! NOTE: This project is currently being set up, and the content describ
 ## Project Overview
 Stroke Spoiler - Prototype Mobile/Web cross-platform app for stroke prevention management.
 
+## Project Documentation
+Reference documents are available in the `docs/` directory:
+
+### Design Documents
+- **`docs/StrokeSpoiler_Software_Requirement_Specification.pdf`**: Complete software requirements specification
+- **`docs/StrokeSpoiler_System_Modeling_and_Design.pdf`**: System architecture, modeling, and design documentation
+
+### Development Guidelines
+- **`docs/RIVERPOD_V3_BEST_PRACTICES.md`**: Comprehensive Riverpod v3 state management guidelines
+- **`docs/RIVERPOD_V3_BEST_PRACTICES_ko.md`**: Korean version of Riverpod v3 best practices
+- **`docs/RIVERPOD_V3_MUTATIONS.md`**: Guidelines for using Riverpod v3 Mutations
+- **`docs/ROLE_BASED_ACCESS_CONTROL.md`**: Role-based access control implementation guide
+
+**Note**: Always reference these documents when working on features related to requirements, system design, or state management patterns.
+
 ## Development Commands
 
 ### Essential Commands
