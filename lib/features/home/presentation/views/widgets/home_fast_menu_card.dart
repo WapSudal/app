@@ -119,8 +119,8 @@ class _FastMenuItem extends StatelessWidget {
             ),
             // 화살표
             Assets.icons.right.svg(
-              width: 16,
-              height: 16,
+              width: 12,
+              height: 12,
               colorFilter: ColorFilter.mode(
                 AppColorScheme.grey400,
                 BlendMode.srcIn,
@@ -139,6 +139,9 @@ class _MenuDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(height: 1, color: AppColorScheme.white500);
+    return Container(
+      height: 1,
+      color: AppColorScheme.black100.withValues(alpha: 0.1),
+    );
   }
 }

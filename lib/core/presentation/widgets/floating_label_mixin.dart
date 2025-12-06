@@ -101,7 +101,6 @@ mixin FloatingLabelMixin<T extends StatefulWidget>
               child: Text(
                 label,
                 style: TextStyle(
-                  fontFamily: 'Pretendard',
                   fontSize: baseFontSize,
                   fontWeight: FontWeight.w500,
                   height: 20 / baseFontSize,
@@ -146,7 +145,6 @@ mixin FloatingLabelMixin<T extends StatefulWidget>
             child: Text(
               label,
               style: TextStyle(
-                fontFamily: 'Pretendard',
                 fontSize: baseFontSize,
                 fontWeight: FontWeight.w500,
                 height: 20 / baseFontSize,

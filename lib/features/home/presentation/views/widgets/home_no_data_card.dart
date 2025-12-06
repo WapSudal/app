@@ -32,12 +32,15 @@ class HomeNoDataCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // 아이콘
-              Assets.icons.compass.svg(
-                width: 72,
-                height: 72,
-                colorFilter: ColorFilter.mode(
-                  AppColorScheme.grey500,
-                  BlendMode.srcIn,
+              Padding(
+                padding: EdgeInsets.all(9),
+                child: Assets.icons.compass.svg(
+                  width: 72,
+                  height: 72,
+                  colorFilter: ColorFilter.mode(
+                    AppColorScheme.grey500,
+                    BlendMode.srcIn,
+                  ),
                 ),
               ),
               // 텍스트 영역

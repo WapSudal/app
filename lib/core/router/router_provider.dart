@@ -1,12 +1,18 @@
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../features/all/presentation/views/all_view.dart';
+import '../../features/analysis/presentation/views/analysis_view.dart';
 import '../../features/auth/presentation/providers/auth_notifier.dart';
+import '../../features/explore/presentation/views/explore_view.dart';
 import '../../features/home/presentation/views/home_view.dart';
 import '../../features/onboarding/presentation/views/onboarding_view.dart';
+import '../../features/record/presentation/views/record_view.dart';
 import '../../features/role_select/presentation/views/role_select_view.dart';
 import '../../features/splash/presentation/splash_screen.dart';
 import '../../features/user/presentation/providers/registered_user_notifier.dart';
+import '../enums/user_role.dart';
+import '../presentation/widgets/bottom_nav_shell.dart';
 
 part 'router_provider.g.dart';
 
@@ -23,6 +29,10 @@ GoRouter router(Ref ref) {
 
   // 가입 완료 상태 구독
   final isRegistered = ref.watch(isUserRegisteredProvider);
+
+  // 사용자 역할 감지 (bottom nav 표시 여부 결정)
+  final registeredUserState = ref.watch(registeredUserProvider);
+  final userRole = registeredUserState.user?.role;
 
   return GoRouter(
     initialLocation: '/',
@@ -81,11 +91,74 @@ GoRouter router(Ref ref) {
         name: 'roleSelect',
         builder: (context, state) => const RoleSelectView(),
       ),
-      GoRoute(
-        path: '/home',
-        name: 'home',
-        builder: (context, state) => const HomeView(),
-      ),
+
+      // Conditional routing based on user role
+      if (userRole == UserRole.generalUser)
+        // General users get bottom navigation with 5 tabs
+        StatefulShellRoute.indexedStack(
+          builder: (context, state, navigationShell) {
+            return BottomNavShell(navigationShell: navigationShell);
+          },
+          branches: [
+            // Tab 1: 홈
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/home',
+                  name: 'home',
+                  builder: (context, state) => const HomeView(),
+                ),
+              ],
+            ),
+            // Tab 2: 기록
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/record',
+                  name: 'record',
+                  builder: (context, state) => const RecordView(),
+                ),
+              ],
+            ),
+            // Tab 3: 분석
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/analysis',
+                  name: 'analysis',
+                  builder: (context, state) => const AnalysisView(),
+                ),
+              ],
+            ),
+            // Tab 4: 탐색
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/explore',
+                  name: 'explore',
+                  builder: (context, state) => const ExploreView(),
+                ),
+              ],
+            ),
+            // Tab 5: 전체
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/all',
+                  name: 'all',
+                  builder: (context, state) => const AllView(),
+                ),
+              ],
+            ),
+          ],
+        )
+      else
+        // Doctor and Guardian get simple route without bottom nav
+        GoRoute(
+          path: '/home',
+          name: 'home',
+          builder: (context, state) => const HomeView(),
+        ),
     ],
   );
 }

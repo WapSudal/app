@@ -59,8 +59,6 @@ class GeneralUserHomeContent extends StatelessWidget {
                 // TODO: 추천 콘텐츠 탐색 페이지로 이동
               },
             ),
-            // 하단 네비게이션 바 높이만큼 여백 추가
-            const SizedBox(height: 90),
           ],
         ),
       ),
