@@ -47,7 +47,7 @@ class HomeFastMenuCard extends StatelessWidget {
           const _MenuDivider(),
           // 미래 예측 시뮬레이션
           _FastMenuItem(
-            icon: Assets.icons.compass,
+            icon: Assets.icons.data,
             iconBackgroundColor: AppColorScheme.success,
             title: '미래 예측 시뮬레이션',
             onTap: onFutureSimulation,
@@ -90,7 +90,7 @@ class _FastMenuItem extends StatelessWidget {
           children: [
             // 아이콘 프레임
             Container(
-              padding: const EdgeInsets.all(4),
+              padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
                 color: Color.alphaBlend(
                   AppColorScheme.white100.withValues(alpha: 0.9),
