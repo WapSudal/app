@@ -82,8 +82,10 @@ class _AppOutlinedDropdownState<T> extends State<AppOutlinedDropdown<T>>
 
   @override
   void dispose() {
+    // Remove overlay without setState (widget is being disposed)
+    _overlayEntry?.remove();
+    _overlayEntry = null;
     disposeFloatingLabelAnimation();
-    _removeOverlay();
     super.dispose();
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'home_fast_menu_card.dart';
 import 'home_no_data_card.dart';
 import 'home_splash_card.dart';
@@ -33,9 +34,7 @@ class GeneralUserHomeContent extends StatelessWidget {
             const SizedBox(height: 8),
             // 스플래시 카드 (첫 방문 시)
             HomeSplashCard(
-              onInputPressed: () {
-                // TODO: 기록 입력 페이지로 이동
-              },
+              onInputPressed: () => context.push('/record/input'),
             ),
             const SizedBox(height: 8),
             // 환영 카드
@@ -46,9 +45,7 @@ class GeneralUserHomeContent extends StatelessWidget {
             const SizedBox(height: 8),
             // 빠른 메뉴 카드
             HomeFastMenuCard(
-              onNewDataInput: () {
-                // TODO: 새 데이터 입력 페이지로 이동
-              },
+              onNewDataInput: () => context.push('/record/input'),
               onRiskPrediction: () {
                 // TODO: 위험도 예측 페이지로 이동
               },

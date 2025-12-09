@@ -13,6 +13,7 @@ class AppFlatButton extends StatelessWidget with AppButtonMixin {
     this.icon,
     this.isLoading = false,
     this.isExpanded = false,
+    this.style,
   });
 
   /// 버튼 텍스트
@@ -30,14 +31,26 @@ class AppFlatButton extends StatelessWidget with AppButtonMixin {
   /// 너비를 최대로 확장할지 여부
   final bool isExpanded;
 
+  /// 커스텀 버튼 스타일
+  ///
+  /// 기본 스타일에 병합되어 적용됩니다.
+  /// 예: border radius를 최대로 하려면
+  /// ```dart
+  /// style: ButtonStyle(
+  ///   shape: WidgetStateProperty.all(
+  ///     RoundedRectangleBorder(
+  ///       borderRadius: BorderRadius.circular(999),
+  ///     ),
+  ///   ),
+  /// )
+  /// ```
+  final ButtonStyle? style;
+
   @override
   Widget build(BuildContext context) {
-    final Widget button = SizedBox(
-      height: ButtonTokens.height,
-      child: FilledButton(
-        onPressed: isLoading ? null : onPressed,
-        style: ButtonStyle(
-          backgroundColor: WidgetStateProperty.resolveWith((states) {
+    final buttonStyle = ButtonStyle(
+      backgroundColor: style?.backgroundColor ??
+          WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.disabled)) {
               return AppColorScheme.primaryColor;
             }
@@ -57,22 +70,43 @@ class AppFlatButton extends StatelessWidget with AppButtonMixin {
             }
             return AppColorScheme.primaryColor;
           }),
-          foregroundColor: WidgetStateProperty.resolveWith((states) {
+      foregroundColor: style?.foregroundColor ??
+          WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.disabled)) {
               return AppColorScheme.white100.withValues(alpha: 0.5);
             }
             return AppColorScheme.white100;
           }),
-          overlayColor: WidgetStateProperty.all(Colors.transparent),
-          shadowColor: WidgetStateProperty.all(Colors.transparent),
-          elevation: WidgetStateProperty.all(0),
-          shape: WidgetStateProperty.all(buttonShape),
-          padding: WidgetStateProperty.all(buttonPadding),
-          textStyle: WidgetStateProperty.all(
+      overlayColor:
+          style?.overlayColor ?? WidgetStateProperty.all(Colors.transparent),
+      shadowColor:
+          style?.shadowColor ?? WidgetStateProperty.all(Colors.transparent),
+      elevation: style?.elevation ?? WidgetStateProperty.all(0),
+      shape: style?.shape ?? WidgetStateProperty.all(buttonShape),
+      padding: style?.padding ?? WidgetStateProperty.all(buttonPadding),
+      textStyle: style?.textStyle ??
+          WidgetStateProperty.all(
             Theme.of(context).textTheme.labelLarge,
           ),
-          splashFactory: NoSplash.splashFactory,
-        ),
+      splashFactory: style?.splashFactory ?? NoSplash.splashFactory,
+      minimumSize: style?.minimumSize,
+      maximumSize: style?.maximumSize,
+      fixedSize: style?.fixedSize,
+      side: style?.side,
+      visualDensity: style?.visualDensity,
+      tapTargetSize: style?.tapTargetSize,
+      animationDuration: style?.animationDuration,
+      enableFeedback: style?.enableFeedback,
+      alignment: style?.alignment,
+      mouseCursor: style?.mouseCursor,
+    );
+
+    final Widget button = SizedBox(
+      height: ButtonTokens.height,
+      child: FilledButton(
+        onPressed: isLoading ? null : onPressed,
+        style: buttonStyle,
+        clipBehavior: Clip.antiAlias,
         child: buildButtonContent(
           text: text,
           isLoading: isLoading,

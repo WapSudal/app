@@ -211,9 +211,9 @@ class _AppOutlinedTextFieldState extends State<AppOutlinedTextField>
 
   @override
   void dispose() {
-    disposeFloatingLabelAnimation();
     _focusNode.removeListener(_onFocusChange);
     _controller.removeListener(_onTextChange);
+    disposeFloatingLabelAnimation();
     if (_isInternalController) {
       _controller.dispose();
     }

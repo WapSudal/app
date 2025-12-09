@@ -210,9 +210,9 @@ class _AppLinedTextFieldState extends State<AppLinedTextField>
 
   @override
   void dispose() {
-    disposeFloatingLabelAnimation();
     _focusNode.removeListener(_onFocusChange);
     _controller.removeListener(_onTextChange);
+    disposeFloatingLabelAnimation();
     if (_isInternalController) {
       _controller.dispose();
     }

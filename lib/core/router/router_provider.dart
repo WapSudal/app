@@ -8,6 +8,7 @@ import '../../features/explore/presentation/views/explore_view.dart';
 import '../../features/home/presentation/views/home_view.dart';
 import '../../features/onboarding/presentation/views/onboarding_view.dart';
 import '../../features/record/presentation/views/record_view.dart';
+import '../../features/health_record/presentation/views/health_record_input_view.dart';
 import '../../features/role_select/presentation/views/role_select_view.dart';
 import '../../features/splash/presentation/splash_screen.dart';
 import '../../features/user/presentation/providers/registered_user_notifier.dart';
@@ -159,6 +160,13 @@ GoRouter router(Ref ref) {
           name: 'home',
           builder: (context, state) => const HomeView(),
         ),
+
+      // Full-screen routes without bottom navigation
+      GoRoute(
+        path: '/record/input',
+        name: 'recordInput',
+        builder: (context, state) => const HealthRecordInputView(),
+      ),
     ],
   );
 }
