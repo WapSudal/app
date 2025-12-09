@@ -48,45 +48,25 @@ class AppOutlinedButton extends StatelessWidget with AppButtonMixin {
 
   @override
   Widget build(BuildContext context) {
-    final buttonStyle = ButtonStyle(
-      foregroundColor: style?.foregroundColor ??
-          WidgetStateProperty.all(AppColorScheme.primaryColor),
-      side: style?.side ??
-          WidgetStateProperty.all(
-            BorderSide(
-              color: onPressed == null
-                  ? AppColorScheme.grey400
-                  : AppColorScheme.primaryColor,
-              width: ButtonTokens.strokeWidth,
-            ),
-          ),
-      shape: style?.shape ?? WidgetStateProperty.all(buttonShape),
-      padding: style?.padding ?? WidgetStateProperty.all(buttonPadding),
-      textStyle: style?.textStyle ??
-          WidgetStateProperty.all(
-            Theme.of(context).textTheme.labelLarge,
-          ),
-      splashFactory: style?.splashFactory ?? NoSplash.splashFactory,
-      backgroundColor: style?.backgroundColor,
-      overlayColor: style?.overlayColor,
-      shadowColor: style?.shadowColor,
-      elevation: style?.elevation,
-      minimumSize: style?.minimumSize,
-      maximumSize: style?.maximumSize,
-      fixedSize: style?.fixedSize,
-      visualDensity: style?.visualDensity,
-      tapTargetSize: style?.tapTargetSize,
-      animationDuration: style?.animationDuration,
-      enableFeedback: style?.enableFeedback,
-      alignment: style?.alignment,
-      mouseCursor: style?.mouseCursor,
+    final baseStyle = OutlinedButton.styleFrom(
+      foregroundColor: AppColorScheme.primaryColor,
+      side: BorderSide(
+        color: onPressed == null
+            ? AppColorScheme.grey400
+            : AppColorScheme.primaryColor,
+        width: ButtonTokens.strokeWidth,
+      ),
+      shape: buttonShape,
+      padding: buttonPadding,
+      textStyle: Theme.of(context).textTheme.labelLarge,
+      splashFactory: NoSplash.splashFactory,
     );
 
     final Widget button = SizedBox(
       height: ButtonTokens.height,
       child: OutlinedButton(
         onPressed: isLoading ? null : onPressed,
-        style: buttonStyle,
+        style: mergeStyle(baseStyle, style),
         clipBehavior: Clip.antiAlias,
         child: buildButtonContent(
           text: text,

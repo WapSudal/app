@@ -48,64 +48,49 @@ class AppFlatButton extends StatelessWidget with AppButtonMixin {
 
   @override
   Widget build(BuildContext context) {
-    final buttonStyle = ButtonStyle(
-      backgroundColor: style?.backgroundColor ??
-          WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.disabled)) {
-              return AppColorScheme.primaryColor;
-            }
-            if (states.contains(WidgetState.pressed)) {
-              // 클릭 시: primaryColor에 검은색 10% 오버레이 효과
-              return Color.alphaBlend(
-                AppColorScheme.black100.withValues(alpha: 0.1),
-                AppColorScheme.primaryColor,
-              );
-            }
-            if (states.contains(WidgetState.hovered)) {
-              // 호버 시: primaryColor에 흰색 10% 오버레이 효과
-              return Color.alphaBlend(
-                AppColorScheme.white100.withValues(alpha: 0.1),
-                AppColorScheme.primaryColor,
-              );
-            }
-            return AppColorScheme.primaryColor;
-          }),
-      foregroundColor: style?.foregroundColor ??
-          WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.disabled)) {
-              return AppColorScheme.white100.withValues(alpha: 0.5);
-            }
-            return AppColorScheme.white100;
-          }),
-      overlayColor:
-          style?.overlayColor ?? WidgetStateProperty.all(Colors.transparent),
-      shadowColor:
-          style?.shadowColor ?? WidgetStateProperty.all(Colors.transparent),
-      elevation: style?.elevation ?? WidgetStateProperty.all(0),
-      shape: style?.shape ?? WidgetStateProperty.all(buttonShape),
-      padding: style?.padding ?? WidgetStateProperty.all(buttonPadding),
-      textStyle: style?.textStyle ??
-          WidgetStateProperty.all(
-            Theme.of(context).textTheme.labelLarge,
-          ),
-      splashFactory: style?.splashFactory ?? NoSplash.splashFactory,
-      minimumSize: style?.minimumSize,
-      maximumSize: style?.maximumSize,
-      fixedSize: style?.fixedSize,
-      side: style?.side,
-      visualDensity: style?.visualDensity,
-      tapTargetSize: style?.tapTargetSize,
-      animationDuration: style?.animationDuration,
-      enableFeedback: style?.enableFeedback,
-      alignment: style?.alignment,
-      mouseCursor: style?.mouseCursor,
+    final baseStyle = ButtonStyle(
+      backgroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.disabled)) {
+          return AppColorScheme.primaryColor;
+        }
+        if (states.contains(WidgetState.pressed)) {
+          // 클릭 시: primaryColor에 검은색 10% 오버레이 효과
+          return Color.alphaBlend(
+            AppColorScheme.black100.withValues(alpha: 0.1),
+            AppColorScheme.primaryColor,
+          );
+        }
+        if (states.contains(WidgetState.hovered)) {
+          // 호버 시: primaryColor에 흰색 10% 오버레이 효과
+          return Color.alphaBlend(
+            AppColorScheme.white100.withValues(alpha: 0.1),
+            AppColorScheme.primaryColor,
+          );
+        }
+        return AppColorScheme.primaryColor;
+      }),
+      foregroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.disabled)) {
+          return AppColorScheme.white100.withValues(alpha: 0.5);
+        }
+        return AppColorScheme.white100;
+      }),
+      overlayColor: WidgetStateProperty.all(Colors.transparent),
+      shadowColor: WidgetStateProperty.all(Colors.transparent),
+      elevation: WidgetStateProperty.all(0),
+      shape: WidgetStateProperty.all(buttonShape),
+      padding: WidgetStateProperty.all(buttonPadding),
+      textStyle: WidgetStateProperty.all(
+        Theme.of(context).textTheme.labelLarge,
+      ),
+      splashFactory: NoSplash.splashFactory,
     );
 
     final Widget button = SizedBox(
       height: ButtonTokens.height,
       child: FilledButton(
         onPressed: isLoading ? null : onPressed,
-        style: buttonStyle,
+        style: mergeStyle(baseStyle, style),
         clipBehavior: Clip.antiAlias,
         child: buildButtonContent(
           text: text,

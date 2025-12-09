@@ -77,4 +77,36 @@ mixin AppButtonMixin {
   RoundedRectangleBorder get buttonShape => RoundedRectangleBorder(
     borderRadius: BorderRadius.circular(ButtonTokens.borderRadius),
   );
+
+  /// ButtonStyle merge helper
+  ///
+  /// ButtonStyle.merge가 예상대로 작동하지 않는 경우가 있어
+  /// 수동으로 copyWith를 사용하여 병합합니다.
+  ButtonStyle mergeStyle(ButtonStyle base, ButtonStyle? override) {
+    if (override == null) return base;
+    return base.copyWith(
+      textStyle: override.textStyle,
+      backgroundColor: override.backgroundColor,
+      foregroundColor: override.foregroundColor,
+      overlayColor: override.overlayColor,
+      shadowColor: override.shadowColor,
+      surfaceTintColor: override.surfaceTintColor,
+      elevation: override.elevation,
+      padding: override.padding,
+      minimumSize: override.minimumSize,
+      fixedSize: override.fixedSize,
+      maximumSize: override.maximumSize,
+      side: override.side,
+      shape: override.shape,
+      mouseCursor: override.mouseCursor,
+      visualDensity: override.visualDensity,
+      tapTargetSize: override.tapTargetSize,
+      animationDuration: override.animationDuration,
+      enableFeedback: override.enableFeedback,
+      alignment: override.alignment,
+      splashFactory: override.splashFactory,
+      iconColor: override.iconColor,
+      iconSize: override.iconSize,
+    );
+  }
 }
