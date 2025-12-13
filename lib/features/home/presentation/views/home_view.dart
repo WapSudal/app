@@ -5,11 +5,13 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/enums/user_role.dart';
 import '../../../../core/presentation/helpers/snackbar_helper.dart';
+import '../../../../core/presentation/widgets/app_bottom_sheet.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../auth/data/providers/auth_data_providers.dart';
 import '../../../auth/presentation/providers/auth_mutations.dart';
 import '../../../auth/presentation/providers/auth_notifier.dart';
+import '../../../notification/presentation/widgets/notification_bottom_sheet_content.dart';
 import '../../../user/presentation/providers/registered_user_notifier.dart';
 import '../providers/home_notifier.dart';
 import '../providers/home_state.dart';
@@ -71,9 +73,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 BlendMode.srcIn,
               ),
             ),
-            onPressed: () {
-              // TODO: 알림 페이지로 이동
-            },
+            onPressed: () => _showNotificationBottomSheet(context),
           ),
           const SizedBox(width: 8),
         ],
@@ -106,6 +106,17 @@ class _HomeViewState extends ConsumerState<HomeView> {
           canManagePatients: homeState.canManagePatients,
         );
     }
+  }
+
+  /// 알림 Bottom Sheet 표시
+  void _showNotificationBottomSheet(BuildContext context) {
+    AppBottomSheet.show(
+      context: context,
+      title: '알림',
+      maxHeightRatio: 0.8, // 화면의 80%
+      showDragHandle: true,
+      child: const NotificationBottomSheetContent(),
+    );
   }
 
   void _showLogoutDialog() {
