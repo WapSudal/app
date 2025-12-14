@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -51,7 +52,7 @@ class MyApp extends ConsumerWidget {
       ],
       supportedLocales: [const Locale('ko', 'KR')],
       builder: (context, child) {
-        return GestureDetector(
+        Widget result = GestureDetector(
           onTap: () {
             final currentFocus = FocusScope.of(context);
             if (!currentFocus.hasPrimaryFocus &&
@@ -61,6 +62,28 @@ class MyApp extends ConsumerWidget {
           },
           child: child,
         );
+
+        // 웹에서는 최대 너비 480px로 제한하고 그림자 추가
+        if (kIsWeb) {
+          result = Center(
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 480),
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 20,
+                    spreadRadius: 0,
+                    offset: const Offset(0, 0),
+                  ),
+                ],
+              ),
+              child: result,
+            ),
+          );
+        }
+
+        return result;
       },
     );
   }

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 import '../../theme/color_scheme.dart';
@@ -16,8 +14,7 @@ class BottomSheetTokens {
   static const double headerHeight = 28.0;
 
   // 백드롭 효과 (Figma 디자인 기준)
-  static const double maxDimOpacity = 0.15; // rgba(0,0,0,0.15)
-  static const double maxBackdropBlur = 4.0;
+  static const double maxDimOpacity = 0.5; // rgba(0,0,0,0.15)
 
   // 그림자 (Floating Button 효과: 0px 4px 20px rgba(0,39,76,0.07))
   static const Color shadowColor = Color(0x1200274C);
@@ -28,8 +25,8 @@ class BottomSheetTokens {
   static const double dismissThreshold = 0.25;
 
   // 애니메이션
-  static const Duration animationDuration = Duration(milliseconds: 200);
-  static const Curve animationCurve = Curves.easeOutCubic;
+  static const Duration animationDuration = Duration(milliseconds: 300);
+  static const Curve animationCurve = Curves.easeOutExpo;
 }
 
 /// 재사용 가능한 Bottom Sheet 위젯
@@ -123,6 +120,10 @@ class AppBottomSheet extends StatefulWidget {
             child: child,
           ),
         );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        // 페이드 효과 없이 항상 불투명하게 유지
+        return child;
       },
     );
   }
@@ -437,14 +438,11 @@ class _AnimatedBackdrop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final clampedIntensity = intensity.clamp(0.0, 1.0);
-    final dimOpacity = BottomSheetTokens.maxDimOpacity * clampedIntensity;
-    final blurSigma = BottomSheetTokens.maxBackdropBlur * clampedIntensity;
+    final currentDimOpacity =
+        BottomSheetTokens.maxDimOpacity * clampedIntensity;
 
-    return BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
-      child: Container(
-        color: AppColorScheme.black100.withValues(alpha: dimOpacity),
-      ),
+    return Container(
+      color: AppColorScheme.black100.withValues(alpha: currentDimOpacity),
     );
   }
 }
