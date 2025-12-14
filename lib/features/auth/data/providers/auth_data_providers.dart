@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/storage/secure_storage_provider.dart';
@@ -14,11 +15,18 @@ FirebaseAuth firebaseAuth(Ref ref) {
   return FirebaseAuth.instance;
 }
 
+/// GoogleSignIn 인스턴스 Provider
+@Riverpod(keepAlive: true)
+GoogleSignIn googleSignIn(Ref ref) {
+  return GoogleSignIn(scopes: ['email', 'profile']);
+}
+
 /// AuthRemoteDataSource Provider
 @Riverpod(keepAlive: true)
 AuthRemoteDataSource authRemoteDataSource(Ref ref) {
   return AuthRemoteDataSource(
     firebaseAuth: ref.watch(firebaseAuthProvider),
+    googleSignIn: ref.watch(googleSignInProvider),
     storageHelper: ref.watch(secureStorageHelperProvider),
   );
 }

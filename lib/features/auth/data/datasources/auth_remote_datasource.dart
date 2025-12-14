@@ -20,28 +20,35 @@ class AuthException implements Exception {
 /// Firebase Auth + Google Sign-In 실제 호출 담당
 class AuthRemoteDataSource {
   final FirebaseAuth _firebaseAuth;
+  final GoogleSignIn _googleSignIn;
   final SecureStorageHelper _storageHelper;
 
   AuthRemoteDataSource({
     required FirebaseAuth firebaseAuth,
+    required GoogleSignIn googleSignIn,
     required SecureStorageHelper storageHelper,
   }) : _firebaseAuth = firebaseAuth,
+       _googleSignIn = googleSignIn,
        _storageHelper = storageHelper;
 
   /// Google 계정으로 로그인
   Future<AuthUserEntity> signInWithGoogle() async {
     try {
       // Google Sign-In 플로우 시작
-      final GoogleSignInAccount googleUser = await GoogleSignIn.instance
-          .authenticate();
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+      if (googleUser == null) {
+        // 사용자가 로그인 취소
+        throw AuthException('로그인이 취소되었습니다.', code: 'cancelled');
+      }
 
       // Google 인증 정보 획득
-      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
       // Firebase credential 생성
-      // v7 변경사항: accessToken 분리됨. Firebase 로그인은 idToken만으로 가능.
       final credential = GoogleAuthProvider.credential(
-        accessToken: null,
+        accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
@@ -56,17 +63,11 @@ class AuthRemoteDataSource {
       }
 
       // 토큰 저장
-      await _saveTokens(googleAuth.idToken);
+      await _saveTokens(googleAuth);
 
       return _mapUserToEntity(user);
     } on FirebaseAuthException catch (e) {
       throw AuthException(_getFirebaseAuthErrorMessage(e.code), code: e.code);
-    } on GoogleSignInException catch (e) {
-      throw AuthException(switch (e.code) {
-        GoogleSignInExceptionCode.canceled => '로그인이 취소되었습니다.',
-        GoogleSignInExceptionCode.interrupted => '로그인에 실패했습니다.',
-        _ => '로그인 중 오류가 발생했습니다: ${e.description}',
-      }, code: e.code.name);
     } catch (e) {
       if (e is AuthException) rethrow;
       throw AuthException('로그인 중 오류가 발생했습니다: $e');
@@ -77,7 +78,7 @@ class AuthRemoteDataSource {
   Future<void> signOut() async {
     try {
       // Google Sign-In 로그아웃
-      await GoogleSignIn.instance.signOut();
+      await _googleSignIn.signOut();
 
       // Firebase Auth 로그아웃
       await _firebaseAuth.signOut();
@@ -93,7 +94,7 @@ class AuthRemoteDataSource {
   Future<AuthUserEntity> switchAccount() async {
     try {
       // 기존 Google 계정 연결 해제 (계정 선택 UI 다시 표시하기 위함)
-      await GoogleSignIn.instance.disconnect();
+      await _googleSignIn.disconnect();
 
       // Firebase 로그아웃
       await _firebaseAuth.signOut();
@@ -141,10 +142,10 @@ class AuthRemoteDataSource {
   }
 
   /// 토큰 저장
-  Future<void> _saveTokens(String? idToken) async {
+  Future<void> _saveTokens(GoogleSignInAuthentication auth) async {
     await _storageHelper.saveTokens(
-      // accessToken: null, // 저장하지 않음 (v7에서 획득 방식 변경됨)
-      idToken: idToken,
+      accessToken: auth.accessToken,
+      idToken: auth.idToken,
     );
   }
 
