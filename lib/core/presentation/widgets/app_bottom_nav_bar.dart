@@ -13,8 +13,8 @@ import 'bottom_nav_item.dart';
 /// - Border radius: 24px (top corners only)
 /// - Horizontal padding: 28px
 /// - Items: justify-between (evenly distributed)
-class CustomBottomNavBar extends StatelessWidget {
-  const CustomBottomNavBar({
+class AppBottomNavBar extends StatelessWidget {
+  const AppBottomNavBar({
     super.key,
     required this.currentIndex,
     required this.onTabChanged,
@@ -27,6 +27,7 @@ class CustomBottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 90,
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: AppColorScheme.white100, // #FFFFFF
         border: Border(

@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'custom_bottom_nav_bar.dart';
+import 'app_bottom_nav_bar.dart';
 
 /// Shell widget that wraps tab content with bottom navigation
 ///
 /// Used by StatefulShellRoute to provide persistent bottom nav
 class BottomNavShell extends StatelessWidget {
-  const BottomNavShell({
-    super.key,
-    required this.navigationShell,
-  });
+  const BottomNavShell({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
 
@@ -18,9 +15,12 @@ class BottomNavShell extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: navigationShell,
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: navigationShell.currentIndex,
-        onTabChanged: _onTabChanged,
+      bottomNavigationBar: Material(
+        color: Colors.transparent,
+        child: AppBottomNavBar(
+          currentIndex: navigationShell.currentIndex,
+          onTabChanged: _onTabChanged,
+        ),
       ),
     );
   }

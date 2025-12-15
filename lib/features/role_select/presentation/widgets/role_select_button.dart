@@ -36,6 +36,8 @@ class RoleSelectButton extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
+      splashFactory: NoSplash.splashFactory,
+      highlightColor: Colors.transparent,
       child: Container(
         height: 80,
         padding: const EdgeInsets.symmetric(horizontal: 12),

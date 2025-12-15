@@ -58,4 +58,9 @@ class HealthRecordRepositoryImpl implements HealthRecordRepository {
     final models = await _localDataSource.getRecords();
     return models.map((m) => m.toEntity()).toList();
   }
+
+  @override
+  Future<void> deleteHealthRecord(String id) async {
+    await _localDataSource.deleteRecord(id);
+  }
 }

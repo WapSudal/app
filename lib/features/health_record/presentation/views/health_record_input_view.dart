@@ -12,7 +12,6 @@ import '../../../../core/enums/smoking_status.dart';
 import '../../../../core/enums/drinking_level.dart';
 import '../providers/health_record_input_notifier.dart';
 import '../providers/health_record_mutations.dart';
-import '../../domain/providers/health_record_usecase_providers.dart';
 import 'health_record_status_views.dart';
 
 class HealthRecordInputView extends ConsumerStatefulWidget {
@@ -63,22 +62,7 @@ class _HealthRecordInputViewState extends ConsumerState<HealthRecordInputView> {
       return;
     }
 
-    saveHealthRecordMutation.run(ref, (tsx) async {
-      final useCase = tsx.get(saveHealthRecordUseCaseProvider);
-
-      await useCase(
-        recordedAt: DateTime.now(),
-        weight: double.tryParse(inputState.weight),
-        height: double.tryParse(inputState.height),
-        systolicBP: int.tryParse(inputState.systolicBP),
-        diastolicBP: int.tryParse(inputState.diastolicBP),
-        bloodSugar: int.tryParse(inputState.bloodSugar),
-        smokingStatus: inputState.smokingStatus,
-        drinkingLevel: inputState.drinkingLevel,
-        exerciseHours: double.tryParse(inputState.exerciseHours),
-        memo: inputState.memo.isNotEmpty ? inputState.memo : null,
-      );
-    });
+    ref.read(healthRecordInputProvider.notifier).save();
   }
 
   @override
@@ -106,8 +90,10 @@ class _HealthRecordInputViewState extends ConsumerState<HealthRecordInputView> {
     return Stack(
       children: [
         Scaffold(
+          resizeToAvoidBottomInset: false,
           appBar: const CustomAppBar(title: '건강 정보 입력'),
           body: SafeArea(
+            maintainBottomViewPadding: true,
             child: Column(
               children: [
                 Expanded(
@@ -337,7 +323,8 @@ class _HealthRecordInputViewState extends ConsumerState<HealthRecordInputView> {
                 ),
                 // 저장 버튼
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  color: Colors.transparent,
+                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
                   child: AppFlatButton(
                     text: '저장',
                     onPressed: isLoading ? null : _handleSave,

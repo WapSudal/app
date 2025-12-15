@@ -227,7 +227,7 @@ class _RoleSelectViewState extends ConsumerState<RoleSelectView> {
     final textTheme = Theme.of(context).textTheme;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 58),
+      padding: const EdgeInsets.only(bottom: 20),
       child: Text(
         'Stroke Spoiler는 건강보조 어플리케이션입니다.\n정확한 의료 정보는 주치의와 상담하세요.',
         style: textTheme.labelSmall?.copyWith(color: AppColorScheme.grey300),

@@ -1,6 +1,9 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../../home/presentation/providers/home_notifier.dart';
 import 'health_record_input_state.dart';
+import 'health_record_mutations.dart';
 import '../../domain/entities/health_record_entity.dart';
+import '../../domain/providers/health_record_usecase_providers.dart';
 import '../../../../core/enums/smoking_status.dart';
 import '../../../../core/enums/drinking_level.dart';
 
@@ -60,5 +63,29 @@ class HealthRecordInput extends _$HealthRecordInput {
 
   void reset() {
     state = const HealthRecordInputState();
+  }
+
+  /// 건강 기록 저장
+  void save() {
+    if (!state.hasAnyData) return;
+
+    saveHealthRecordMutation.run(ref, (tsx) async {
+      final useCase = tsx.get(saveHealthRecordUseCaseProvider);
+
+      await useCase(
+        recordedAt: DateTime.now(),
+        weight: double.tryParse(state.weight),
+        height: double.tryParse(state.height),
+        systolicBP: int.tryParse(state.systolicBP),
+        diastolicBP: int.tryParse(state.diastolicBP),
+        bloodSugar: int.tryParse(state.bloodSugar),
+        smokingStatus: state.smokingStatus,
+        drinkingLevel: state.drinkingLevel,
+        exerciseHours: double.tryParse(state.exerciseHours),
+        memo: state.memo.isNotEmpty ? state.memo : null,
+      );
+
+      ref.invalidate(homeProvider);
+    });
   }
 }

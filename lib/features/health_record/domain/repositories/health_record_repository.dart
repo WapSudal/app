@@ -18,4 +18,5 @@ abstract class HealthRecordRepository {
 
   Future<HealthRecordEntity?> getLatestHealthRecord();
   Future<List<HealthRecordEntity>> getAllHealthRecords();
+  Future<void> deleteHealthRecord(String id);
 }

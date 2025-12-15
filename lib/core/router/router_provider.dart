@@ -8,6 +8,7 @@ import '../../features/explore/presentation/views/explore_view.dart';
 import '../../features/home/presentation/views/home_view.dart';
 import '../../features/onboarding/presentation/views/onboarding_view.dart';
 import '../../features/record/presentation/views/record_view.dart';
+import '../../features/record/presentation/views/record_all_view.dart';
 import '../../features/health_record/presentation/views/health_record_input_view.dart';
 import '../../features/role_select/presentation/views/role_select_view.dart';
 import '../../features/splash/presentation/splash_screen.dart';
@@ -166,6 +167,11 @@ GoRouter router(Ref ref) {
         path: '/record/input',
         name: 'recordInput',
         builder: (context, state) => const HealthRecordInputView(),
+      ),
+      GoRoute(
+        path: '/record/all',
+        name: 'recordAll',
+        builder: (context, state) => const RecordAllView(),
       ),
     ],
   );

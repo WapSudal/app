@@ -10,7 +10,7 @@ class HealthRecordLocalDataSource {
   final SharedPreferences _prefs;
 
   HealthRecordLocalDataSource({required SharedPreferences prefs})
-      : _prefs = prefs;
+    : _prefs = prefs;
 
   /// 새로운 건강 기록 저장
   Future<void> saveRecord(HealthRecordModel record) async {
@@ -32,13 +32,16 @@ class HealthRecordLocalDataSource {
     try {
       final List<dynamic> jsonList = jsonDecode(jsonString);
       final records = jsonList
-          .map((json) => HealthRecordModel.fromJson(json as Map<String, dynamic>))
+          .map(
+            (json) => HealthRecordModel.fromJson(json as Map<String, dynamic>),
+          )
           .toList();
 
       // 날짜 내림차순 정렬
       records.sort(
-        (a, b) => DateTime.parse(b.recordedAt)
-            .compareTo(DateTime.parse(a.recordedAt)),
+        (a, b) => DateTime.parse(
+          b.recordedAt,
+        ).compareTo(DateTime.parse(a.recordedAt)),
       );
       return records;
     } catch (e) {
@@ -57,5 +60,17 @@ class HealthRecordLocalDataSource {
   /// 모든 기록 삭제
   Future<void> clearRecords() async {
     await _prefs.remove(_HealthRecordStorageKeys.recordsList);
+  }
+
+  /// 특정 기록 삭제
+  Future<void> deleteRecord(String id) async {
+    final records = await getRecords();
+    final filteredRecords = records.where((r) => r.id != id).toList();
+
+    final jsonList = filteredRecords.map((r) => r.toJson()).toList();
+    await _prefs.setString(
+      _HealthRecordStorageKeys.recordsList,
+      jsonEncode(jsonList),
+    );
   }
 }
