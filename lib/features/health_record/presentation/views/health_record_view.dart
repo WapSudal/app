@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/presentation/widgets/app_bar.dart';
+import '../../../../core/presentation/widgets/app_bottom_sheet.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../providers/health_record_notifier.dart';
 import '../providers/health_record_state.dart';
-import '../widgets/record_detail_modal.dart';
+import '../widgets/record_detail_bottom_sheet_content.dart';
 import '../widgets/record_empty_card.dart';
 import '../widgets/record_recent_list_card.dart';
 import '../widgets/record_stats_card.dart';
@@ -113,14 +114,19 @@ class HealthRecordView extends ConsumerWidget {
             records: recordState.healthRecords,
             onViewAll: () => context.push('/record/all'),
             onRecordTap: (record) {
-              RecordDetailModal.show(
-                context,
-                record: record,
-                onDelete: () {
-                  ref
-                      .read(healthRecordProvider.notifier)
-                      .deleteRecord(record.id);
-                },
+              AppBottomSheet.show(
+                context: context,
+                title: '건강 데이터 상세',
+                maxHeightRatio: 0.8,
+                showDragHandle: false,
+                child: RecordDetailBottomSheetContent(
+                  record: record,
+                  onDelete: () {
+                    ref
+                        .read(healthRecordProvider.notifier)
+                        .deleteRecord(record.id);
+                  },
+                ),
               );
             },
           ),

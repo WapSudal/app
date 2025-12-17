@@ -60,21 +60,14 @@ class RecordRecentListCard extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          '최근 작성 내역',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: AppColorScheme.black100,
-            fontWeight: FontWeight.w600,
-            letterSpacing: -0.45,
-          ),
-        ),
+        Text('최근 작성 내역', style: Theme.of(context).textTheme.headlineSmall),
         GestureDetector(
           onTap: onViewAll,
           child: Opacity(
             opacity: 0.2,
             child: Assets.icons.arrowRight.svg(
-              width: 28,
-              height: 28,
+              width: 21,
+              height: 21,
               colorFilter: ColorFilter.mode(
                 AppColorScheme.black100,
                 BlendMode.srcIn,

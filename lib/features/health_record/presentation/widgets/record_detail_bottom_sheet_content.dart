@@ -50,19 +50,14 @@ class RecordDetailBottomSheetContent extends StatelessWidget {
         children: [
           Text(
             dateFormat.format(record.recordedAt),
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: AppColorScheme.primaryColor,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: -0.65,
-                ),
+            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+              color: AppColorScheme.primaryColor,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             '${weekDays[record.recordedAt.weekday - 1]} ${timeFormat.format(record.recordedAt)}',
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: AppColorScheme.black100,
-                  letterSpacing: -0.4,
-                ),
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
         ],
       ),
@@ -201,20 +196,12 @@ class RecordDetailBottomSheetContent extends StatelessWidget {
         children: [
           Text(
             label,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColorScheme.grey300,
-                  letterSpacing: -0.325,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: AppColorScheme.grey300),
           ),
           const SizedBox(height: 4),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: AppColorScheme.black100,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: -0.32,
-                ),
-          ),
+          Text(value, style: Theme.of(context).textTheme.labelLarge),
         ],
       ),
     );
@@ -238,10 +225,10 @@ class RecordDetailBottomSheetContent extends StatelessWidget {
         child: Text(
           '기록 삭제',
           style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: AppColorScheme.danger,
-                fontWeight: FontWeight.w500,
-                letterSpacing: -0.32,
-              ),
+            color: AppColorScheme.danger,
+            fontWeight: FontWeight.w500,
+            letterSpacing: -0.32,
+          ),
         ),
       ),
     );

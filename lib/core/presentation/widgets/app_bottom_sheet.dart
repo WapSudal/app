@@ -90,7 +90,7 @@ class AppBottomSheet extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF00274C).withValues(alpha: 0.07),
+                    color: AppColorScheme.black100.withValues(alpha: 0.15),
                     offset: const Offset(0, 4),
                     blurRadius: 20,
                   ),
@@ -134,22 +134,15 @@ class AppBottomSheet extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title!,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: AppColorScheme.black100,
-                fontWeight: FontWeight.w600,
-                letterSpacing: -0.5,
-              ),
-        ),
+        Text(title!, style: Theme.of(context).textTheme.headlineMedium),
         if (showCloseButton)
           GestureDetector(
             onTap: () => Navigator.of(context).pop(),
             child: Opacity(
               opacity: 0.2,
               child: Assets.icons.close.svg(
-                width: 28,
-                height: 28,
+                width: 21,
+                height: 21,
                 colorFilter: ColorFilter.mode(
                   AppColorScheme.black100,
                   BlendMode.srcIn,

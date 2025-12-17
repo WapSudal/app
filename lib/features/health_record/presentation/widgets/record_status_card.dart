@@ -29,20 +29,15 @@ class RecordStatusCard extends StatelessWidget {
           // 타이틀
           Text(
             healthStatus.title,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: AppColorScheme.black100,
-              fontWeight: FontWeight.w600,
-              letterSpacing: -0.55,
-            ),
+            style: Theme.of(context).textTheme.headlineLarge,
           ),
           const SizedBox(height: 8),
           // 설명
           Text(
             healthStatus.description,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: AppColorScheme.grey300,
-              letterSpacing: -0.4,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyLarge!.copyWith(color: AppColorScheme.grey300),
           ),
         ],
       ),

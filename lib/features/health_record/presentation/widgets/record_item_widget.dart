@@ -64,9 +64,9 @@ class RecordItemWidget extends StatelessWidget {
               ),
             ),
             // 화살표 아이콘
-            Assets.icons.arrowRight.svg(
-              width: 16,
-              height: 16,
+            Assets.icons.right.svg(
+              width: 12,
+              height: 12,
               colorFilter: ColorFilter.mode(
                 AppColorScheme.grey400,
                 BlendMode.srcIn,

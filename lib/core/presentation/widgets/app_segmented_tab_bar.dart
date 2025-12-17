@@ -71,35 +71,59 @@ class AppSegmentedTabBar extends StatelessWidget {
         color: backgroundColor ?? AppColorScheme.white300,
         borderRadius: BorderRadius.circular(borderRadius),
       ),
-      child: Row(
-        children: List.generate(items.length, (index) {
-          final isSelected = index == selectedIndex;
-          return Expanded(
-            child: GestureDetector(
-              onTap: () => onItemSelected(index),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                height: itemHeight,
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? (selectedBackgroundColor ?? AppColorScheme.white100)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(itemBorderRadius),
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  items[index].label,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: isSelected
-                        ? (selectedTextColor ?? AppColorScheme.primaryColor)
-                        : (unselectedTextColor ?? AppColorScheme.grey400),
-                    fontWeight: FontWeight.w500,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final itemWidth = constraints.maxWidth / items.length;
+          final selectedLeft = itemWidth * selectedIndex;
+
+          return Stack(
+            children: [
+              // 애니메이션되는 선택된 배경
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 150),
+                curve: Curves.easeInOut,
+                left: selectedLeft,
+                top: 0,
+                bottom: 0,
+                width: itemWidth,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: selectedBackgroundColor ?? AppColorScheme.white100,
+                    borderRadius: BorderRadius.circular(itemBorderRadius),
                   ),
                 ),
               ),
-            ),
+              // 탭 버튼들
+              Row(
+                children: List.generate(items.length, (index) {
+                  final isSelected = index == selectedIndex;
+                  return Expanded(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => onItemSelected(index),
+                      child: Container(
+                        height: itemHeight,
+                        alignment: Alignment.center,
+                        child: Text(
+                          items[index].label,
+                          style: Theme.of(context).textTheme.labelLarge
+                              ?.copyWith(
+                                color: isSelected
+                                    ? (selectedTextColor ??
+                                          AppColorScheme.primaryColor)
+                                    : (unselectedTextColor ??
+                                          AppColorScheme.grey400),
+                                fontWeight: FontWeight.w500,
+                              ),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ],
           );
-        }),
+        },
       ),
     );
   }

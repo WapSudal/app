@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/presentation/widgets/app_bar.dart';
+import '../../../../core/presentation/widgets/app_bottom_sheet.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../health_record/domain/entities/health_record_entity.dart';
 import '../providers/health_record_notifier.dart';
 import '../providers/health_record_state.dart';
-import '../widgets/record_detail_modal.dart';
+import '../widgets/record_detail_bottom_sheet_content.dart';
 import '../widgets/record_item_widget.dart';
 
 /// 전체 기록 화면
@@ -151,14 +152,19 @@ class HealthRecordAllView extends ConsumerWidget {
             RecordItemWidget(
               record: sortedRecords[i],
               onTap: () {
-                RecordDetailModal.show(
-                  context,
-                  record: sortedRecords[i],
-                  onDelete: () {
-                    ref
-                        .read(healthRecordProvider.notifier)
-                        .deleteRecord(sortedRecords[i].id);
-                  },
+                AppBottomSheet.show(
+                  context: context,
+                  title: '건강 데이터 상세',
+                  maxHeightRatio: 0.8,
+                  showDragHandle: false,
+                  child: RecordDetailBottomSheetContent(
+                    record: sortedRecords[i],
+                    onDelete: () {
+                      ref
+                          .read(healthRecordProvider.notifier)
+                          .deleteRecord(sortedRecords[i].id);
+                    },
+                  ),
                 );
               },
             ),

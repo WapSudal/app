@@ -36,14 +36,7 @@ class HealthRecordStatsCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 헤더
-          Text(
-            '혈압/혈당 변화율',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: AppColorScheme.black100,
-              fontWeight: FontWeight.w600,
-              letterSpacing: -0.45,
-            ),
-          ),
+          Text('혈압/혈당 변화율', style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 12),
 
           // 기간 탭
@@ -156,6 +149,24 @@ class HealthRecordStatsCard extends StatelessWidget {
           height: 200,
           child: _BloodPressureLineChart(records: recordState.filteredRecords),
         ),
+        const SizedBox(height: 8),
+        // 범례
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildLegendItem(
+              context,
+              color: const Color(0xFFFF6B6B),
+              label: '수축기',
+            ),
+            const SizedBox(width: 16),
+            _buildLegendItem(
+              context,
+              color: AppColorScheme.primaryColor,
+              label: '이완기',
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -176,6 +187,34 @@ class HealthRecordStatsCard extends StatelessWidget {
         SizedBox(
           height: 200,
           child: _BloodSugarLineChart(records: recordState.filteredRecords),
+        ),
+        const SizedBox(height: 8),
+        // 범례
+        _buildLegendItem(context, color: const Color(0xFFFFB946), label: '혈당'),
+      ],
+    );
+  }
+
+  Widget _buildLegendItem(
+    BuildContext context, {
+    required Color color,
+    required String label,
+  }) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 6),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: AppColorScheme.grey400,
+            fontSize: 12,
+          ),
         ),
       ],
     );
