@@ -6,8 +6,8 @@ import '../providers/health_record_state.dart';
 ///
 /// Figma: Record - 2 (Card/Property 1=Good)
 /// 이모지 + 상태 타이틀 + 설명 메시지를 표시합니다.
-class RecordStatusCard extends StatelessWidget {
-  const RecordStatusCard({super.key, required this.healthStatus});
+class HealthRecordStatusCard extends StatelessWidget {
+  const HealthRecordStatusCard({super.key, required this.healthStatus});
 
   final HealthStatusLevel healthStatus;
 

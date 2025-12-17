@@ -16,10 +16,7 @@ class HealthRecordSavingView extends StatelessWidget {
           children: [
             const Text(
               '🚀',
-              style: TextStyle(
-                fontFamily: 'TossFace',
-                fontSize: 72,
-              ),
+              style: TextStyle(fontFamily: 'TossFace', fontSize: 72),
             ),
             const SizedBox(height: 24),
             Text(
@@ -62,10 +59,7 @@ class HealthRecordSuccessView extends StatelessWidget {
               children: [
                 const Text(
                   '🎉',
-                  style: TextStyle(
-                    fontFamily: 'TossFace',
-                    fontSize: 72,
-                  ),
+                  style: TextStyle(fontFamily: 'TossFace', fontSize: 72),
                 ),
                 const SizedBox(height: 24),
                 Text(
@@ -97,6 +91,13 @@ class HealthRecordSuccessView extends StatelessWidget {
                   text: '닫기',
                   onPressed: onClose,
                   isExpanded: true,
+                  style: ButtonStyle(
+                    shape: WidgetStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),

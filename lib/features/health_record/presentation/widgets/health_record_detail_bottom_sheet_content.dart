@@ -7,8 +7,8 @@ import '../../domain/entities/health_record_entity.dart';
 ///
 /// 기록의 상세 정보를 표시하고 삭제 기능을 제공합니다.
 /// [AppBottomSheet]의 child로 사용됩니다.
-class RecordDetailBottomSheetContent extends StatelessWidget {
-  const RecordDetailBottomSheetContent({
+class HealthRecordDetailBottomSheetContent extends StatelessWidget {
+  const HealthRecordDetailBottomSheetContent({
     super.key,
     required this.record,
     this.onDelete,

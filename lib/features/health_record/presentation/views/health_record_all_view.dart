@@ -6,8 +6,8 @@ import '../../../../core/theme/color_scheme.dart';
 import '../../../health_record/domain/entities/health_record_entity.dart';
 import '../providers/health_record_notifier.dart';
 import '../providers/health_record_state.dart';
-import '../widgets/record_detail_bottom_sheet_content.dart';
-import '../widgets/record_item_widget.dart';
+import '../widgets/health_record_detail_bottom_sheet_content.dart';
+import '../widgets/health_record_item_widget.dart';
 
 /// 전체 기록 화면
 ///
@@ -149,7 +149,7 @@ class HealthRecordAllView extends ConsumerWidget {
       child: Column(
         children: [
           for (int i = 0; i < sortedRecords.length; i++) ...[
-            RecordItemWidget(
+            HealthRecordItemWidget(
               record: sortedRecords[i],
               onTap: () {
                 AppBottomSheet.show(
@@ -157,7 +157,7 @@ class HealthRecordAllView extends ConsumerWidget {
                   title: '건강 데이터 상세',
                   maxHeightRatio: 0.8,
                   showDragHandle: false,
-                  child: RecordDetailBottomSheetContent(
+                  child: HealthRecordDetailBottomSheetContent(
                     record: sortedRecords[i],
                     onDelete: () {
                       ref

@@ -6,11 +6,11 @@ import '../../../../core/presentation/widgets/app_bottom_sheet.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../providers/health_record_notifier.dart';
 import '../providers/health_record_state.dart';
-import '../widgets/record_detail_bottom_sheet_content.dart';
-import '../widgets/record_empty_card.dart';
-import '../widgets/record_recent_list_card.dart';
-import '../widgets/record_stats_card.dart';
-import '../widgets/record_status_card.dart';
+import '../widgets/health_record_detail_bottom_sheet_content.dart';
+import '../widgets/health_record_empty_card.dart';
+import '../widgets/health_record_recent_list_card.dart';
+import '../widgets/health_record_stats_card.dart';
+import '../widgets/health_record_status_card.dart';
 
 /// 기록 화면
 ///
@@ -58,7 +58,7 @@ class HealthRecordView extends ConsumerWidget {
       child: Column(
         children: [
           // 빈 상태 카드 (Expanded로 남은 공간 채우기)
-          const Expanded(child: RecordEmptyCard()),
+          const Expanded(child: HealthRecordEmptyCard()),
           const SizedBox(height: 8),
           // 기록 입력하기 버튼
           SizedBox(
@@ -97,7 +97,7 @@ class HealthRecordView extends ConsumerWidget {
       child: Column(
         children: [
           // 상태 카드
-          RecordStatusCard(healthStatus: recordState.healthStatus),
+          HealthRecordStatusCard(healthStatus: recordState.healthStatus),
           const SizedBox(height: 8),
           // 통계 카드
           HealthRecordStatsCard(
@@ -110,7 +110,7 @@ class HealthRecordView extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           // 최근 작성 내역 카드
-          RecordRecentListCard(
+          HealthRecordRecentListCard(
             records: recordState.healthRecords,
             onViewAll: () => context.push('/record/all'),
             onRecordTap: (record) {
@@ -119,7 +119,7 @@ class HealthRecordView extends ConsumerWidget {
                 title: '건강 데이터 상세',
                 maxHeightRatio: 0.8,
                 showDragHandle: false,
-                child: RecordDetailBottomSheetContent(
+                child: HealthRecordDetailBottomSheetContent(
                   record: record,
                   onDelete: () {
                     ref

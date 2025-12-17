@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../domain/entities/health_record_entity.dart';
-import 'record_item_widget.dart';
+import 'health_record_item_widget.dart';
 
 /// 최근 작성 내역 카드
 ///
 /// Figma: Record - 2 (최근 작성 내역 카드)
 /// 최근 기록 리스트를 표시하며, 헤더에 전체 보기 버튼이 있습니다.
-class RecordRecentListCard extends StatelessWidget {
-  const RecordRecentListCard({
+class HealthRecordRecentListCard extends StatelessWidget {
+  const HealthRecordRecentListCard({
     super.key,
     required this.records,
     this.onViewAll,
@@ -102,7 +102,7 @@ class RecordRecentListCard extends StatelessWidget {
       child: Column(
         children: [
           for (int i = 0; i < displayRecords.length; i++) ...[
-            RecordItemWidget(
+            HealthRecordItemWidget(
               record: displayRecords[i],
               onTap: () => onRecordTap?.call(displayRecords[i]),
             ),

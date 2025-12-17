@@ -7,8 +7,8 @@ import '../../domain/entities/health_record_entity.dart';
 ///
 /// Figma: Record/Record Element
 /// 개별 기록 항목을 표시합니다.
-class RecordItemWidget extends StatelessWidget {
-  const RecordItemWidget({super.key, required this.record, this.onTap});
+class HealthRecordItemWidget extends StatelessWidget {
+  const HealthRecordItemWidget({super.key, required this.record, this.onTap});
 
   final HealthRecordEntity record;
   final VoidCallback? onTap;

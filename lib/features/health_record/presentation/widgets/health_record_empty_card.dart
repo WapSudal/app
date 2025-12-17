@@ -6,8 +6,8 @@ import '../../../../gen/assets.gen.dart';
 ///
 /// Figma: Record - 1 (Card/None)
 /// 데이터가 없을 때 표시되는 카드입니다.
-class RecordEmptyCard extends StatelessWidget {
-  const RecordEmptyCard({super.key});
+class HealthRecordEmptyCard extends StatelessWidget {
+  const HealthRecordEmptyCard({super.key});
 
   @override
   Widget build(BuildContext context) {
