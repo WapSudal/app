@@ -6,6 +6,7 @@ import '../../domain/entities/health_record_entity.dart';
 import '../../domain/providers/health_record_usecase_providers.dart';
 import '../../../../core/enums/smoking_status.dart';
 import '../../../../core/enums/drinking_level.dart';
+import 'health_record_notifier.dart';
 
 part 'health_record_input_notifier.g.dart';
 
@@ -86,6 +87,7 @@ class HealthRecordInput extends _$HealthRecordInput {
       );
 
       ref.invalidate(homeProvider);
+      ref.invalidate(healthRecordProvider);
     });
   }
 }
