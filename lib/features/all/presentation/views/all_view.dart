@@ -4,6 +4,7 @@ import '../../../../core/presentation/widgets/app_bar.dart';
 import '../../../../core/presentation/widgets/app_icon.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
+import '../widgets/guardian_manage_bottom_sheet.dart';
 
 /// 전체 화면 - 내 정보 및 전체 메뉴
 class AllView extends StatelessWidget {
@@ -206,6 +207,12 @@ class AllView extends StatelessWidget {
             iconColor: AppColorScheme.primaryColor,
             title: '보호자 관리',
             requestCount: 1,
+            onTap: () {
+              GuardianManageBottomSheet.show(
+                context: context,
+                type: ManageType.guardian,
+              );
+            },
           ),
           // 구분선
           Container(
@@ -218,6 +225,12 @@ class AllView extends StatelessWidget {
             iconColor: AppColorScheme.success,
             title: '주치의 관리',
             requestCount: 1,
+            onTap: () {
+              GuardianManageBottomSheet.show(
+                context: context,
+                type: ManageType.physician,
+              );
+            },
           ),
         ],
       ),
@@ -230,11 +243,10 @@ class AllView extends StatelessWidget {
     required Color iconColor,
     required String title,
     required int requestCount,
+    VoidCallback? onTap,
   }) {
     return InkWell(
-      onTap: () {
-        // TODO: 라우팅 연동
-      },
+      onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Row(
