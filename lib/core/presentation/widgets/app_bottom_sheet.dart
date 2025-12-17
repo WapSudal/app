@@ -13,6 +13,7 @@ class AppBottomSheet extends StatelessWidget {
     super.key,
     this.title,
     this.maxHeightRatio = 0.8,
+    this.heightRatio,
     this.showDragHandle = false,
     this.showCloseButton = true,
     required this.child,
@@ -20,6 +21,7 @@ class AppBottomSheet extends StatelessWidget {
 
   final String? title;
   final double maxHeightRatio;
+  final double? heightRatio;
   final bool showDragHandle;
   final bool showCloseButton;
   final Widget child;
@@ -28,6 +30,7 @@ class AppBottomSheet extends StatelessWidget {
   ///
   /// [title]: Bottom Sheet 상단에 표시될 제목
   /// [maxHeightRatio]: Bottom Sheet의 최대 높이 비율 (0.0 ~ 1.0, 기본값: 0.8)
+  /// [heightRatio]: Bottom Sheet의 고정 높이 비율 (0.0 ~ 1.0). 설정 시 maxHeightRatio 무시
   /// [showDragHandle]: Drag Handle 표시 여부 (기본값: false)
   /// [showCloseButton]: 닫기 버튼 표시 여부 (기본값: true)
   /// [child]: Bottom Sheet의 내용
@@ -35,6 +38,7 @@ class AppBottomSheet extends StatelessWidget {
     required BuildContext context,
     String? title,
     double maxHeightRatio = 0.8,
+    double? heightRatio,
     bool showDragHandle = false,
     bool showCloseButton = true,
     required Widget child,
@@ -48,6 +52,7 @@ class AppBottomSheet extends StatelessWidget {
       builder: (context) => AppBottomSheet(
         title: title,
         maxHeightRatio: maxHeightRatio,
+        heightRatio: heightRatio,
         showDragHandle: showDragHandle,
         showCloseButton: showCloseButton,
         child: child,
@@ -79,7 +84,12 @@ class AppBottomSheet extends StatelessWidget {
         child: SafeArea(
           child: Container(
             constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * maxHeightRatio,
+              maxHeight:
+                  MediaQuery.of(context).size.height *
+                  (heightRatio ?? maxHeightRatio),
+              minHeight: heightRatio != null
+                  ? MediaQuery.of(context).size.height * heightRatio!
+                  : 0,
             ),
             margin: const EdgeInsets.symmetric(horizontal: 12),
             child: Container(
