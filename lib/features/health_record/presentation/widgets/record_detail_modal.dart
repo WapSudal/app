@@ -6,7 +6,7 @@ import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../domain/entities/health_record_entity.dart';
 
-/// 기록 상세 모달
+/// 기록 상세 Bottom Sheet
 ///
 /// Figma: Record Modal (node-id=489:4396)
 /// 기록의 상세 정보를 표시하고 삭제 기능을 제공합니다.
@@ -22,15 +22,18 @@ class RecordDetailModal extends StatelessWidget {
   final VoidCallback? onDelete;
   final VoidCallback? onClose;
 
-  /// 모달을 표시합니다.
+  /// Bottom Sheet를 표시합니다.
   static Future<void> show(
     BuildContext context, {
     required HealthRecordEntity record,
     VoidCallback? onDelete,
   }) {
-    return showDialog(
+    return showModalBottomSheet(
       context: context,
+      backgroundColor: Colors.transparent,
       barrierColor: Colors.black.withValues(alpha: 0.15),
+      isScrollControlled: true,
+      useRootNavigator: true,
       builder: (context) => RecordDetailModal(
         record: record,
         onDelete: onDelete,
@@ -41,45 +44,64 @@ class RecordDetailModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-      child: Dialog(
-        backgroundColor: Colors.transparent,
-        insetPadding: const EdgeInsets.symmetric(horizontal: 12),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: AppColorScheme.white100,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF00274C).withValues(alpha: 0.07),
-                offset: const Offset(0, 4),
-                blurRadius: 20,
-              ),
-            ],
+    final animation =
+        ModalRoute.of(context)?.animation ?? kAlwaysCompleteAnimation;
+
+    return AnimatedBuilder(
+      animation: animation,
+      builder: (context, child) {
+        final animationValue = animation.value;
+        return BackdropFilter(
+          filter: ImageFilter.blur(
+            sigmaX: 3 * animationValue,
+            sigmaY: 3 * animationValue,
           ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 헤더
-                _buildHeader(context),
-                const SizedBox(height: 16),
-                // 날짜 및 시간
-                _buildDateTime(context),
-                const SizedBox(height: 16),
-                // 구분선
-                const Divider(color: AppColorScheme.white500),
-                const SizedBox(height: 16),
-                // 정보 리스트
-                _buildInfoList(context),
-                const SizedBox(height: 16),
-                // 삭제 버튼
-                _buildDeleteButton(context),
-              ],
+          child: child!,
+        );
+      },
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: SafeArea(
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 12),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: AppColorScheme.white100,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF00274C).withValues(alpha: 0.07),
+                    offset: const Offset(0, 4),
+                    blurRadius: 20,
+                  ),
+                ],
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 헤더
+                    _buildHeader(context),
+                    const SizedBox(height: 16),
+                    // 날짜 및 시간
+                    _buildDateTime(context),
+                    const SizedBox(height: 16),
+                    // 구분선
+                    const Divider(color: AppColorScheme.white500),
+                    const SizedBox(height: 16),
+                    // 정보 리스트
+                    _buildInfoList(context),
+                    const SizedBox(height: 16),
+                    // 삭제 버튼
+                    _buildDeleteButton(context),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
