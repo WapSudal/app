@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../../enums/nav_tab.dart';
@@ -41,26 +42,44 @@ class AppBottomNavBar extends StatelessWidget {
           topRight: Radius.circular(24),
         ),
       ),
-      child: SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: NavTab.values.asMap().entries.map((entry) {
-              final index = entry.key;
-              final tab = entry.value;
+      child: kIsWeb
+          ? Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 28),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: NavTab.values.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final tab = entry.value;
 
-              return BottomNavItem(
-                icon: tab.icon,
-                label: tab.label,
-                isSelected: currentIndex == index,
-                onTap: () => onTabChanged(index),
-              );
-            }).toList(),
-          ),
-        ),
-      ),
+                  return BottomNavItem(
+                    icon: tab.icon,
+                    label: tab.label,
+                    isSelected: currentIndex == index,
+                    onTap: () => onTabChanged(index),
+                  );
+                }).toList(),
+              ),
+            )
+          : SafeArea(
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 28),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: NavTab.values.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final tab = entry.value;
+
+                    return BottomNavItem(
+                      icon: tab.icon,
+                      label: tab.label,
+                      isSelected: currentIndex == index,
+                      onTap: () => onTabChanged(index),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
     );
   }
 }
