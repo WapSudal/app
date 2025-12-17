@@ -42,7 +42,6 @@ class GeneralUserHomeContent extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 8),
             // 환영 카드
             HomeWelcomeCard(displayName: displayName),
             const SizedBox(height: 8),

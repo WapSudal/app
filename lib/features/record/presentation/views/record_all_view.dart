@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import '../../../../core/presentation/widgets/app_bar.dart';
 import '../../../../core/theme/color_scheme.dart';
-import '../../../../gen/assets.gen.dart';
 import '../../../health_record/domain/entities/health_record_entity.dart';
 import '../providers/record_notifier.dart';
 import '../providers/record_state.dart';
@@ -22,7 +21,10 @@ class RecordAllView extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F6FB), // dashboard/bg
-      appBar: _buildAppBar(context),
+      appBar: const CustomAppBar(
+        mode: AppBarMode.subpage,
+        title: '전체 기록',
+      ),
       body: recordAsync.when(
         data: (recordState) {
           final groupedRecords = recordState.recordsByMonth;
@@ -34,36 +36,6 @@ class RecordAllView extends ConsumerWidget {
             '데이터를 불러오는 중 오류가 발생했습니다.',
             style: const TextStyle(color: AppColorScheme.grey400),
           ),
-        ),
-      ),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return AppBar(
-      backgroundColor: const Color(0xFFF7F6FB),
-      elevation: 0,
-      scrolledUnderElevation: 0,
-      leading: GestureDetector(
-        onTap: () => context.pop(),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Assets.icons.arrowLeft.svg(
-            width: 32,
-            height: 32,
-            colorFilter: ColorFilter.mode(
-              AppColorScheme.black100,
-              BlendMode.srcIn,
-            ),
-          ),
-        ),
-      ),
-      title: const Text(
-        '전체 기록',
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          color: Color(0xFF000000),
         ),
       ),
     );

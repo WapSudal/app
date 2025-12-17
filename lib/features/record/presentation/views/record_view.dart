@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/presentation/widgets/app_bar.dart';
 import '../../../../core/theme/color_scheme.dart';
-import '../../../../gen/assets.gen.dart';
 import '../providers/record_notifier.dart';
 import '../providers/record_state.dart';
 import 'widgets/record_detail_modal.dart';
@@ -24,7 +24,10 @@ class RecordView extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F6FB), // dashboard/bg
-      appBar: _buildAppBar(context),
+      appBar: const CustomAppBar(
+        mode: AppBarMode.navigation,
+        title: '기록',
+      ),
       body: recordAsync.when(
         data: (recordState) => _buildContent(context, ref, recordState),
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -36,35 +39,6 @@ class RecordView extends ConsumerWidget {
           ),
         ),
       ),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return AppBar(
-      backgroundColor: const Color(0xFFF7F6FB),
-      elevation: 0,
-      scrolledUnderElevation: 0,
-      title: const Text(
-        '기록',
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          color: Color(0xFF000000),
-        ),
-      ),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 20),
-          child: Assets.icons.alarm.svg(
-            width: 32,
-            height: 32,
-            colorFilter: ColorFilter.mode(
-              AppColorScheme.black100,
-              BlendMode.srcIn,
-            ),
-          ),
-        ),
-      ],
     );
   }
 

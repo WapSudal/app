@@ -5,13 +5,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/enums/user_role.dart';
 import '../../../../core/presentation/helpers/snackbar_helper.dart';
-import '../../../../core/presentation/widgets/app_bottom_sheet.dart';
-import '../../../../core/theme/color_scheme.dart';
+import '../../../../core/presentation/widgets/app_bar.dart';
 import '../../../../gen/assets.gen.dart';
-import '../../../auth/data/providers/auth_data_providers.dart';
 import '../../../auth/presentation/providers/auth_mutations.dart';
-import '../../../auth/presentation/providers/auth_notifier.dart';
-import '../../../notification/presentation/widgets/notification_bottom_sheet_content.dart';
 import '../../../user/presentation/providers/registered_user_notifier.dart';
 import '../providers/home_notifier.dart';
 import '../providers/home_state.dart';
@@ -56,27 +52,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F6FB), // dashboard/bg
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF7F6FB), // dashboard/bg
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: false,
-        title: Assets.logos.textLogo.svg(height: 14),
-        actions: [
-          // 알림 버튼
-          IconButton(
-            icon: Assets.icons.alarm.svg(
-              width: 24,
-              height: 24,
-              colorFilter: ColorFilter.mode(
-                AppColorScheme.black100,
-                BlendMode.srcIn,
-              ),
-            ),
-            onPressed: () => _showNotificationBottomSheet(context),
-          ),
-          const SizedBox(width: 8),
-        ],
+      appBar: CustomAppBar(
+        mode: AppBarMode.navigation,
+        customTitle: Assets.logos.textLogo.svg(height: 14),
       ),
       body: SafeArea(
         bottom: false,
@@ -108,51 +86,4 @@ class _HomeViewState extends ConsumerState<HomeView> {
     }
   }
 
-  /// 알림 Bottom Sheet 표시
-  void _showNotificationBottomSheet(BuildContext context) {
-    AppBottomSheet.show(
-      context: context,
-      title: '알림',
-      maxHeightRatio: 0.8, // 화면의 80%
-      showDragHandle: true,
-      child: const NotificationBottomSheetContent(),
-    );
-  }
-
-  void _showLogoutDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('로그아웃'),
-        content: const Text('정말 로그아웃 하시겠습니까?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('취소'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _handleSignOut();
-            },
-            child: const Text('로그아웃'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _handleSignOut() {
-    signOutMutation.run(ref, (tsx) async {
-      // 사용자 데이터 초기화
-      await tsx.get(registeredUserProvider.notifier).clear();
-
-      // Firebase 로그아웃
-      final repository = tsx.get(authRepositoryProvider);
-      await repository.signOut();
-
-      // Auth 상태 초기화
-      tsx.get(authProvider.notifier).clearUser();
-    });
-  }
 }

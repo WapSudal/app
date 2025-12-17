@@ -91,7 +91,10 @@ class _HealthRecordInputViewState extends ConsumerState<HealthRecordInputView> {
       children: [
         Scaffold(
           resizeToAvoidBottomInset: false,
-          appBar: const CustomAppBar(title: '건강 정보 입력'),
+          appBar: const CustomAppBar(
+            mode: AppBarMode.subpage,
+            title: '건강 정보 입력',
+          ),
           body: SafeArea(
             maintainBottomViewPadding: true,
             child: Column(
