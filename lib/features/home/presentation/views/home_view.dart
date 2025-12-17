@@ -11,9 +11,9 @@ import '../../../auth/presentation/providers/auth_mutations.dart';
 import '../../../user/presentation/providers/registered_user_notifier.dart';
 import '../providers/home_notifier.dart';
 import '../providers/home_state.dart';
-import 'widgets/doctor_home_content.dart';
-import 'widgets/general_user_home_content.dart';
-import 'widgets/guardian_home_content.dart';
+import '../widgets/doctor_home_content.dart';
+import '../widgets/general_user_home_content.dart';
+import '../widgets/guardian_home_content.dart';
 
 /// 홈 화면
 ///

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/presentation/widgets/app_flat_button.dart';
-import '../../../../../core/theme/color_scheme.dart';
+import '../../../../core/presentation/widgets/app_flat_button.dart';
+import '../../../../core/theme/color_scheme.dart';
 
 /// 홈 화면 스플래시 카드 (첫 방문 시 표시)
 ///

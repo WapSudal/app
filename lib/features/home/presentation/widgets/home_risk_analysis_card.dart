@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/color_scheme.dart';
-import '../../../../../gen/assets.gen.dart';
-import '../../providers/home_state.dart';
+import '../../../../core/theme/color_scheme.dart';
+import '../../../../gen/assets.gen.dart';
+import '../providers/home_state.dart';
 
 /// 위험도 분석 카드 (3개 이상 기록 시)
 ///

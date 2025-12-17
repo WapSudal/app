@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/color_scheme.dart';
-import '../../../../../gen/assets.gen.dart';
+import '../../../../core/theme/color_scheme.dart';
+import '../../../../gen/assets.gen.dart';
 
 /// 시간대별 환영 메시지 카드
 ///

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../providers/home_notifier.dart';
-import '../../providers/home_state.dart';
+import '../providers/home_notifier.dart';
+import '../providers/home_state.dart';
 import 'home_fast_menu_card.dart';
 import 'home_no_data_card.dart';
 import 'home_progress_card.dart';

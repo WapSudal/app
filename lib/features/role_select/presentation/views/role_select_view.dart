@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/enums/user_role.dart';
 import '../../../../core/presentation/helpers/snackbar_helper.dart';
+import '../../../../core/presentation/widgets/app_loading_overlay.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../auth/data/providers/auth_data_providers.dart';
@@ -40,6 +41,12 @@ class _RoleSelectViewState extends ConsumerState<RoleSelectView> {
 
     // 계정 전환 Mutation 상태 처리
     ref.listen(switchAccountMutation, (previous, next) {
+      if (next is MutationPending) {
+        LoadingOverlay.show(context, message: '계정 전환 중');
+      } else {
+        LoadingOverlay.hide();
+      }
+
       if (next case MutationError(:final error)) {
         showErrorSnackBar(context, error);
       }
@@ -47,6 +54,12 @@ class _RoleSelectViewState extends ConsumerState<RoleSelectView> {
 
     // 역할 확정 Mutation 상태 처리
     ref.listen(confirmRoleMutation, (previous, next) {
+      if (next is MutationPending) {
+        LoadingOverlay.show(context, message: '요청 처리중');
+      } else {
+        LoadingOverlay.hide();
+      }
+
       switch (next) {
         case MutationSuccess():
           if (context.mounted) {
@@ -100,7 +113,7 @@ class _RoleSelectViewState extends ConsumerState<RoleSelectView> {
       name: authState.isAuthenticated ? '${authState.displayName}님' : '사용자님',
       email: authState.email,
       photoUrl: authState.photoUrl,
-      isLoading: isLoading,
+      isLoading: false,
       onSwitchAccount: isLoading
           ? null
           : () => _onSwitchAccountPressed(context, ref),
