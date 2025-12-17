@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
 
 import '../../../../core/presentation/widgets/app_bar.dart';
@@ -22,7 +23,7 @@ class RiskMeasurementView extends StatelessWidget {
         child: Column(
           children: [
             // 다음 검진 권장 카드
-            _buildNextCheckupCard(),
+            _buildNextCheckupCard(context),
             const SizedBox(height: 8),
             // 현재 위험도 카드
             _buildCurrentRiskCard(),
@@ -31,7 +32,7 @@ class RiskMeasurementView extends StatelessWidget {
             _buildRankCard(),
             const SizedBox(height: 8),
             // 주요 위험 요인 카드
-            _buildRiskFactorsCard(),
+            _buildRiskFactorsCard(context),
             const SizedBox(height: 24),
           ],
         ),
@@ -39,11 +40,12 @@ class RiskMeasurementView extends StatelessWidget {
     );
   }
 
-  Widget _buildNextCheckupCard() {
+  Widget _buildNextCheckupCard(BuildContext context) {
     final nextCheckup = riskAssessment.nextCheckupRecommended;
     final now = DateTime.now();
     final diff = nextCheckup.difference(now);
     final monthsUntil = (diff.inDays / 30).round();
+    final theme = Theme.of(context);
 
     return Container(
       width: double.infinity,
@@ -52,10 +54,10 @@ class RiskMeasurementView extends StatelessWidget {
         color: AppColorScheme.white100,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('🩺', style: TextStyle(fontSize: 48)),
-          const SizedBox(width: 12),
+          const Text('🩺', style: TextStyle(fontSize: 64)),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -63,35 +65,18 @@ class RiskMeasurementView extends StatelessWidget {
                 children: [
                   Text(
                     '$monthsUntil개월 후',
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w600,
-                      height: 32 / 22,
-                      letterSpacing: -0.55,
+                    style: theme.textTheme.headlineLarge!.copyWith(
                       color: AppColorScheme.primaryColor,
                     ),
                   ),
                   const SizedBox(width: 4),
-                  const Text(
-                    '다음 검진 권장',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w600,
-                      height: 32 / 22,
-                      letterSpacing: -0.55,
-                      color: AppColorScheme.black100,
-                    ),
-                  ),
+                  Text('다음 검진 권장', style: theme.textTheme.headlineLarge),
                 ],
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 '정기적인 건강검진으로 위험을 관리하세요',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                  height: 24 / 16,
-                  letterSpacing: -0.4,
+                style: theme.textTheme.bodyLarge!.copyWith(
                   color: AppColorScheme.black500,
                 ),
               ),
@@ -199,7 +184,7 @@ class RiskMeasurementView extends StatelessWidget {
           const SizedBox(height: 8),
           // 순위 정보
           _buildRankInfo(),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
           // 분포 그래프
           _RankDistributionChart(
             myScore: riskAssessment.riskScore,
@@ -369,7 +354,7 @@ class RiskMeasurementView extends StatelessWidget {
     );
   }
 
-  Widget _buildRiskFactorsCard() {
+  Widget _buildRiskFactorsCard(BuildContext context) {
     return AnalysisCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -385,7 +370,7 @@ class RiskMeasurementView extends StatelessWidget {
           }),
           const SizedBox(height: 8),
           // AI 추천 권고사항
-          _buildAIRecommendation(),
+          _buildAIRecommendation(context),
         ],
       ),
     );
@@ -478,7 +463,9 @@ class RiskMeasurementView extends StatelessWidget {
     );
   }
 
-  Widget _buildAIRecommendation() {
+  Widget _buildAIRecommendation(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
@@ -489,13 +476,9 @@ class RiskMeasurementView extends StatelessWidget {
             children: [
               const Text('✅', style: TextStyle(fontSize: 16)),
               const SizedBox(width: 4),
-              const Text(
+              Text(
                 'AI 추천 권고사항',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  height: 20 / 16,
-                  letterSpacing: -0.32,
+                style: theme.textTheme.labelLarge!.copyWith(
                   color: AppColorScheme.success,
                 ),
               ),
@@ -527,69 +510,86 @@ class _RiskGaugeChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 150,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return Center(
+      child: SizedBox(
+        width: 200,
+        height: 120,
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.topCenter,
           children: [
             // 게이지 차트
-            SizedBox(
-              width: 200,
-              height: 100,
-              child: CustomPaint(
-                painter: _GaugeChartPainter(
-                  progress: riskScore / 100,
-                  color: riskLevel.color != null
-                      ? Color(riskLevel.color!)
-                      : AppColorScheme.grey400,
-                ),
-              ),
-            ),
-            // 레벨 칩
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(
+            CustomPaint(
+              size: const Size(200, 100),
+              painter: _GaugeChartPainter(
+                progress: riskScore / 100,
                 color: riskLevel.color != null
-                    ? Color(riskLevel.color!).withValues(alpha: 0.1)
-                    : AppColorScheme.white200,
-                borderRadius: BorderRadius.circular(9999),
+                    ? Color(riskLevel.color!)
+                    : AppColorScheme.grey400,
               ),
-              child: Text(
-                riskLevel.label,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w400,
-                  height: 18 / 13,
-                  letterSpacing: -0.32,
-                  color: riskLevel.color != null
-                      ? Color(riskLevel.color!)
-                      : AppColorScheme.grey300,
+            ),
+            // 레벨 칩 (게이지 중앙 상단에 배치)
+            Positioned(
+              top: 30,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: riskLevel.color != null
+                            ? Color(riskLevel.color!).withValues(alpha: 0.1)
+                            : AppColorScheme.white200,
+                        borderRadius: BorderRadius.circular(9999),
+                      ),
+                      child: Text(
+                        riskLevel.label,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400,
+                          height: 18 / 13,
+                          letterSpacing: -0.32,
+                          color: riskLevel.color != null
+                              ? Color(riskLevel.color!)
+                              : AppColorScheme.grey300,
+                        ),
+                      ),
+                    ),
+
+                    Column(
+                      children: [
+                        Text(
+                          '$riskScore%',
+                          style: const TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w700,
+                            height: 44 / 32,
+                            letterSpacing: -0.8,
+                            color: AppColorScheme.black100,
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        Text(
+                          riskLevel == RiskLevel.low
+                              ? '관리를 그대로 유지해주세요!'
+                              : '개선이 필요합니다',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            height: 22 / 14,
+                            letterSpacing: -0.35,
+                            color: AppColorScheme.black500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            // 퍼센트
-            Text(
-              '$riskScore%',
-              style: const TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.w700,
-                height: 44 / 32,
-                letterSpacing: -0.8,
-                color: AppColorScheme.black100,
-              ),
-            ),
-            const SizedBox(height: 4),
-            // 메시지
-            Text(
-              riskLevel == RiskLevel.low ? '관리를 그대로 유지해주세요!' : '개선이 필요합니다',
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                height: 22 / 14,
-                letterSpacing: -0.35,
-                color: AppColorScheme.black500,
               ),
             ),
           ],
@@ -649,7 +649,7 @@ class _GaugeChartPainter extends CustomPainter {
   }
 }
 
-/// 순위 분포 차트
+/// 순위 분포 차트 (fl_chart 사용)
 class _RankDistributionChart extends StatelessWidget {
   const _RankDistributionChart({
     required this.myScore,
@@ -661,104 +661,171 @@ class _RankDistributionChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 정규 분포 유사한 히스토그램 데이터
+    // 정규 분포 유사한 히스토그램 데이터 (32개 막대)
     final heights = [
-      20,
-      30,
-      30,
-      32,
-      40,
-      60,
-      90,
-      100,
-      122,
-      120,
-      80,
-      73,
-      70,
-      70,
-      50,
-      28,
-      33,
-      32,
-      34,
-      30,
-      12,
-      12,
-      14,
-      10,
-      22,
-      25,
-      20,
-      30,
-      40,
-      55,
-      50,
-      10,
+      20.0,
+      30.0,
+      30.0,
+      32.0,
+      40.0,
+      60.0,
+      90.0,
+      100.0,
+      122.0,
+      120.0,
+      80.0,
+      73.0,
+      70.0,
+      70.0,
+      50.0,
+      28.0,
+      33.0,
+      32.0,
+      34.0,
+      30.0,
+      12.0,
+      12.0,
+      14.0,
+      10.0,
+      22.0,
+      25.0,
+      20.0,
+      30.0,
+      40.0,
+      55.0,
+      50.0,
+      10.0,
     ];
+
+    // 내 점수와 평균 점수에 해당하는 막대 인덱스 계산
+    final myScoreIndex = (myScore * (heights.length - 1) / 100).round();
+    final avgIndex = (groupAverage * (heights.length - 1) / 100).round();
+
+    // 라벨 박스 크기 상수
+    const double labelBoxWidth = 56.0;
+    const double labelBoxHeight = 26.0;
+    const double triangleHeight = 8.0;
+    const double labelTopOffset = 0.0;
 
     return Column(
       children: [
         SizedBox(
           height: 180,
-          child: Stack(
-            children: [
-              // 막대 그래프
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: heights.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final height = entry.value;
-                  final isMyScore =
-                      (index * 100 / heights.length).round() ==
-                      (myScore * heights.length / 100).round();
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final chartWidth = constraints.maxWidth;
+              // fl_chart의 spaceEvenly 정렬에서 각 막대 위치 계산
+              final barWidth = 8.0;
+              final totalBars = heights.length;
+              // spaceEvenly: 양쪽 끝에도 동일한 간격
+              final spacing =
+                  (chartWidth - (barWidth * totalBars)) / (totalBars + 1);
+              // 막대 중앙 위치 계산
+              final barCenterX =
+                  spacing +
+                  (myScoreIndex * (barWidth + spacing)) +
+                  (barWidth / 2);
+              // 라벨 왼쪽 위치 (라벨 중앙이 막대 중앙에 오도록)
+              final labelLeft = (barCenterX - (labelBoxWidth / 2)).clamp(
+                0.0,
+                chartWidth - labelBoxWidth,
+              );
 
-                  return Expanded(
-                    child: Container(
-                      height: height.toDouble(),
-                      margin: const EdgeInsets.symmetric(horizontal: 0.5),
-                      decoration: BoxDecoration(
-                        color: isMyScore
-                            ? AppColorScheme.primaryColor
-                            : AppColorScheme.grey500.withValues(
-                                alpha: 0.5 + (height / 244),
-                              ),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
+              return Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  // fl_chart BarChart
+                  BarChart(
+                    BarChartData(
+                      alignment: BarChartAlignment.spaceEvenly,
+                      maxY: 150,
+                      minY: 0,
+                      barTouchData: BarTouchData(enabled: false),
+                      titlesData: const FlTitlesData(show: false),
+                      borderData: FlBorderData(show: false),
+                      gridData: const FlGridData(show: false),
+                      barGroups: List.generate(heights.length, (index) {
+                        final height = heights[index];
+                        final isMyScore = index == myScoreIndex;
+                        final isAvgArea = _isInAverageArea(index, avgIndex);
+
+                        Color barColor;
+                        if (isMyScore) {
+                          // 내 점수: Primary Color
+                          barColor = AppColorScheme.primaryColor;
+                        } else if (isAvgArea) {
+                          // 평균 점수 주변: Black 그라데이션
+                          final distance = (index - avgIndex).abs();
+                          final opacity = _calculateBlackOpacity(distance);
+                          barColor = AppColorScheme.black100.withValues(
+                            alpha: opacity,
+                          );
+                        } else {
+                          // 기본: 회색
+                          barColor = const Color(0xFFD9D9D9);
+                        }
+
+                        return BarChartGroupData(
+                          x: index,
+                          barRods: [
+                            BarChartRodData(
+                              toY: height,
+                              color: barColor,
+                              width: barWidth,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ],
+                        );
+                      }),
                     ),
-                  );
-                }).toList(),
-              ),
-              // 내 점수 라벨
-              Positioned(
-                left:
-                    (myScore / 100 * (MediaQuery.of(context).size.width - 56)) -
-                    30,
-                top: 0,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
                   ),
-                  decoration: BoxDecoration(
-                    color: AppColorScheme.primaryColor.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Text(
-                    '내 점수',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      height: 18 / 14,
-                      letterSpacing: -0.28,
-                      color: AppColorScheme.primaryColor,
+                  // 내 점수 라벨 (말풍선 스타일)
+                  Positioned(
+                    left: labelLeft,
+                    top: labelTopOffset,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // 라벨 박스
+                        Container(
+                          width: labelBoxWidth,
+                          height: labelBoxHeight,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: AppColorScheme.primaryColor.withValues(
+                              alpha: 0.2,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Text(
+                            '내 점수',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              height: 18 / 14,
+                              letterSpacing: -0.28,
+                              color: AppColorScheme.primaryColor,
+                            ),
+                          ),
+                        ),
+                        // 말풍선 삼각형 (박스 바깥)
+                        CustomPaint(
+                          size: Size(12, triangleHeight),
+                          painter: _TrianglePainter(
+                            color: AppColorScheme.primaryColor.withValues(
+                              alpha: 0.2,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ),
-            ],
+                ],
+              );
+            },
           ),
         ),
+        const SizedBox(height: 4),
         // 점수 눈금
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -797,5 +864,53 @@ class _RankDistributionChart extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  /// 평균 점수 주변 영역인지 확인 (±3 범위)
+  bool _isInAverageArea(int index, int avgIndex) {
+    return (index - avgIndex).abs() <= 3;
+  }
+
+  /// Black 컬러의 투명도 계산 (거리에 따라)
+  double _calculateBlackOpacity(int distance) {
+    switch (distance) {
+      case 0:
+        return 1.0; // 평균 점수 정확히: 완전 검정
+      case 1:
+        return 0.75;
+      case 2:
+        return 0.5;
+      case 3:
+        return 0.25;
+      default:
+        return 0.0;
+    }
+  }
+}
+
+/// 삼각형 화살표 페인터 (말풍선 꼬리)
+class _TrianglePainter extends CustomPainter {
+  final Color color;
+
+  _TrianglePainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+
+    final path = Path()
+      ..moveTo(0, 0)
+      ..lineTo(size.width / 2, size.height)
+      ..lineTo(size.width, 0)
+      ..close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _TrianglePainter oldDelegate) {
+    return oldDelegate.color != color;
   }
 }

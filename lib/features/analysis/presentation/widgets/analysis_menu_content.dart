@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/presentation/widgets/app_flat_button.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../providers/analysis_notifier.dart';
 import 'analysis_common_widgets.dart';
@@ -67,7 +68,8 @@ class AnalysisMenuContent extends ConsumerWidget {
           _buildFeatureList(['실시간 위험도 점수 확인', '위험 요인 상세 분석', '맞춤형 건강 관리 조언']),
           const SizedBox(height: 12),
           // 버튼
-          AnalysisPrimaryButton(
+          AppFlatButton(
+            isExpanded: true,
             text: '위험도 측정 시작하기',
             onPressed: () async {
               // 위험도 측정 데이터 로드 후 화면 이동
@@ -129,7 +131,8 @@ class AnalysisMenuContent extends ConsumerWidget {
           ]),
           const SizedBox(height: 12),
           // 버튼
-          AnalysisPrimaryButton(
+          AppFlatButton(
+            isExpanded: true,
             text: '시뮬레이션 시작하기',
             onPressed: () async {
               // What-if 시뮬레이션 데이터 로드 후 화면 이동

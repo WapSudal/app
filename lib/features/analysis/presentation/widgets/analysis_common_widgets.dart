@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/color_scheme.dart';
 
 /// 분석 카드 위젯
+/// TODO: core 폴더에 공통 스타일로 분리 검토
 class AnalysisCard extends StatelessWidget {
   const AnalysisCard({super.key, required this.child, this.padding});
 
@@ -31,59 +32,12 @@ class AnalysisCardHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       height: 28,
       alignment: Alignment.centerLeft,
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          height: 26 / 18,
-          letterSpacing: -0.45,
-          color: AppColorScheme.black100,
-        ),
-      ),
-    );
-  }
-}
-
-/// 기본 버튼
-class AnalysisPrimaryButton extends StatelessWidget {
-  const AnalysisPrimaryButton({
-    super.key,
-    required this.text,
-    required this.onPressed,
-    this.height = 48,
-  });
-
-  final String text;
-  final VoidCallback onPressed;
-  final double height;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: height,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColorScheme.primaryColor,
-          foregroundColor: AppColorScheme.white100,
-          elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            height: 20 / 16,
-            letterSpacing: -0.32,
-          ),
-        ),
-      ),
+      child: Text(title, style: theme.textTheme.headlineSmall),
     );
   }
 }

@@ -83,7 +83,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
           displayName: displayName,
           canManagePatients: homeState.canManagePatients,
         );
+      default:
+        throw UnimplementedError('지원되지 않는 사용자 역할입니다.');
     }
   }
-
 }

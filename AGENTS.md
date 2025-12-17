@@ -526,6 +526,197 @@ lib/
 - Run `flutter pub get` to regenerate asset classes after adding new files
 - Generated files are located in `lib/gen/assets.gen.dart`
 
+### 16. TextStyle Usage (Design System)
+- **NEVER hardcode TextStyle properties** - always use theme-defined text styles
+- **Always use Theme.of(context).textTheme** to access predefined text styles
+- Text styles must match Figma design tokens (displayLarge, headlineSmall, bodyLarge, etc.)
+- This ensures design consistency and makes theme changes easier
+  ```dart
+  // ✅ Correct - Using theme text styles
+  Text(
+    'Title',
+    style: Theme.of(context).textTheme.headlineLarge,
+  )
+
+  Text(
+    'Subtitle',
+    style: Theme.of(context).textTheme.titleMedium,
+  )
+
+  Text(
+    'Body text',
+    style: Theme.of(context).textTheme.bodyLarge,
+  )
+
+  // ✅ Correct - Overriding specific properties only when necessary
+  Text(
+    'Custom color text',
+    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+      color: Colors.red,
+    ),
+  )
+
+  // ❌ Wrong - Hardcoding TextStyle
+  Text(
+    'Title',
+    style: TextStyle(
+      fontSize: 24,
+      fontWeight: FontWeight.bold,
+      color: Colors.black,
+    ),
+  )
+
+  // ❌ Wrong - Hardcoding even with const
+  const Text(
+    'Title',
+    style: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+    ),
+  )
+  ```
+
+#### Available Text Theme Styles
+- **Display**: `displayLarge`, `displayMedium`, `displaySmall`
+- **Headline**: `headlineLarge`, `headlineMedium`, `headlineSmall`
+- **Title**: `titleLarge`, `titleMedium`, `titleSmall`
+- **Body**: `bodyLarge`, `bodyMedium`, `bodySmall`
+- **Label**: `labelLarge`, `labelMedium`, `labelSmall`
+
+#### Theme Configuration
+- Text theme definitions should be located in `lib/core/theme/`
+- All text styles must be defined in theme configuration to match Figma design tokens
+- Update theme definitions when design tokens change, not individual widgets
+
+### 17. Common Widget Usage (UI Consistency)
+- **ALWAYS use common widgets** from `lib/core/presentation/widgets/` for UI components
+- **NEVER recreate basic UI components** (buttons, text fields, dropdowns, etc.) in feature code
+- Common widgets ensure design consistency, reduce code duplication, and centralize style updates
+- Only create feature-specific widgets when behavior is truly unique to that feature
+
+#### Available Common Widgets
+**Buttons:**
+- `AppFlatButton` - Primary filled button
+- `AppOutlinedButton` - Secondary outlined button
+
+**Form Fields:**
+- `AppLinedTextField` - Text field with underline style
+- `AppOutlinedTextField` - Text field with outline style
+- `AppOutlinedTextarea` - Multi-line text area with outline style
+- `AppLinedDropdown` - Dropdown with underline style
+- `AppOutlinedDropdown` - Dropdown with outline style
+- `AppCheckbox` - Checkbox component
+
+**Navigation:**
+- `AppBar` - Top app bar
+- `AppBottomNavBar` - Bottom navigation bar
+- `AppBottomSheet` - Bottom sheet component
+- `AppSegmentedTabBar` - Segmented tab navigation
+
+**Other:**
+- `AppIcon` - Icon wrapper with consistent styling
+
+#### Usage Examples
+  ```dart
+  // ✅ Correct - Using common widgets
+  AppFlatButton(
+    text: '시작하기',
+    onPressed: () {},
+    isExpanded: true,
+  )
+
+  AppOutlinedButton(
+    text: '취소',
+    onPressed: () {},
+  )
+
+  AppOutlinedTextField(
+    label: '이름',
+    controller: nameController,
+  )
+
+  AppCheckbox(
+    value: isChecked,
+    onChanged: (value) {},
+  )
+
+  // ❌ Wrong - Recreating button manually
+  ElevatedButton(
+    onPressed: () {},
+    style: ElevatedButton.styleFrom(
+      backgroundColor: AppColorScheme.primary,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+    ),
+    child: const Text('시작하기'),
+  )
+
+  // ❌ Wrong - Creating custom button widget for basic functionality
+  class MyCustomButton extends StatelessWidget {
+    // Don't recreate what AppFlatButton already provides!
+  }
+
+  // ✅ Acceptable - Feature-specific widget with unique behavior
+  class AnalysisRiskScoreCard extends StatelessWidget {
+    // This has analysis-specific logic and layout
+    // that doesn't belong in common widgets
+  }
+  ```
+
+#### When to Create New Common Widgets
+Create a new common widget when:
+1. The component will be reused across **multiple features** (3+ features)
+2. The component has standardized design in Figma design system
+3. The component needs centralized style/behavior updates
+
+Create a feature-specific widget when:
+1. The component is only used within a single feature
+2. The component has feature-specific business logic
+3. The component is a composition of common widgets with feature-specific layout
+
+#### Adding New Common Widgets
+When adding new common widgets:
+1. Place in `lib/core/presentation/widgets/`
+2. Follow existing naming convention (`app_*_*.dart`)
+3. Document available parameters and use cases
+4. Match Figma design tokens for styling
+5. Ensure widget is reusable and configurable
+
+### 18. Chart Display (fl_chart)
+- **ALWAYS use `fl_chart` package for displaying graphs and charts**
+- fl_chart provides Flutter-native chart implementations with high performance
+- Use fl_chart for line charts, bar charts, pie charts, and other data visualizations
+- Never create custom chart implementations from scratch when fl_chart provides the functionality
+  ```dart
+  // ✅ Correct - Using fl_chart for line chart
+  import 'package:fl_chart/fl_chart.dart';
+
+  LineChart(
+    LineChartData(
+      lineBarsData: [
+        LineChartBarData(
+          spots: dataPoints,
+          isCurved: true,
+          color: Colors.blue,
+        ),
+      ],
+    ),
+  )
+
+  // ❌ Wrong - Creating custom chart with CustomPainter
+  class CustomLineChart extends StatelessWidget {
+    // Don't recreate what fl_chart already provides!
+  }
+  ```
+
+#### Available Chart Types
+- **LineChart** - Line graphs for trends over time
+- **BarChart** - Bar graphs for comparisons
+- **PieChart** - Pie charts for proportional data
+- **ScatterChart** - Scatter plots for data point distributions
+- **RadarChart** - Radar charts for multi-dimensional data
+
 ## Environment Setup
 
 ### Required Files

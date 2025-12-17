@@ -123,3 +123,4 @@ app.*.symbols
 lib/gen/
 *.g.dart
 *.freezed.dart
+.claude/

@@ -1,24 +1,19 @@
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../features/all/presentation/views/all_view.dart';
-import '../../features/analysis/presentation/views/analysis_view.dart';
-import '../../features/analysis/presentation/views/risk_measurement_view.dart';
-import '../../features/analysis/presentation/views/what_if_simulation_view.dart';
 import '../../features/analysis/domain/entities/risk_assessment_entity.dart';
 import '../../features/analysis/domain/entities/what_if_scenario_entity.dart';
+import '../../features/analysis/presentation/views/risk_measurement_view.dart';
+import '../../features/analysis/presentation/views/what_if_simulation_view.dart';
 import '../../features/auth/presentation/providers/auth_notifier.dart';
-import '../../features/explore/presentation/views/explore_view.dart';
-import '../../features/home/presentation/views/home_view.dart';
-import '../../features/onboarding/presentation/views/onboarding_view.dart';
-import '../../features/health_record/presentation/views/health_record_view.dart';
 import '../../features/health_record/presentation/views/health_record_all_view.dart';
 import '../../features/health_record/presentation/views/health_record_input_view.dart';
+import '../../features/onboarding/presentation/views/onboarding_view.dart';
 import '../../features/role_select/presentation/views/role_select_view.dart';
 import '../../features/splash/presentation/splash_screen.dart';
 import '../../features/user/presentation/providers/registered_user_notifier.dart';
-import '../enums/user_role.dart';
 import '../presentation/widgets/bottom_nav_shell.dart';
+import 'role_routes.dart';
 
 part 'router_provider.g.dart';
 
@@ -98,72 +93,14 @@ GoRouter router(Ref ref) {
         builder: (context, state) => const RoleSelectView(),
       ),
 
-      // Conditional routing based on user role
-      if (userRole == UserRole.generalUser)
-        // General users get bottom navigation with 5 tabs
+      // Role-based navigation with bottom nav
+      // 역할별 탭 구성을 RoleRoutes에서 동적으로 로드
+      if (userRole != null)
         StatefulShellRoute.indexedStack(
           builder: (context, state, navigationShell) {
             return BottomNavShell(navigationShell: navigationShell);
           },
-          branches: [
-            // Tab 1: 홈
-            StatefulShellBranch(
-              routes: [
-                GoRoute(
-                  path: '/home',
-                  name: 'home',
-                  builder: (context, state) => const HomeView(),
-                ),
-              ],
-            ),
-            // Tab 2: 기록
-            StatefulShellBranch(
-              routes: [
-                GoRoute(
-                  path: '/record',
-                  name: 'record',
-                  builder: (context, state) => const HealthRecordView(),
-                ),
-              ],
-            ),
-            // Tab 3: 분석
-            StatefulShellBranch(
-              routes: [
-                GoRoute(
-                  path: '/analysis',
-                  name: 'analysis',
-                  builder: (context, state) => const AnalysisView(),
-                ),
-              ],
-            ),
-            // Tab 4: 탐색
-            StatefulShellBranch(
-              routes: [
-                GoRoute(
-                  path: '/explore',
-                  name: 'explore',
-                  builder: (context, state) => const ExploreView(),
-                ),
-              ],
-            ),
-            // Tab 5: 전체
-            StatefulShellBranch(
-              routes: [
-                GoRoute(
-                  path: '/all',
-                  name: 'all',
-                  builder: (context, state) => const AllView(),
-                ),
-              ],
-            ),
-          ],
-        )
-      else
-        // Doctor and Guardian get simple route without bottom nav
-        GoRoute(
-          path: '/home',
-          name: 'home',
-          builder: (context, state) => const HomeView(),
+          branches: RoleRoutes.getBranchesForRole(userRole),
         ),
 
       // Full-screen routes without bottom navigation

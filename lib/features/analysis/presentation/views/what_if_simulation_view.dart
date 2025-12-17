@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/presentation/widgets/app_bar.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../domain/entities/what_if_scenario_entity.dart';
 import '../widgets/analysis_common_widgets.dart';
@@ -37,27 +38,7 @@ class _WhatIfSimulationViewState extends State<WhatIfSimulationView>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F6FB),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF7F6FB),
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: AppColorScheme.black100,
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text(
-          'What-if 시뮬레이션',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: AppColorScheme.black100,
-          ),
-        ),
-        centerTitle: false,
-      ),
+      appBar: CustomAppBar(mode: AppBarMode.subpage, title: 'What-if 시뮬레이션'),
       body: Column(
         children: [
           // 탭 바
