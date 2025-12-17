@@ -3,6 +3,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/all/presentation/views/all_view.dart';
 import '../../features/analysis/presentation/views/analysis_view.dart';
+import '../../features/analysis/presentation/views/risk_measurement_view.dart';
+import '../../features/analysis/presentation/views/what_if_simulation_view.dart';
+import '../../features/analysis/domain/entities/risk_assessment_entity.dart';
+import '../../features/analysis/domain/entities/what_if_scenario_entity.dart';
 import '../../features/auth/presentation/providers/auth_notifier.dart';
 import '../../features/explore/presentation/views/explore_view.dart';
 import '../../features/home/presentation/views/home_view.dart';
@@ -172,6 +176,23 @@ GoRouter router(Ref ref) {
         path: '/record/all',
         name: 'recordAll',
         builder: (context, state) => const HealthRecordAllView(),
+      ),
+      // Analysis feature routes
+      GoRoute(
+        path: '/analysis/risk-measurement',
+        name: 'riskMeasurement',
+        builder: (context, state) {
+          final riskAssessment = state.extra as RiskAssessmentEntity;
+          return RiskMeasurementView(riskAssessment: riskAssessment);
+        },
+      ),
+      GoRoute(
+        path: '/analysis/what-if',
+        name: 'whatIfSimulation',
+        builder: (context, state) {
+          final simulation = state.extra as WhatIfSimulationEntity;
+          return WhatIfSimulationView(simulation: simulation);
+        },
       ),
     ],
   );

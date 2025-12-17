@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../../analysis/presentation/providers/analysis_notifier.dart';
 import '../../../home/presentation/providers/home_notifier.dart';
 import 'health_record_input_state.dart';
 import 'health_record_mutations.dart';
@@ -88,6 +89,7 @@ class HealthRecordInput extends _$HealthRecordInput {
 
       ref.invalidate(homeProvider);
       ref.invalidate(healthRecordProvider);
+      ref.invalidate(analysisProvider);
     });
   }
 }

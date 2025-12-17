@@ -4,5 +4,6 @@
     "explorer.fileNesting.patterns": {
         "*.dart": "${capture}.g.dart,${capture}.freezed.dart"
     },
-    "dart.flutterHotReloadOnSave": "all"
+    "dart.flutterHotReloadOnSave": "all",
+    "explorer.fileNesting.expand": false
 }
