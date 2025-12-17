@@ -67,27 +67,19 @@ class _NotificationBottomSheetContentState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // 필터 (고정)
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: NotificationFilter(
-            selectedFilter: _selectedFilter,
-            onFilterChanged: (filter) {
-              setState(() {
-                _selectedFilter = filter;
-              });
-            },
-          ),
+        NotificationFilter(
+          selectedFilter: _selectedFilter,
+          onFilterChanged: (filter) {
+            setState(() {
+              _selectedFilter = filter;
+            });
+          },
         ),
         const SizedBox(height: 16),
 
         // 알림 리스트 (스크롤 가능)
         Expanded(
           child: ListView.builder(
-            padding: EdgeInsets.only(
-              left: 20,
-              right: 20,
-              bottom: MediaQuery.of(context).padding.bottom + 20,
-            ),
             itemCount: _filteredNotifications.isEmpty
                 ? 1
                 : _filteredNotifications.length,

@@ -140,8 +140,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     AppBottomSheet.show(
       context: context,
       title: '알림',
-      maxHeightRatio: 0.8,
-      showDragHandle: true,
+      maxHeightRatio: 0.6,
       child: const NotificationBottomSheetContent(),
     );
   }
