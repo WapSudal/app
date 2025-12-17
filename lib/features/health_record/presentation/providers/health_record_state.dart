@@ -2,27 +2,28 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../health_record/domain/entities/health_record_entity.dart';
 
-part 'record_state.freezed.dart';
+part 'health_record_state.freezed.dart';
 
 /// 기록 탭 화면 상태
 @freezed
-abstract class RecordState with _$RecordState {
-  const factory RecordState({
+abstract class HealthRecordState with _$HealthRecordState {
+  const factory HealthRecordState({
     /// 건강 기록 목록
     @Default([]) List<HealthRecordEntity> healthRecords,
 
     /// 선택된 기간 필터 (7일, 30일, 전체)
-    @Default(RecordPeriodFilter.week) RecordPeriodFilter periodFilter,
-  }) = _RecordState;
+    @Default(HealthRecordPeriodFilter.week)
+    HealthRecordPeriodFilter periodFilter,
+  }) = _HealthRecordState;
 }
 
 /// 기록 기간 필터
-enum RecordPeriodFilter {
+enum HealthRecordPeriodFilter {
   week('7일', 7),
   month('30일', 30),
   all('전체', null);
 
-  const RecordPeriodFilter(this.label, this.days);
+  const HealthRecordPeriodFilter(this.label, this.days);
 
   final String label;
   final int? days;
@@ -45,7 +46,7 @@ enum HealthStatusLevel {
 
 // ==================== Extensions ====================
 
-extension RecordStateX on RecordState {
+extension HealthRecordStateX on HealthRecordState {
   /// 데이터 존재 여부
   bool get hasData => healthRecords.isNotEmpty;
 
@@ -175,7 +176,7 @@ extension RecordStateX on RecordState {
   }
 
   /// 최근 N개 기록
-  List<HealthRecordEntity> recentRecords(int count) {
+  List<HealthRecordEntity> recentHealthRecords(int count) {
     final sorted = List<HealthRecordEntity>.from(healthRecords)
       ..sort((a, b) => b.recordedAt.compareTo(a.recordedAt));
     return sorted.take(count).toList();

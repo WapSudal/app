@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/color_scheme.dart';
-import '../../../../../gen/assets.gen.dart';
+import '../../../../core/theme/color_scheme.dart';
+import '../../../../gen/assets.gen.dart';
 
 /// 빈 상태 카드 (데이터 없음)
 ///

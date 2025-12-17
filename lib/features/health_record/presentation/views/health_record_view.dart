@@ -3,31 +3,28 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/presentation/widgets/app_bar.dart';
 import '../../../../core/theme/color_scheme.dart';
-import '../providers/record_notifier.dart';
-import '../providers/record_state.dart';
-import 'widgets/record_detail_modal.dart';
-import 'widgets/record_empty_card.dart';
-import 'widgets/record_recent_list_card.dart';
-import 'widgets/record_stats_card.dart';
-import 'widgets/record_status_card.dart';
+import '../providers/health_record_notifier.dart';
+import '../providers/health_record_state.dart';
+import '../widgets/record_detail_modal.dart';
+import '../widgets/record_empty_card.dart';
+import '../widgets/record_recent_list_card.dart';
+import '../widgets/record_stats_card.dart';
+import '../widgets/record_status_card.dart';
 
 /// 기록 화면
 ///
 /// Figma: Record - 1, Record - 2
 /// 건강 기록 데이터 유무에 따라 빈 상태 또는 데이터 상태를 표시합니다.
-class RecordView extends ConsumerWidget {
-  const RecordView({super.key});
+class HealthRecordView extends ConsumerWidget {
+  const HealthRecordView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final recordAsync = ref.watch(recordProvider);
+    final recordAsync = ref.watch(healthRecordProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F6FB), // dashboard/bg
-      appBar: const CustomAppBar(
-        mode: AppBarMode.navigation,
-        title: '기록',
-      ),
+      appBar: const CustomAppBar(mode: AppBarMode.navigation, title: '기록'),
       body: recordAsync.when(
         data: (recordState) => _buildContent(context, ref, recordState),
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -45,7 +42,7 @@ class RecordView extends ConsumerWidget {
   Widget _buildContent(
     BuildContext context,
     WidgetRef ref,
-    RecordState recordState,
+    HealthRecordState recordState,
   ) {
     if (!recordState.hasData) {
       return _buildEmptyContent(context);
@@ -92,7 +89,7 @@ class RecordView extends ConsumerWidget {
   Widget _buildDataContent(
     BuildContext context,
     WidgetRef ref,
-    RecordState recordState,
+    HealthRecordState recordState,
   ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -102,10 +99,12 @@ class RecordView extends ConsumerWidget {
           RecordStatusCard(healthStatus: recordState.healthStatus),
           const SizedBox(height: 8),
           // 통계 카드
-          RecordStatsCard(
+          HealthRecordStatsCard(
             recordState: recordState,
             onPeriodChanged: (filter) {
-              ref.read(recordProvider.notifier).updatePeriodFilter(filter);
+              ref
+                  .read(healthRecordProvider.notifier)
+                  .updatePeriodFilter(filter);
             },
           ),
           const SizedBox(height: 8),
@@ -118,7 +117,9 @@ class RecordView extends ConsumerWidget {
                 context,
                 record: record,
                 onDelete: () {
-                  ref.read(recordProvider.notifier).deleteRecord(record.id);
+                  ref
+                      .read(healthRecordProvider.notifier)
+                      .deleteRecord(record.id);
                 },
               );
             },

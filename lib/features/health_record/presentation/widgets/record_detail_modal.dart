@@ -2,9 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../../../core/theme/color_scheme.dart';
-import '../../../../../gen/assets.gen.dart';
-import '../../../../health_record/domain/entities/health_record_entity.dart';
+import '../../../../core/theme/color_scheme.dart';
+import '../../../../gen/assets.gen.dart';
+import '../../domain/entities/health_record_entity.dart';
 
 /// 기록 상세 모달
 ///

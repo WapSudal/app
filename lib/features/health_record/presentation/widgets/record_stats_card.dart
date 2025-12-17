@@ -1,27 +1,27 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import '../../../../../core/presentation/widgets/app_segmented_tab_bar.dart';
-import '../../../../../core/theme/color_scheme.dart';
-import '../../../../health_record/domain/entities/health_record_entity.dart';
-import '../../providers/record_state.dart';
+import '../../../../core/presentation/widgets/app_segmented_tab_bar.dart';
+import '../../../../core/theme/color_scheme.dart';
+import '../../domain/entities/health_record_entity.dart';
+import '../providers/health_record_state.dart';
 
 /// 혈압/혈당 변화율 카드
 ///
 /// Figma: Record - 2 (혈압/혈당 변화율 카드)
 /// 7일/30일/전체 탭 + 통계 요약 + 그래프
-class RecordStatsCard extends StatelessWidget {
-  const RecordStatsCard({
+class HealthRecordStatsCard extends StatelessWidget {
+  const HealthRecordStatsCard({
     super.key,
     required this.recordState,
     required this.onPeriodChanged,
   });
 
-  final RecordState recordState;
-  final ValueChanged<RecordPeriodFilter> onPeriodChanged;
+  final HealthRecordState recordState;
+  final ValueChanged<HealthRecordPeriodFilter> onPeriodChanged;
 
   @override
   Widget build(BuildContext context) {
-    final periodIndex = RecordPeriodFilter.values.indexOf(
+    final periodIndex = HealthRecordPeriodFilter.values.indexOf(
       recordState.periodFilter,
     );
 
@@ -48,12 +48,12 @@ class RecordStatsCard extends StatelessWidget {
 
           // 기간 탭
           AppSegmentedTabBar(
-            items: RecordPeriodFilter.values
+            items: HealthRecordPeriodFilter.values
                 .map((f) => SegmentedTabItem(label: f.label, value: f))
                 .toList(),
             selectedIndex: periodIndex,
             onItemSelected: (index) {
-              onPeriodChanged(RecordPeriodFilter.values[index]);
+              onPeriodChanged(HealthRecordPeriodFilter.values[index]);
             },
           ),
           const SizedBox(height: 12),

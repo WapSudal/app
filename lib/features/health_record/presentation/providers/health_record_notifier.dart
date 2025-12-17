@@ -2,16 +2,16 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../health_record/domain/entities/health_record_entity.dart';
 import '../../../health_record/domain/providers/health_record_usecase_providers.dart';
-import 'record_state.dart';
+import 'health_record_state.dart';
 
-part 'record_notifier.g.dart';
+part 'health_record_notifier.g.dart';
 
 @riverpod
-class Record extends _$Record {
+class HealthRecord extends _$HealthRecord {
   @override
-  Future<RecordState> build() async {
+  Future<HealthRecordState> build() async {
     final records = await _fetchAllRecords();
-    return RecordState(healthRecords: records);
+    return HealthRecordState(healthRecords: records);
   }
 
   Future<List<HealthRecordEntity>> _fetchAllRecords() async {
@@ -20,7 +20,7 @@ class Record extends _$Record {
   }
 
   /// 기간 필터 변경
-  void updatePeriodFilter(RecordPeriodFilter filter) {
+  void updatePeriodFilter(HealthRecordPeriodFilter filter) {
     final currentState = state.value;
     if (currentState == null) return;
 
@@ -33,8 +33,11 @@ class Record extends _$Record {
     state = await AsyncValue.guard(() async {
       final records = await _fetchAllRecords();
       final currentFilter =
-          state.value?.periodFilter ?? RecordPeriodFilter.week;
-      return RecordState(healthRecords: records, periodFilter: currentFilter);
+          state.value?.periodFilter ?? HealthRecordPeriodFilter.week;
+      return HealthRecordState(
+        healthRecords: records,
+        periodFilter: currentFilter,
+      );
     });
   }
 

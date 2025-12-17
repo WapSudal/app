@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../../../gen/assets.gen.dart';
 import '../../../features/notification/presentation/widgets/notification_bottom_sheet_content.dart';
@@ -57,31 +58,30 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.showNotificationButton = true,
     this.onBackPressed,
     this.onNotificationPressed,
-  })  : assert(
-          title == null || customTitle == null,
-          'title과 customTitle은 동시에 사용할 수 없습니다.',
-        ),
-        assert(
-          title != null || customTitle != null,
-          'title 또는 customTitle 중 하나는 반드시 제공해야 합니다.',
-        );
+  }) : assert(
+         title == null || customTitle == null,
+         'title과 customTitle은 동시에 사용할 수 없습니다.',
+       ),
+       assert(
+         title != null || customTitle != null,
+         'title 또는 customTitle 중 하나는 반드시 제공해야 합니다.',
+       );
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    // 배경색 결정
-    final defaultBackgroundColor = mode == AppBarMode.navigation
-        ? const Color(0xFFF7F6FB)
-        : AppColorScheme.white100;
-    final effectiveBackgroundColor = backgroundColor ?? defaultBackgroundColor;
-
     return AppBar(
-      backgroundColor: effectiveBackgroundColor,
+      backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       scrolledUnderElevation: 0,
       centerTitle: false,
+      systemOverlayStyle: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      ),
       leading: _buildLeading(context),
       title: _buildTitle(theme),
       titleSpacing: mode == AppBarMode.navigation ? null : 0,
@@ -107,10 +107,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     if (customTitle != null) {
       return customTitle!;
     }
-    return Text(
-      title!,
-      style: theme.textTheme.headlineMedium,
-    );
+    return Text(title!, style: theme.textTheme.headlineMedium);
   }
 
   List<Widget>? _buildActions(BuildContext context) {

@@ -3,28 +3,25 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/presentation/widgets/app_bar.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../health_record/domain/entities/health_record_entity.dart';
-import '../providers/record_notifier.dart';
-import '../providers/record_state.dart';
-import 'widgets/record_detail_modal.dart';
-import 'widgets/record_item_widget.dart';
+import '../providers/health_record_notifier.dart';
+import '../providers/health_record_state.dart';
+import '../widgets/record_detail_modal.dart';
+import '../widgets/record_item_widget.dart';
 
 /// 전체 기록 화면
 ///
 /// Figma: Record - 7, Record - 8
 /// 월별로 그룹화된 전체 기록을 표시합니다.
-class RecordAllView extends ConsumerWidget {
-  const RecordAllView({super.key});
+class HealthRecordAllView extends ConsumerWidget {
+  const HealthRecordAllView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final recordAsync = ref.watch(recordProvider);
+    final recordAsync = ref.watch(healthRecordProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F6FB), // dashboard/bg
-      appBar: const CustomAppBar(
-        mode: AppBarMode.subpage,
-        title: '전체 기록',
-      ),
+      appBar: const CustomAppBar(mode: AppBarMode.subpage, title: '전체 기록'),
       body: recordAsync.when(
         data: (recordState) {
           final groupedRecords = recordState.recordsByMonth;
@@ -159,7 +156,7 @@ class RecordAllView extends ConsumerWidget {
                   record: sortedRecords[i],
                   onDelete: () {
                     ref
-                        .read(recordProvider.notifier)
+                        .read(healthRecordProvider.notifier)
                         .deleteRecord(sortedRecords[i].id);
                   },
                 );

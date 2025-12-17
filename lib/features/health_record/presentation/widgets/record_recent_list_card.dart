@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/color_scheme.dart';
-import '../../../../../gen/assets.gen.dart';
-import '../../../../health_record/domain/entities/health_record_entity.dart';
+import '../../../../core/theme/color_scheme.dart';
+import '../../../../gen/assets.gen.dart';
+import '../../domain/entities/health_record_entity.dart';
 import 'record_item_widget.dart';
 
 /// 최근 작성 내역 카드

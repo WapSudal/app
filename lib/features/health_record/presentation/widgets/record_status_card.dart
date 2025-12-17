@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/color_scheme.dart';
-import '../../providers/record_state.dart';
+import '../../../../core/theme/color_scheme.dart';
+import '../providers/health_record_state.dart';
 
 /// 상태 카드 위젯
 ///
