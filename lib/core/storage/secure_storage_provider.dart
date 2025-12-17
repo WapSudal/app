@@ -14,7 +14,7 @@ abstract class SecureStorageKeys {
 @Riverpod(keepAlive: true)
 FlutterSecureStorage secureStorage(Ref ref) {
   return const FlutterSecureStorage(
-    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+    aOptions: AndroidOptions(),
     iOptions: IOSOptions(
       accessibility: KeychainAccessibility.first_unlock_this_device,
     ),
