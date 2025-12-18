@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../theme/color_scheme.dart';
 import 'app_bottom_nav_bar.dart';
 
 /// Shell widget that wraps tab content with bottom navigation
@@ -13,13 +15,22 @@ class BottomNavShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: navigationShell,
-      bottomNavigationBar: Material(
-        color: Colors.transparent,
-        child: AppBottomNavBar(
-          currentIndex: navigationShell.currentIndex,
-          onTabChanged: _onTabChanged,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+        systemNavigationBarColor: AppColorScheme.white100, // White background
+        systemNavigationBarIconBrightness: Brightness.dark, // Dark icons
+      ),
+      child: Scaffold(
+        body: navigationShell,
+        bottomNavigationBar: Material(
+          color: Colors.transparent,
+          child: AppBottomNavBar(
+            currentIndex: navigationShell.currentIndex,
+            onTabChanged: _onTabChanged,
+          ),
         ),
       ),
     );

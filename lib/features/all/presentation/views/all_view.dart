@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/presentation/widgets/app_bar.dart';
 import '../../../../core/presentation/widgets/app_icon.dart';
@@ -118,13 +119,13 @@ class AllView extends StatelessWidget {
   /// 전체 메뉴 카드
   Widget _buildMenuCard(BuildContext context) {
     final menuItems = [
-      _MenuItem(emoji: '🩸', title: '혈압/혈당 및 기록'),
-      _MenuItem(emoji: '✏️', title: '데이터 입력'),
-      _MenuItem(emoji: '📉', title: '위험도 분석'),
+      _MenuItem(emoji: '🩸', title: '혈압/혈당 및 기록', route: '/record'),
+      _MenuItem(emoji: '✏️', title: '데이터 입력', route: '/record/input'),
+      _MenuItem(emoji: '📉', title: '위험도 분석', route: '/analysis'),
       _MenuItem(emoji: '⚡', title: 'What-if 시뮬레이션'),
-      _MenuItem(emoji: '🎬', title: '탐색'),
+      _MenuItem(emoji: '🎬', title: '탐색', route: '/explore'),
       _MenuItem(emoji: '🗂️', title: '보고서 관리'),
-      _MenuItem(emoji: '⚙️', title: '계정 관리'),
+      _MenuItem(emoji: '⚙️', title: '계정 관리', route: '/account-management'),
     ];
 
     return Container(
@@ -158,7 +159,9 @@ class AllView extends StatelessWidget {
   Widget _buildMenuElement(BuildContext context, _MenuItem item) {
     return InkWell(
       onTap: () {
-        // TODO: 라우팅 연동
+        if (item.route != null) {
+          context.push(item.route!);
+        }
       },
       borderRadius: BorderRadius.circular(8),
       child: Padding(
@@ -333,6 +336,7 @@ class AllView extends StatelessWidget {
 class _MenuItem {
   final String emoji;
   final String title;
+  final String? route;
 
-  const _MenuItem({required this.emoji, required this.title});
+  const _MenuItem({required this.emoji, required this.title, this.route});
 }

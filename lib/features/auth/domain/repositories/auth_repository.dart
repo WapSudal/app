@@ -27,4 +27,14 @@ abstract class AuthRepository {
   ///
   /// 로그인/로그아웃 시 사용자 정보 또는 null emit
   Stream<AuthUserEntity?> authStateChanges();
+
+  /// 계정 삭제
+  ///
+  /// Firebase Auth 계정 삭제 (requires-recent-login 예외 발생 가능)
+  Future<void> deleteAccount();
+
+  /// 재인증 후 계정 삭제
+  ///
+  /// Google 재로그인 후 계정 삭제 수행
+  Future<void> reauthenticateAndDelete();
 }

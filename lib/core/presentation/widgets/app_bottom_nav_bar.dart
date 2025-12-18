@@ -26,8 +26,10 @@ class AppBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get safe area bottom padding for iOS devices
+    final bottomPadding = kIsWeb ? 0.0 : MediaQuery.of(context).viewPadding.bottom;
+
     return Container(
-      height: 90,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: AppColorScheme.white100, // #FFFFFF
@@ -42,44 +44,29 @@ class AppBottomNavBar extends StatelessWidget {
           topRight: Radius.circular(24),
         ),
       ),
-      child: kIsWeb
-          ? Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 28),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: NavTab.values.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final tab = entry.value;
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: 28,
+          right: 28,
+          top: 4,
+          bottom: bottomPadding > 0 ? bottomPadding : 8,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: NavTab.values.asMap().entries.map((entry) {
+            final index = entry.key;
+            final tab = entry.value;
 
-                  return BottomNavItem(
-                    icon: tab.icon,
-                    label: tab.label,
-                    isSelected: currentIndex == index,
-                    onTap: () => onTabChanged(index),
-                  );
-                }).toList(),
-              ),
-            )
-          : SafeArea(
-              top: false,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 28),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: NavTab.values.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final tab = entry.value;
-
-                    return BottomNavItem(
-                      icon: tab.icon,
-                      label: tab.label,
-                      isSelected: currentIndex == index,
-                      onTap: () => onTabChanged(index),
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
+            return BottomNavItem(
+              icon: tab.icon,
+              label: tab.label,
+              isSelected: currentIndex == index,
+              onTap: () => onTabChanged(index),
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
 }

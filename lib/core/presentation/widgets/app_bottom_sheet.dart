@@ -71,8 +71,8 @@ class AppBottomSheet extends StatelessWidget {
         final animationValue = animation.value;
         return BackdropFilter(
           filter: ImageFilter.blur(
-            sigmaX: 3 * animationValue,
-            sigmaY: 3 * animationValue,
+            sigmaX: 1.25 * animationValue,
+            sigmaY: 1.25 * animationValue,
           ),
           child: child!,
         );

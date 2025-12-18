@@ -33,4 +33,14 @@ class AuthRepositoryImpl implements AuthRepository {
   Stream<AuthUserEntity?> authStateChanges() {
     return _remoteDataSource.authStateChanges();
   }
+
+  @override
+  Future<void> deleteAccount() {
+    return _remoteDataSource.deleteAccount();
+  }
+
+  @override
+  Future<void> reauthenticateAndDelete() {
+    return _remoteDataSource.reauthenticateAndDelete();
+  }
 }

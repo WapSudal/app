@@ -5,6 +5,7 @@ import '../../features/analysis/domain/entities/risk_assessment_entity.dart';
 import '../../features/analysis/domain/entities/what_if_scenario_entity.dart';
 import '../../features/analysis/presentation/views/risk_measurement_view.dart';
 import '../../features/analysis/presentation/views/what_if_simulation_view.dart';
+import '../../features/account/presentation/views/account_manage_view.dart';
 import '../../features/auth/presentation/providers/auth_notifier.dart';
 import '../../features/health_record/presentation/views/health_record_all_view.dart';
 import '../../features/health_record/presentation/views/health_record_input_view.dart';
@@ -130,6 +131,12 @@ GoRouter router(Ref ref) {
           final simulation = state.extra as WhatIfSimulationEntity;
           return WhatIfSimulationView(simulation: simulation);
         },
+      ),
+      // Account management route
+      GoRoute(
+        path: '/account-management',
+        name: 'accountManagement',
+        builder: (context, state) => const AccountManageView(),
       ),
     ],
   );
