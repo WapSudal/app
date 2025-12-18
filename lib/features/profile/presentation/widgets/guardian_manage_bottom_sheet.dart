@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/presentation/widgets/app_bottom_sheet.dart';
 import '../../../../core/presentation/widgets/app_segmented_tab_bar.dart';
+import '../../../../core/presentation/widgets/no_data_paint.dart';
 import 'account_request_tile.dart';
-import 'empty_state_card.dart';
 import 'linked_account_info_tile.dart';
 
 /// 관리 타입 (보호자/주치의)
@@ -130,7 +130,7 @@ class _GuardianManageBottomSheetState extends State<GuardianManageBottomSheet> {
   /// "내 보호자/주치의" 탭 콘텐츠
   Widget _buildMyLinkedList() {
     if (_linkedAccounts.isEmpty) {
-      return EmptyStateCard(mainText: _emptyMainText, subText: _emptySubText);
+      return NoDataPaint(title: _emptyMainText, subtitle: _emptySubText);
     }
 
     return SingleChildScrollView(
@@ -155,9 +155,9 @@ class _GuardianManageBottomSheetState extends State<GuardianManageBottomSheet> {
   /// "수락 요청" 탭 콘텐츠
   Widget _buildRequestList() {
     if (_accountRequests.isEmpty) {
-      return EmptyStateCard(
-        mainText: _emptyRequestMainText,
-        subText: _emptyRequestSubText,
+      return NoDataPaint(
+        title: _emptyRequestMainText,
+        subtitle: _emptyRequestSubText,
       );
     }
 
