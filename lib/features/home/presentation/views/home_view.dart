@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/enums/user_role.dart';
 import '../../../../core/presentation/helpers/snackbar_helper.dart';
 import '../../../../core/presentation/widgets/app_bar.dart';
+import '../../../../core/presentation/widgets/app_loading_indicator.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../auth/presentation/providers/auth_mutations.dart';
 import '../../../user/presentation/providers/registered_user_notifier.dart';
@@ -58,7 +59,12 @@ class _HomeViewState extends ConsumerState<HomeView> {
       body: SafeArea(
         bottom: false,
         child: isLoading
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [AppLoadingIndicator(), Text('불러오는 중')],
+                ),
+              )
             : _buildContent(homeState, user?.displayName),
       ),
     );

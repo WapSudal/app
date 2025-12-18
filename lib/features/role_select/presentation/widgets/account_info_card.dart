@@ -69,29 +69,22 @@ class AccountInfoCard extends StatelessWidget {
             ),
           ),
           // 계정 전환 버튼
-          if (isLoading)
-            const SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            )
-          else
-            TextButton(
-              onPressed: onSwitchAccount,
-              style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                minimumSize: const Size(66, 28),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              child: Text(
-                '계정 전환',
-                style: textTheme.labelSmall?.copyWith(
-                  color: onSwitchAccount != null
-                      ? AppColorScheme.black100
-                      : AppColorScheme.grey400,
-                ),
+          TextButton(
+            onPressed: onSwitchAccount,
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              minimumSize: const Size(66, 28),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Text(
+              '계정 전환',
+              style: textTheme.labelSmall?.copyWith(
+                color: onSwitchAccount != null
+                    ? AppColorScheme.black100
+                    : AppColorScheme.grey400,
               ),
             ),
+          ),
         ],
       ),
     );

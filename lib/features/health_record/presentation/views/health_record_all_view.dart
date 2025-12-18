@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/presentation/widgets/app_bar.dart';
 import '../../../../core/presentation/widgets/app_bottom_sheet.dart';
+import '../../../../core/presentation/widgets/app_loading_indicator.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../health_record/domain/entities/health_record_entity.dart';
 import '../providers/health_record_notifier.dart';
@@ -28,7 +29,12 @@ class HealthRecordAllView extends ConsumerWidget {
           final groupedRecords = recordState.recordsByMonth;
           return _buildContent(context, ref, groupedRecords);
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [AppLoadingIndicator(), Text('불러오는 중')],
+          ),
+        ),
         error: (error, stack) => Center(
           child: Text(
             '데이터를 불러오는 중 오류가 발생했습니다.',

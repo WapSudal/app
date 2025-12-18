@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/presentation/widgets/app_bar.dart';
 import '../../../../core/presentation/widgets/app_flat_button.dart';
+import '../../../../core/presentation/widgets/app_loading_indicator.dart';
 import '../../../../core/presentation/widgets/no_data_card.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../providers/patients_notifier.dart';
@@ -28,7 +29,12 @@ class PatientsView extends ConsumerWidget {
       appBar: const CustomAppBar(mode: AppBarMode.navigation, title: '환자 관리'),
       body: patientsState.when(
         data: (state) => _buildContent(context, ref, state),
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [AppLoadingIndicator(), Text('불러오는 중')],
+          ),
+        ),
         error: (error, stack) => Center(
           child: Text(
             '데이터를 불러오는 중 오류가 발생했습니다.\n$error',

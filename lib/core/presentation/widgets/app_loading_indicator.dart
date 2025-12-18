@@ -9,7 +9,7 @@ class AppLoadingIndicator extends StatefulWidget {
   const AppLoadingIndicator({
     super.key,
     this.size = 64,
-    this.color = AppColorScheme.white100,
+    this.color = AppColorScheme.black200,
   });
 
   /// 전체 인디케이터 크기 (정사각형)
