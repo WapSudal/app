@@ -8,6 +8,7 @@ import '../../../../core/theme/color_scheme.dart';
 import '../providers/patients_notifier.dart';
 import '../providers/patients_state.dart';
 import '../widgets/patient_list_item.dart';
+import '../widgets/patient_manage_bottom_sheet.dart';
 
 /// 환자 목록 화면 (보호자/주치의 전용)
 ///
@@ -44,70 +45,41 @@ class PatientsView extends ConsumerWidget {
     WidgetRef ref,
     PatientsState state,
   ) {
-    if (!state.hasPatients) {
-      return _buildEmptyContent(context);
-    }
-    return _buildListContent(context, ref, state);
-  }
-
-  /// 환자 없음 상태
-  Widget _buildEmptyContent(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Column(
         children: [
           // 빈 상태 카드 (Expanded로 남은 공간 채우기)
-          const Expanded(
-            child: NoDataCard(title: '아직 환자가 없어요', subtitle: '환자를 연결하여 시작해주세요'),
-          ),
+          !state.hasPatients
+              ? Expanded(
+                  child: ListView.separated(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    itemCount: state.patients.length,
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 8),
+                    itemBuilder: (context, index) {
+                      final patient = state.patients[index];
+                      return PatientListItem(
+                        patient: patient,
+                        onTap: () {
+                          // TODO: 환자 상세 화면으로 라우팅
+                        },
+                      );
+                    },
+                  ),
+                )
+              : const Expanded(
+                  child: NoDataCard(
+                    title: '아직 환자가 없어요',
+                    subtitle: '환자를 연결하여 시작해주세요',
+                  ),
+                ),
           const SizedBox(height: 8),
           // 새로운 환자 연결하기 버튼
           AppFlatButton(
             text: '새로운 환자 연결하기',
             onPressed: () {
-              // TODO: 환자 연결 화면으로 라우팅
-            },
-            isExpanded: true,
-          ),
-          const SizedBox(height: 12),
-        ],
-      ),
-    );
-  }
-
-  /// 환자 목록 상태
-  Widget _buildListContent(
-    BuildContext context,
-    WidgetRef ref,
-    PatientsState state,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Column(
-        children: [
-          // 환자 리스트
-          Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.only(bottom: 12),
-              itemCount: state.patients.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 8),
-              itemBuilder: (context, index) {
-                final patient = state.patients[index];
-                return PatientListItem(
-                  patient: patient,
-                  onTap: () {
-                    // TODO: 환자 상세 화면으로 라우팅
-                  },
-                );
-              },
-            ),
-          ),
-          const SizedBox(height: 8),
-          // 새로운 환자 연결하기 버튼
-          AppFlatButton(
-            text: '새로운 환자 연결하기',
-            onPressed: () {
-              // TODO: 환자 연결 화면으로 라우팅
+              PatientManageBottomSheet.show(context: context);
             },
             isExpanded: true,
           ),
