@@ -1,6 +1,6 @@
 import 'package:go_router/go_router.dart';
 
-import '../../features/all/presentation/views/all_view.dart';
+import '../../features/profile/presentation/views/profile_view.dart';
 import '../../features/analysis/presentation/views/analysis_view.dart';
 import '../../features/explore/presentation/views/explore_view.dart';
 import '../../features/health_record/presentation/views/health_record_view.dart';
@@ -33,7 +33,7 @@ class RoleRoutes {
   /// - 기록: 건강 기록 입력 및 관리
   /// - 분석: 건강 데이터 분석 및 통계
   /// - 탐색: 건강 정보 콘텐츠 탐색
-  /// - 전체: 모든 기능 접근
+  /// - 프로필: 내 정보 및 전체 메뉴
   static final List<StatefulShellBranch> _generalUserBranches = [
     // Tab 1: 홈
     StatefulShellBranch(
@@ -75,13 +75,13 @@ class RoleRoutes {
         ),
       ],
     ),
-    // Tab 5: 전체
+    // Tab 5: 프로필
     StatefulShellBranch(
       routes: [
         GoRoute(
-          path: '/all',
-          name: 'all',
-          builder: (context, state) => const AllView(),
+          path: '/profile',
+          name: 'profile',
+          builder: (context, state) => const ProfileView(),
         ),
       ],
     ),

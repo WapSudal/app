@@ -7,9 +7,9 @@ import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
 import '../widgets/guardian_manage_bottom_sheet.dart';
 
-/// 전체 화면 - 내 정보 및 전체 메뉴
-class AllView extends StatelessWidget {
-  const AllView({super.key});
+/// 프로필 화면 - 내 정보 및 전체 메뉴
+class ProfileView extends StatelessWidget {
+  const ProfileView({super.key});
 
   @override
   Widget build(BuildContext context) {

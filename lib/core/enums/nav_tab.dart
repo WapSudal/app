@@ -8,7 +8,7 @@ enum NavTab {
   record,
   analysis,
   explore,
-  all,
+  profile,
 }
 
 extension NavTabExtension on NavTab {
@@ -23,8 +23,8 @@ extension NavTabExtension on NavTab {
         return '분석';
       case NavTab.explore:
         return '탐색';
-      case NavTab.all:
-        return '전체';
+      case NavTab.profile:
+        return '프로필';
     }
   }
 
@@ -39,8 +39,8 @@ extension NavTabExtension on NavTab {
         return '/analysis';
       case NavTab.explore:
         return '/explore';
-      case NavTab.all:
-        return '/all';
+      case NavTab.profile:
+        return '/profile';
     }
   }
 
@@ -55,7 +55,7 @@ extension NavTabExtension on NavTab {
         return Assets.icons.data;
       case NavTab.explore:
         return Assets.icons.compass;
-      case NavTab.all:
+      case NavTab.profile:
         return Assets.icons.more;
     }
   }
