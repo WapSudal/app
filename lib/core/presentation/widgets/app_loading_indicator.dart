@@ -46,12 +46,40 @@ class _AppLoadingIndicatorState extends State<AppLoadingIndicator>
   /// [index]: 사각형 인덱스 (0: 좌상단, 1: 우상단, 2: 우하단, 3: 좌하단)
   /// [value]: 애니메이션 값 (0.0 ~ 1.0)
   double _getOpacity(int index, double value) {
-    // 8 프레임으로 나누어 각 사각형이 2프레임씩 활성화
-    final frame = (value * 8).floor();
-    final activeIndex = (frame / 2).floor() % 4;
+    const minOpacity = 0.15;
+    const maxOpacity = 1.0;
 
-    // 활성 상태: opacity 1.0, 비활성 상태: opacity 0.2
-    return activeIndex == index ? 1.0 : 0.2;
+    // 각 사각형의 활성화 중심 시점 (0, 0.25, 0.5, 0.75)
+    final centerPoint = index * 0.25;
+
+    // 현재 애니메이션 값과의 거리 계산
+    double distance = (value - centerPoint).abs();
+
+    // 순환 거리 계산 (0.5를 넘으면 반대편이 더 가까움)
+    if (distance > 0.5) {
+      distance = 1.0 - distance;
+    }
+
+    // 거리 0.0 ~ 0.25 범위를 0.0 ~ 1.0으로 정규화
+    final normalizedDistance = (distance / 0.25).clamp(0.0, 1.0);
+
+    // Ease-in-out curve를 적용하여 부드러운 전환
+    final easedDistance = _easeInOutCubic(normalizedDistance);
+
+    // 거리가 가까울수록 밝게 (1.0 - easedDistance)
+    final opacity = minOpacity + (maxOpacity - minOpacity) * (1.0 - easedDistance);
+
+    return opacity.clamp(minOpacity, maxOpacity);
+  }
+
+  /// Ease-in-out cubic 함수
+  double _easeInOutCubic(double t) {
+    if (t < 0.5) {
+      return 4 * t * t * t;
+    } else {
+      final f = 2 * t - 2;
+      return 1 + f * f * f / 2;
+    }
   }
 
   @override

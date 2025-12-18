@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/presentation/helpers/snackbar_helper.dart';
 import '../../../../core/presentation/widgets/app_icon.dart';
+import '../../../../core/presentation/widgets/app_loading_overlay.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../auth/data/providers/auth_data_providers.dart';
@@ -58,8 +59,8 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
       imagePath: 'assets/images/mock-3.png',
     ),
     OnboardingPageData(
-      title: '총알보다 빠른 실시간 알림',
-      subtitle: '위험도 급상승 시 즉시 알림 전송\n가족/주치의와 데이터를 공유해 함께 모니터링',
+      title: '나에게 딱 맞는 콘텐츠',
+      subtitle: '담당자가 추천해주는 건강 콘텐츠를 손쉽게 시청',
       imagePath: 'assets/images/mock-4.png',
     ),
   ];
@@ -98,6 +99,12 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
 
     // Mutation 상태 변화 감지 및 처리
     ref.listen(signInWithGoogleMutation, (previous, next) {
+      if (next is MutationPending) {
+        LoadingOverlay.show(context, message: 'Google 로그인 중');
+      } else {
+        LoadingOverlay.hide();
+      }
+
       switch (next) {
         case MutationSuccess():
           if (mounted) {
@@ -319,34 +326,23 @@ class _GoogleLoginButtonState extends State<_GoogleLoginButton>
             borderRadius: BorderRadius.circular(9999),
           ),
           alignment: Alignment.center,
-          child: widget.isLoading
-              ? const SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      AppColorScheme.white100,
-                    ),
-                  ),
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    AppIcon(
-                      Assets.icons.google,
-                      size: 22,
-                      color: AppColorScheme.white100,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Google로 시작하기',
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: AppColorScheme.white100,
-                      ),
-                    ),
-                  ],
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AppIcon(
+                Assets.icons.google,
+                size: 22,
+                color: AppColorScheme.white100,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                'Google로 시작하기',
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: AppColorScheme.white100,
                 ),
+              ),
+            ],
+          ),
         ),
       ),
     );
