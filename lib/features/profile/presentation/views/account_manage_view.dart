@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/presentation/widgets/app_bar.dart';
 import '../../../../core/presentation/widgets/app_confirm_dialog.dart';
 import '../../../../core/presentation/widgets/app_flat_button.dart';
 import '../../../../core/presentation/widgets/app_icon.dart';
+import '../../../../core/storage/secure_storage_provider.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../auth/data/providers/auth_data_providers.dart';
 import '../../../auth/presentation/providers/auth_notifier.dart';
 import '../../../auth/presentation/providers/auth_mutations.dart';
+import '../../../user/presentation/providers/registered_user_notifier.dart';
 
 /// 계정 관리 화면
 ///
@@ -61,6 +64,19 @@ class AccountManageView extends ConsumerWidget {
             iconColor: AppColorScheme.danger,
             title: '계정 삭제',
             onTap: () => _showDeleteAccountDialog(context, ref),
+          ),
+          // 구분선
+          Container(
+            height: 1,
+            color: AppColorScheme.black100.withValues(alpha: 0.1),
+          ),
+          // 로컬 데이터 초기화 버튼
+          _buildManageButton(
+            context,
+            icon: Assets.icons.backspace,
+            iconColor: AppColorScheme.danger,
+            title: '로컬 데이터 초기화',
+            onTap: () => _showResetLocalDataDialog(context, ref),
           ),
         ],
       ),
@@ -279,6 +295,79 @@ class AccountManageView extends ConsumerWidget {
                     }
                   });
             },
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 로컬 데이터 초기화 확인 다이얼로그
+  void _showResetLocalDataDialog(BuildContext context, WidgetRef ref) {
+    AppConfirmDialog.show(
+      context: context,
+      title: '로컬 데이터를 초기화할까요?',
+      description: '모든 로컬 데이터가 삭제되고 앱이 재시작됩니다.',
+      buttons: [
+        // 취소 버튼
+        Expanded(
+          child: AppFlatButton(
+            text: '취소',
+            onPressed: () => Navigator.pop(context),
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.all(AppColorScheme.white300),
+              foregroundColor: WidgetStateProperty.all(AppColorScheme.black100),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        // 초기화 버튼
+        Expanded(
+          child: AppFlatButton(
+            text: '초기화',
+            onPressed: () async {
+              Navigator.pop(context); // 확인 다이얼로그 닫기
+
+              try {
+                // SharedPreferences 삭제
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.clear();
+
+                // Secure Storage 삭제
+                final secureStorage = ref.read(secureStorageHelperProvider);
+                await secureStorage.clearAll();
+
+                // 인증 상태 초기화
+                ref.read(authProvider.notifier).clearUser();
+
+                // 가입된 사용자 상태 초기화
+                await ref.read(registeredUserProvider.notifier).clear();
+
+                if (context.mounted) {
+                  // 온보딩 화면으로 이동
+                  context.go('/onboarding');
+
+                  // 성공 메시지 표시
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('로컬 데이터가 초기화되었습니다'),
+                      backgroundColor: AppColorScheme.primaryColor,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('초기화 실패: ${e.toString()}'),
+                      backgroundColor: AppColorScheme.danger,
+                    ),
+                  );
+                }
+              }
+            },
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.all(AppColorScheme.danger),
+            ),
           ),
         ),
       ],
