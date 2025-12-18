@@ -1,8 +1,8 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../data/providers/auth_data_providers.dart';
-import '../../domain/entities/auth_user_entity.dart';
-import '../state/auth_state.dart';
+import '../../features/auth/data/providers/auth_data_providers.dart';
+import '../domain/entity/auth_user_entity.dart';
+import 'auth_state.dart';
 
 part 'auth_notifier.g.dart';
 
@@ -49,10 +49,4 @@ class Auth extends _$Auth {
 @Riverpod(keepAlive: true)
 bool isAuthenticated(Ref ref) {
   return ref.watch(authProvider).isAuthenticated;
-}
-
-/// 현재 사용자 Provider (편의용)
-@Riverpod(keepAlive: true)
-AuthUserEntity? currentUser(Ref ref) {
-  return ref.watch(authProvider).user;
 }

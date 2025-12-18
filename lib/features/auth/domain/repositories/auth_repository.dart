@@ -1,4 +1,4 @@
-import '../entities/auth_user_entity.dart';
+import '../../../../core/domain/entity/auth_user_entity.dart';
 
 /// 인증 Repository 인터페이스
 abstract class AuthRepository {

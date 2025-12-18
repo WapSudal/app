@@ -1,29 +1,29 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../../../core/enums/user_role.dart';
-import '../../domain/entities/user_entity.dart';
+import '../enums/user_role.dart';
+import '../domain/entity/user_entity.dart';
 
-part 'current_user_state.freezed.dart';
+part 'registered_user_state.freezed.dart';
 
-/// 현재 사용자 상태
+/// 등록된 사용자 상태
 ///
-/// 앱 전역에서 현재 로그인 + 가입 완료된 사용자 정보를 관리
+/// 앱 전역에서 서버에 가입 완료된 사용자 정보를 관리
 ///
 /// Note: 가입/등록 작업의 isLoading과 errorMessage는 confirmRoleMutation으로 분리됨
 @freezed
-abstract class CurrentUserState with _$CurrentUserState {
-  const factory CurrentUserState({
-    /// 현재 가입 완료된 사용자 정보 (null이면 미가입)
+abstract class RegisteredUserState with _$RegisteredUserState {
+  const factory RegisteredUserState({
+    /// 서버 가입 완료된 사용자 정보 (null이면 미가입)
     UserEntity? user,
 
     /// 초기화 중 여부 (앱 시작 시 저장된 사용자 로드 중)
     @Default(true) bool isInitializing,
-  }) = _CurrentUserState;
+  }) = _RegisteredUserState;
 }
 
 // ==================== Extensions ====================
 
-extension CurrentUserStateX on CurrentUserState {
+extension RegisteredUserStateX on RegisteredUserState {
   /// 가입 완료 여부
   bool get isRegistered => user != null;
 

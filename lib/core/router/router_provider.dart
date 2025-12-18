@@ -6,13 +6,13 @@ import '../../features/analysis/domain/entities/what_if_scenario_entity.dart';
 import '../../features/analysis/presentation/views/risk_measurement_view.dart';
 import '../../features/analysis/presentation/views/what_if_simulation_view.dart';
 import '../../features/profile/presentation/views/account_manage_view.dart';
-import '../../features/auth/presentation/providers/auth_notifier.dart';
+import '../providers/auth_notifier.dart';
 import '../../features/health_record/presentation/views/health_record_all_view.dart';
 import '../../features/health_record/presentation/views/health_record_input_view.dart';
 import '../../features/onboarding/presentation/views/onboarding_view.dart';
 import '../../features/role_select/presentation/views/role_select_view.dart';
 import '../../features/splash/presentation/splash_screen.dart';
-import '../../features/user/presentation/providers/registered_user_notifier.dart';
+import '../providers/registered_user_notifier.dart';
 import '../presentation/widgets/bottom_nav_shell.dart';
 import 'role_routes.dart';
 

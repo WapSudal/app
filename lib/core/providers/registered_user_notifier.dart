@@ -1,15 +1,14 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../../core/enums/user_role.dart';
-import '../../domain/entities/user_entity.dart';
-import '../../domain/providers/user_domain_providers.dart';
-import 'current_user_state.dart';
+import '../domain/entity/user_entity.dart';
+import '../../features/user/domain/providers/user_domain_providers.dart';
+import 'registered_user_state.dart';
 
 part 'registered_user_notifier.g.dart';
 
 /// 등록된(가입 완료된) 사용자 상태 관리 Provider
 ///
-/// 앱 전역에서 가입 완료된 사용자 정보를 관리
+/// 앱 전역에서 서버 가입 완료된 사용자 정보를 관리
 /// - 앱 시작 시 저장된 사용자 정보 로드
 /// - 역할 선택(가입) 완료 시 사용자 정보 저장 → confirmRoleMutation 사용
 /// - 로그아웃 시 사용자 정보 초기화 → signOutMutation 사용
@@ -18,10 +17,10 @@ part 'registered_user_notifier.g.dart';
 @Riverpod(keepAlive: true)
 class RegisteredUser extends _$RegisteredUser {
   @override
-  CurrentUserState build() {
+  RegisteredUserState build() {
     // build() 완료 후 비동기 초기화 실행
     Future.microtask(_initializeUser);
-    return const CurrentUserState();
+    return const RegisteredUserState();
   }
 
   /// 초기 사용자 정보 로드
@@ -59,10 +58,10 @@ class RegisteredUser extends _$RegisteredUser {
       final clearUserData = ref.read(clearUserDataUseCaseProvider);
       await clearUserData();
 
-      state = const CurrentUserState(isInitializing: false);
+      state = const RegisteredUserState(isInitializing: false);
     } catch (e) {
       // 초기화 실패해도 상태는 초기화
-      state = const CurrentUserState(isInitializing: false);
+      state = const RegisteredUserState(isInitializing: false);
     }
   }
 }
@@ -75,20 +74,4 @@ class RegisteredUser extends _$RegisteredUser {
 @Riverpod(keepAlive: true)
 bool isUserRegistered(Ref ref) {
   return ref.watch(registeredUserProvider).isRegistered;
-}
-
-/// 등록된 사용자 역할 Provider
-///
-/// 역할별 분기 로직에서 사용
-@riverpod
-UserRole? registeredUserRole(Ref ref) {
-  return ref.watch(registeredUserProvider).role;
-}
-
-/// 등록된 사용자 Entity Provider
-///
-/// 가입 완료된 사용자 정보 직접 접근
-@riverpod
-UserEntity? registeredUserEntity(Ref ref) {
-  return ref.watch(registeredUserProvider).user;
 }

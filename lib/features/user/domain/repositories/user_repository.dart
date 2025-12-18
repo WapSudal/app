@@ -1,4 +1,4 @@
-import '../entities/user_entity.dart';
+import '../../../../core/domain/entity/user_entity.dart';
 import '../../../../core/enums/user_role.dart';
 
 /// 사용자 Repository 인터페이스

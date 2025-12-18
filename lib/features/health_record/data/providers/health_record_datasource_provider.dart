@@ -1,6 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../../../core/providers/shared_preferences_provider.dart';
 import '../datasources/health_record_local_datasource.dart';
-import '../../../user/data/providers/user_data_providers.dart';
 
 part 'health_record_datasource_provider.g.dart';
 

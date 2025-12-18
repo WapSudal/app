@@ -5,9 +5,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'core/providers/shared_preferences_provider.dart';
 import 'core/router/router_provider.dart';
 import 'core/theme/app_theme.dart';
-import 'features/user/data/providers/user_data_providers.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -35,9 +35,7 @@ class CustomScrollBehavior extends MaterialScrollBehavior {
 
   @override
   ScrollPhysics getScrollPhysics(BuildContext context) {
-    return const BouncingScrollPhysics(
-      parent: AlwaysScrollableScrollPhysics(),
-    );
+    return const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics());
   }
 }
 

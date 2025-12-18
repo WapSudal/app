@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../../../core/enums/user_role.dart';
+import '../../enums/user_role.dart';
 
 part 'user_entity.freezed.dart';
 

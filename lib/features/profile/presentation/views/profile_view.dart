@@ -8,8 +8,8 @@ import '../../../../core/presentation/widgets/app_icon.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../patients/presentation/widgets/patient_manage_bottom_sheet.dart';
-import '../../../user/presentation/providers/current_user_state.dart';
-import '../../../user/presentation/providers/registered_user_notifier.dart';
+import '../../../../core/providers/registered_user_notifier.dart';
+import '../../../../core/providers/registered_user_state.dart';
 import '../widgets/caregiver_manage_bottom_sheet.dart';
 
 /// 프로필 화면 - 내 정보 및 전체 메뉴
@@ -57,7 +57,7 @@ class ProfileView extends ConsumerWidget {
 
   /// 계정 정보 카드
   Widget _buildAccountInfoCard(BuildContext context, WidgetRef ref) {
-    final user = ref.read(registeredUserProvider);
+    final state = ref.read(registeredUserProvider);
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -86,14 +86,14 @@ class ProfileView extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${user.displayName}님',
+                  '${state.displayName}님',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     color: AppColorScheme.black100,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  user.email,
+                  state.email,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: AppColorScheme.grey300,
                   ),
@@ -198,7 +198,7 @@ class ProfileView extends ConsumerWidget {
 
   /// 보호자/주치의 관리 카드
   Widget _buildManageListCard(BuildContext context, WidgetRef ref) {
-    final role = ref.read(registeredUserRoleProvider);
+    final role = ref.read(registeredUserProvider).role;
 
     return Container(
       decoration: BoxDecoration(

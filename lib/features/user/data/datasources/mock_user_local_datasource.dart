@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/enums/user_role.dart';
-import '../../domain/entities/user_entity.dart';
+import '../../../../core/domain/entity/user_entity.dart';
 
 /// Mock 사용자 데이터 로컬 저장소 키
 abstract class _MockUserStorageKeys {
