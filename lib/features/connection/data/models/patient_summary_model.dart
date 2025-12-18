@@ -15,14 +15,12 @@ abstract class PatientSummaryModel with _$PatientSummaryModel {
     required String patientId,
     required String name,
     String? profileImageUrl,
-    @JsonKey(unknownEnumValue: PatientRiskLevel.unknown)
     required PatientRiskLevel riskLevel,
     required int riskScore,
     int? systolicBP,
     int? diastolicBP,
     required int dataCount,
     DateTime? lastRecordedAt,
-    @JsonKey(unknownEnumValue: SharingScope.summary)
     required SharingScope scope,
     required String connectionId,
   }) = _PatientSummaryModel;

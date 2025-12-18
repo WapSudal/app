@@ -15,11 +15,8 @@ abstract class ConnectionModel with _$ConnectionModel {
     required String id,
     required String patientId,
     required String connectorId,
-    @JsonKey(unknownEnumValue: ConnectionType.guardian)
     required ConnectionType type,
-    @JsonKey(unknownEnumValue: ConnectionStatus.pending)
     required ConnectionStatus status,
-    @JsonKey(unknownEnumValue: SharingScope.summary)
     required SharingScope scope,
     required DateTime requestedAt,
     DateTime? respondedAt,

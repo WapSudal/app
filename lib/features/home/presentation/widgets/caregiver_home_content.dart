@@ -9,7 +9,6 @@ import 'caregiver_fast_menu_card.dart';
 import 'caregiver_home_patient_count_card.dart';
 import 'caregiver_home_patient_info_card.dart';
 import 'caregiver_home_recent_records_card.dart';
-import '../../../../core/presentation/widgets/no_data_paint.dart';
 import 'home_splash_card.dart';
 import 'home_welcome_card.dart';
 import 'patient_detail_bottom_sheet.dart';

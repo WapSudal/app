@@ -5,7 +5,6 @@ import '../../../../core/presentation/widgets/no_data_card.dart';
 import '../providers/home_notifier.dart';
 import '../providers/home_state.dart';
 import 'general_fast_menu_card.dart';
-import '../../../../core/presentation/widgets/no_data_paint.dart';
 import 'home_progress_card.dart';
 import 'general_home_risk_analysis_card.dart';
 import 'home_splash_card.dart';
