@@ -24,40 +24,21 @@ Reference documents are available in the `docs/` directory:
 
 ## Development Commands
 
-### Essential Commands
 ```bash
-# Install dependencies
+# Setup
 flutter pub get
-
-# Code generation (REQUIRED - run after adding new models or providers)
 dart run build_runner build --delete-conflicting-outputs
 
-# Code generation watch mode (recommended during development)
+# Development (watch mode recommended)
 dart run build_runner watch --delete-conflicting-outputs
-
-# Run app (debug mode)
 flutter run
 
-# Static analysis
+# Testing & Analysis
 flutter analyze
-
-# Run tests
 flutter test
+dart run custom_lint
 
-# Run single test file
-flutter test test/[test_file_name]_test.dart
-
-# Android build
-flutter build apk --release
-flutter build appbundle --release
-
-# iOS build
-flutter build ios --release
-
-# Code formatting
-dart format .
-
-# Clean build
+# Troubleshooting
 flutter clean && flutter pub get && dart run build_runner build --delete-conflicting-outputs
 ```
 
@@ -131,57 +112,23 @@ lib/
 - **Always use relative paths** for internal project imports (no package paths)
 - Use package paths only for external dependencies
   ```dart
-  // ✅ Correct - Using relative paths for project files
+  // ✅ Correct
   import '../domain/entities/auth_entity.dart';
-  import '../../core/utils/validators.dart';
-
-  // ❌ Wrong - Using package paths for project files
-  import 'package:app/features/auth/domain/entities/auth_entity.dart';
-
-  // ✅ Correct - Package paths for external dependencies
-  import 'package:flutter/material.dart';
-  import 'package:riverpod_annotation/riverpod_annotation.dart';
+  import 'package:flutter/material.dart';  // External only
   ```
 
 ### 2. Freezed Usage Rules
-- When using `@freezed` annotation, **must define as abstract class**
+- **Must define as abstract class**
   ```dart
-  // ✅ Correct
   @freezed
   abstract class UserEntity with _$UserEntity {
     const factory UserEntity({...}) = _UserEntity;
   }
-
-  // ❌ Wrong - will cause error
-  @freezed
-  class UserEntity with _$UserEntity {
-    const factory UserEntity({...}) = _UserEntity;
-  }
   ```
 
-- **ALWAYS import Freezed classes before using their methods** (`.when`, `.whenOrNull`, `.map`, etc.)
-  - Freezed generates extension methods (`.when`, `.whenOrNull`, `.map`, `.maybeMap`, etc.) in `*.freezed.dart` files
-  - These methods are NOT available unless you import the class file
-  - Missing imports will cause "method not found" errors even though code generation is correct
-  ```dart
-  // ✅ Correct
-  import 'package:bovivet/features/user/domain/entities/user_entity.dart';
-
-  void handleUser(UserEntity user) {
-    user.when(  // ✅ Methods available
-      intern: (data) => print('Intern'),
-      farm: (data) => print('Farm'),
-      // ...
-    );
-  }
-
-  // ❌ Wrong - Missing import
-  void handleUser(UserEntity user) {
-    user.when(  // ❌ Error: 'when' is not defined
-      // This will fail because UserEntity is not imported!
-    );
-  }
-  ```
+- **ALWAYS import Freezed classes before using methods** (`.when`, `.whenOrNull`, `.map`)
+  - Extension methods are generated in `*.freezed.dart` and require the class import
+  - Missing imports cause "method not found" errors
 
 ### 3. Code Generation Files
 - `*.g.dart` (json_serializable) and `*.freezed.dart` files are auto-generated
@@ -189,13 +136,11 @@ lib/
 - Must run `dart run build_runner build` after adding new models/providers
 
 ### 4. Riverpod Providers
-- Use code generation approach (`@riverpod` annotation)
-- `part` directive is required
+- Use code generation (`@riverpod` annotation) with `part` directive
   ```dart
   import 'package:riverpod_annotation/riverpod_annotation.dart';
-  
   part 'provider_name.g.dart';
-  
+
   @riverpod
   class ExampleNotifier extends _$ExampleNotifier {
     @override
@@ -210,107 +155,31 @@ lib/
 - Auto token refresh on 401 errors
 
 ### 6. State Management Pattern (Riverpod v3)
-- **Primary Pattern**: Use `AsyncNotifier` with `AsyncValue` for async operations
-- Use `Notifier` for synchronous state only
-- Use `Mutation` for one-off UI operations (form submissions, delete actions)
-- State classes should be immutable (`@freezed`)
-- **References**:
-  - See [Riverpod v3 Guide](docs/RIVERPOD_V3_BEST_PRACTICES.md) for comprehensive guidelines
-  - See [Riverpod v3 Mutations Guidelines](docs/RIVERPOD_V3_MUTATIONS.md) for Mutation usage
-
-#### AsyncNotifier Pattern (Recommended for API calls)
-  ```dart
-  @riverpod
-  class UserDetail extends _$UserDetail {
-    @override
-    Future<UserDetailState> build() async {
-      final userDetail = await _fetchUserDetail();
-      return UserDetailState(userDetail: userDetail);
-    }
-
-    // Custom methods use AsyncValue.guard for error handling
-    Future<void> updateUser({required String name}) async {
-      final currentData = state.value;
-      if (currentData == null) return;
-
-      try {
-        final updateUseCase = ref.read(updateUserUseCaseProvider);
-        await updateUseCase(name: name);
-
-        // Reload data without loading state (clean pattern)
-        final updatedUserDetail = await _fetchUserDetail();
-        state = AsyncValue.data(
-          UserDetailState(userDetail: updatedUserDetail),
-        );
-      } catch (error, stackTrace) {
-        state = AsyncValue.error('업데이트 실패: $error', stackTrace);
-      }
-    }
-  }
-  ```
-
-#### Notifier Pattern (For sync state)
-  ```dart
-  @riverpod
-  class Filter extends _$Filter {
-    @override
-    FilterState build() => const FilterState();
-
-    void updateCategory(String category) {
-      state = state.copyWith(selectedCategory: category);
-    }
-  }
-  ```
-
-#### State Class Pattern
-  ```dart
-  @freezed
-  abstract class UserDetailState with _$UserDetailState {
-    const factory UserDetailState({
-      required UserDetailEntity userDetail,
-    }) = _UserDetailState;
-  }
-  ```
+- **AsyncNotifier**: For async operations (API calls)
+- **Notifier**: For synchronous state only
+- **Mutation**: For one-off UI operations (form submissions)
+- State classes must be immutable (`@freezed`)
+- **See [docs/RIVERPOD_V3_BEST_PRACTICES.md](docs/RIVERPOD_V3_BEST_PRACTICES.md) for detailed patterns**
 
 ### 7. Repository Design Pattern
-- Repository interfaces in Domain layer should use individual parameters, NOT Entity objects as method parameters
-- This provides clearer API contracts and avoids unnecessary Entity creation
+- Use individual parameters in method signatures, NOT Entity objects
   ```dart
   // ✅ Correct
-  Future<void> requestFarmMapping({
-    required List<int> farmIds,
-  });
-  
-  // ❌ Wrong
-  Future<void> requestFarmMapping({
-    required RequestFarmMappingEntity request,
-  });
+  Future<void> requestFarmMapping({required List<int> farmIds});
   ```
 
 ### 8. Model Extension Pattern
-- Model to Entity conversion methods should be defined as extensions, NOT as class methods
-- Extensions should be placed in a separate section at the bottom of the model file
-- This keeps model classes pure and separates conversion logic
+- Define `toEntity()` as extensions at bottom of file, NOT as class methods
   ```dart
-  // ✅ Correct - Using extension
+  // Model definition (keep pure)
   @freezed
   abstract class UserModel with _$UserModel {
     const factory UserModel({...}) = _UserModel;
     factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
   }
-  
-  // ==================== Extensions ====================
+
+  // Extension at bottom
   extension UserModelX on UserModel {
-    UserEntity toEntity() => UserEntity(...);
-  }
-  
-  // ❌ Wrong - Method inside class
-  @freezed
-  abstract class UserModel with _$UserModel {
-    const UserModel._();  // Don't add this
-    const factory UserModel({...}) = _UserModel;
-    
-    // Don't add conversion method here
     UserEntity toEntity() => UserEntity(...);
   }
   ```
@@ -321,401 +190,87 @@ lib/
 - Automatic redirect based on authentication state
 
 ### 10. PagedEntity Usage Pattern
-- **ALWAYS use the correct PagedEntity constructor pattern**
-- Follow the cow feature pattern: `PagedEntity(items: ..., pagination: ...)`
-- Use `response.paging.toEntity()` for pagination information
+- Use `PagedEntity(items: ..., pagination: ...)`
   ```dart
-  // ✅ Correct
   return PagedEntity(
-    items: response.data!.map((model) => model.toEntity()).toList(),
+    items: response.data!.map((m) => m.toEntity()).toList(),
     pagination: response.paging.toEntity(),
-  );
-  
-  // ❌ Wrong - Old pattern
-  return PagedEntity<EntityType>(
-    content: response.data?.map((model) => model.toEntity()).toList() ?? [],
-    totalElements: response.totalElements ?? 0,
-    totalPages: response.totalPages ?? 0,
-    // ... other fields
   );
   ```
 
 ### 11. Provider Layer Separation
-- **Data Layer Providers**: Only DataSource and Repository providers
-- **Domain Layer Providers**: Only UseCase providers
-- **NEVER mix UseCase providers in Data layer providers**
-  ```dart
-  // ✅ Correct - Data Layer (data/providers/)
-  @riverpod
-  ExampleRepository exampleRepository(Ref ref) {
-    return ExampleRepositoryImpl(
-      remoteDataSource: ref.watch(exampleRemoteDataSourceProvider),
-    );
-  }
-  
-  // ✅ Correct - Domain Layer (domain/providers/)
-  @riverpod
-  ExampleUseCase exampleUseCase(Ref ref) {
-    return ExampleUseCase(ref.watch(exampleRepositoryProvider));
-  }
-  
-  // ❌ Wrong - UseCase in Data Layer
-  // Don't put UseCase providers in data/providers/
-  ```
+- **Data Layer**: DataSource and Repository providers only
+- **Domain Layer**: UseCase providers only
+- NEVER mix UseCase providers in Data layer
 
 ### 12. Color Opacity Usage
-- **NEVER use `withOpacity()`** (deprecated in Flutter)
-- **Always use `withValues(alpha: value)` instead**
+- Use `withValues(alpha:)` NOT `withOpacity()` (deprecated)
   ```dart
-  // ✅ Correct
   color: Colors.blue.withValues(alpha: 0.7)
-
-  // ❌ Wrong - deprecated
-  color: Colors.blue.withOpacity(0.7)
   ```
 
 ### 13. RadioGroup Usage (Flutter 3.32+)
-- **ALWAYS use `RadioGroup` to manage radio button groups** (Flutter 3.32+)
-- Individual `RadioListTile`'s `groupValue` and `onChanged` are deprecated
-- Manage state at the parent `RadioGroup` level using `groupValue` and `onChanged`
-  ```dart
-  // ✅ Correct - Using RadioGroup
-  String? selectedValue;
-
-  RadioGroup<String>(
-    groupValue: selectedValue,
-    onChanged: (value) {
-      setState(() {
-        selectedValue = value;
-      });
-    },
-    child: Column(
-      children: [
-        RadioListTile<String>(
-          title: const Text('Option 1'),
-          value: 'option1',
-        ),
-        RadioListTile<String>(
-          title: const Text('Option 2'),
-          value: 'option2',
-        ),
-      ],
-    ),
-  )
-
-  // ❌ Wrong - Using deprecated individual properties
-  RadioListTile<String>(
-    title: const Text('Option 1'),
-    value: 'option1',
-    groupValue: selectedValue,  // Deprecated!
-    onChanged: (value) {         // Deprecated!
-      setState(() {
-        selectedValue = value;
-      });
-    },
-  )
-  ```
+- Wrap `RadioListTile` with `RadioGroup` and manage state at parent level
+- Individual `RadioListTile`'s `groupValue`/`onChanged` are deprecated
 
 ### 14. Freezed Union Type Handling
-
-#### Choosing the Right Method
-- **Use `mapOrNull` when you have unused parameters** in the callback
-  - Avoids listing parameters you don't need
-  - Access properties via `state.propertyName`
-  - Cleaner and more maintainable
-- **Use `whenOrNull` when you need most/all parameters** from the union case
-  - Parameters are destructured directly in the callback
-  - Best when you actually use the parameters
-- **Use `when()` only when handling ALL cases** is required
-- **Use `maybeWhen()` only for custom `orElse` behavior** (NOT for empty callbacks)
-- **NEVER use `maybeWhen` with empty `orElse: () {}` callback** - use `whenOrNull` or `mapOrNull` instead
-
-#### Examples
-
+- **`mapOrNull`**: When you have unused parameters (access via `state.propertyName`)
+- **`whenOrNull`**: When you need most/all parameters (destructured in callback)
+- **`when()`**: Only when handling ALL cases is required
+- **NEVER use `maybeWhen` with empty `orElse: () {}`** - use `whenOrNull` instead
   ```dart
-  // ✅ Good - Using mapOrNull (only need 2 out of 6 parameters)
-  cowDetailState.mapOrNull(
-    loaded: (state) {
-      // Access only what you need via state object
-      if (_controller.text != state.editingCowEntityId) {
-        _controller.text = state.editingCowEntityId ?? '';
-      }
-    },
+  // ✅ Good - mapOrNull (only need 2 of 6 params)
+  state.mapOrNull(
+    loaded: (s) => _controller.text = s.editingId ?? '',
   );
 
-  // ❌ Bad - Using whenOrNull with unused parameters
-  cowDetailState.whenOrNull(
-    loaded: (cow, editingId, manageNo, species, remark, isEditing) {
-      // Only using editingId, but must list all 6 parameters!
-      if (_controller.text != editingId) {
-        _controller.text = editingId ?? '';
-      }
+  // ✅ Good - whenOrNull (using all params)
+  state.whenOrNull(
+    loaded: (detail, perms, sync) async {
+      await _updateUI(detail);
+      await _checkPerms(perms);
     },
-  );
-
-  // ✅ Good - Using whenOrNull (actually using most parameters)
-  await state.whenOrNull(
-    loaded: (userDetail, permissions, lastSync) async {
-      // All parameters are meaningfully used
-      await _updateUI(userDetail);
-      await _checkPermissions(permissions);
-      await _displaySyncTime(lastSync);
-    },
-  );
-
-  // ❌ Wrong - Using maybeWhen with empty orElse
-  await state.maybeWhen(
-    loaded: (userDetail) async {
-      await userDetail.maybeWhen(
-        intern: (internUser) async {
-          // Handle intern case only
-        },
-        orElse: () async {},  // Empty callback - use whenOrNull instead!
-      );
-    },
-    orElse: () async {},  // Empty callback - use whenOrNull instead!
-  );
-
-  // ❌ Even Worse - Using when() with empty callbacks
-  await state.maybeWhen(
-    loaded: (userDetail) async {
-      userDetail.when(
-        intern: (internUser) async { /* logic */ },
-        farm: (_) async {},      // All these empty callbacks
-        hospital: (_) async {},  // should be replaced
-        header: (_) async {},    // with a single
-        admin: (_) async {},     // whenOrNull!
-      );
-    },
-    orElse: () async {},
   );
   ```
 
-### 15. Vector Graphics Usage (flutter_gen + vector_graphics)
-- **Use `flutter_gen` for auto-generated asset references**
-- **Use `vector_graphics` package for SVG rendering** (not `flutter_svg`)
-- NEVER directly load SVG files with string paths
-- Generated asset classes provide type-safe references
+### 15. Vector Graphics Usage
+- Use `flutter_gen` for type-safe asset references (NOT string paths)
+- Use `vector_graphics` package for SVG (NOT `flutter_svg`)
   ```dart
-  // ✅ Correct - Using flutter_gen generated assets
   import 'package:app/gen/assets.gen.dart';
-
-  // In Widget
-  Assets.icons.home.svg(
-    width: 24,
-    height: 24,
-    colorFilter: ColorFilter.mode(
-      Colors.black,
-      BlendMode.srcIn,
-    ),
-  )
-
-  // ❌ Wrong - Direct path string
-  SvgPicture.asset(
-    'assets/icons/home.svg',
-    width: 24,
-    height: 24,
-  )
-
-  // ❌ Wrong - Using flutter_svg package
-  import 'package:flutter_svg/flutter_svg.dart';
+  Assets.icons.home.svg(width: 24, height: 24)
   ```
-
-#### Configuration
-- SVG assets must be declared in `pubspec.yaml` under `flutter_gen`
-- Run `flutter pub get` to regenerate asset classes after adding new files
-- Generated files are located in `lib/gen/assets.gen.dart`
 
 ### 16. TextStyle Usage (Design System)
-- **NEVER hardcode TextStyle properties** - always use theme-defined text styles
-- **Always use Theme.of(context).textTheme** to access predefined text styles
-- Text styles must match Figma design tokens (displayLarge, headlineSmall, bodyLarge, etc.)
-- This ensures design consistency and makes theme changes easier
+- NEVER hardcode TextStyle - always use `Theme.of(context).textTheme`
+- Available: display*, headline*, title*, body*, label* (Large/Medium/Small)
   ```dart
-  // ✅ Correct - Using theme text styles
-  Text(
-    'Title',
-    style: Theme.of(context).textTheme.headlineLarge,
-  )
+  // ✅ Correct
+  Text('Title', style: Theme.of(context).textTheme.headlineLarge)
 
-  Text(
-    'Subtitle',
-    style: Theme.of(context).textTheme.titleMedium,
-  )
-
-  Text(
-    'Body text',
-    style: Theme.of(context).textTheme.bodyLarge,
-  )
-
-  // ✅ Correct - Overriding specific properties only when necessary
-  Text(
-    'Custom color text',
-    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-      color: Colors.red,
-    ),
-  )
-
-  // ❌ Wrong - Hardcoding TextStyle
-  Text(
-    'Title',
-    style: TextStyle(
-      fontSize: 24,
-      fontWeight: FontWeight.bold,
-      color: Colors.black,
-    ),
-  )
-
-  // ❌ Wrong - Hardcoding even with const
-  const Text(
-    'Title',
-    style: TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w500,
-    ),
-  )
+  // Override specific properties when needed
+  Text('Custom', style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.red))
   ```
-
-#### Available Text Theme Styles
-- **Display**: `displayLarge`, `displayMedium`, `displaySmall`
-- **Headline**: `headlineLarge`, `headlineMedium`, `headlineSmall`
-- **Title**: `titleLarge`, `titleMedium`, `titleSmall`
-- **Body**: `bodyLarge`, `bodyMedium`, `bodySmall`
-- **Label**: `labelLarge`, `labelMedium`, `labelSmall`
-
-#### Theme Configuration
-- Text theme definitions should be located in `lib/core/theme/`
-- All text styles must be defined in theme configuration to match Figma design tokens
-- Update theme definitions when design tokens change, not individual widgets
 
 ### 17. Common Widget Usage (UI Consistency)
-- **ALWAYS use common widgets** from `lib/core/presentation/widgets/` for UI components
-- **NEVER recreate basic UI components** (buttons, text fields, dropdowns, etc.) in feature code
-- Common widgets ensure design consistency, reduce code duplication, and centralize style updates
-- Only create feature-specific widgets when behavior is truly unique to that feature
+- ALWAYS use widgets from `lib/core/presentation/widgets/`
+- NEVER recreate basic UI components in feature code
 
-#### Available Common Widgets
-**Buttons:**
-- `AppFlatButton` - Primary filled button
-- `AppOutlinedButton` - Secondary outlined button
+**Available Widgets:**
+- Buttons: `AppFlatButton`, `AppOutlinedButton`
+- Form: `AppLinedTextField`, `AppOutlinedTextField`, `AppOutlinedTextarea`, `AppLinedDropdown`, `AppOutlinedDropdown`, `AppCheckbox`
+- Navigation: `AppBar`, `AppBottomNavBar`, `AppBottomSheet`, `AppSegmentedTabBar`
+- Loading: `LoadingOverlay`
+- Other: `AppIcon`
 
-**Form Fields:**
-- `AppLinedTextField` - Text field with underline style
-- `AppOutlinedTextField` - Text field with outline style
-- `AppOutlinedTextarea` - Multi-line text area with outline style
-- `AppLinedDropdown` - Dropdown with underline style
-- `AppOutlinedDropdown` - Dropdown with outline style
-- `AppCheckbox` - Checkbox component
-
-**Navigation:**
-- `AppBar` - Top app bar
-- `AppBottomNavBar` - Bottom navigation bar
-- `AppBottomSheet` - Bottom sheet component
-- `AppSegmentedTabBar` - Segmented tab navigation
-
-**Other:**
-- `AppIcon` - Icon wrapper with consistent styling
-
-#### Usage Examples
-  ```dart
-  // ✅ Correct - Using common widgets
-  AppFlatButton(
-    text: '시작하기',
-    onPressed: () {},
-    isExpanded: true,
-  )
-
-  AppOutlinedButton(
-    text: '취소',
-    onPressed: () {},
-  )
-
-  AppOutlinedTextField(
-    label: '이름',
-    controller: nameController,
-  )
-
-  AppCheckbox(
-    value: isChecked,
-    onChanged: (value) {},
-  )
-
-  // ❌ Wrong - Recreating button manually
-  ElevatedButton(
-    onPressed: () {},
-    style: ElevatedButton.styleFrom(
-      backgroundColor: AppColorScheme.primary,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-    ),
-    child: const Text('시작하기'),
-  )
-
-  // ❌ Wrong - Creating custom button widget for basic functionality
-  class MyCustomButton extends StatelessWidget {
-    // Don't recreate what AppFlatButton already provides!
-  }
-
-  // ✅ Acceptable - Feature-specific widget with unique behavior
-  class AnalysisRiskScoreCard extends StatelessWidget {
-    // This has analysis-specific logic and layout
-    // that doesn't belong in common widgets
-  }
-  ```
-
-#### When to Create New Common Widgets
-Create a new common widget when:
-1. The component will be reused across **multiple features** (3+ features)
-2. The component has standardized design in Figma design system
-3. The component needs centralized style/behavior updates
-
-Create a feature-specific widget when:
-1. The component is only used within a single feature
-2. The component has feature-specific business logic
-3. The component is a composition of common widgets with feature-specific layout
-
-#### Adding New Common Widgets
-When adding new common widgets:
-1. Place in `lib/core/presentation/widgets/`
-2. Follow existing naming convention (`app_*_*.dart`)
-3. Document available parameters and use cases
-4. Match Figma design tokens for styling
-5. Ensure widget is reusable and configurable
+**When to create feature-specific widgets:**
+- Component used only within single feature
+- Has feature-specific business logic
+- Is composition of common widgets with feature-specific layout
 
 ### 18. Chart Display (fl_chart)
-- **ALWAYS use `fl_chart` package for displaying graphs and charts**
-- fl_chart provides Flutter-native chart implementations with high performance
-- Use fl_chart for line charts, bar charts, pie charts, and other data visualizations
-- Never create custom chart implementations from scratch when fl_chart provides the functionality
-  ```dart
-  // ✅ Correct - Using fl_chart for line chart
-  import 'package:fl_chart/fl_chart.dart';
-
-  LineChart(
-    LineChartData(
-      lineBarsData: [
-        LineChartBarData(
-          spots: dataPoints,
-          isCurved: true,
-          color: Colors.blue,
-        ),
-      ],
-    ),
-  )
-
-  // ❌ Wrong - Creating custom chart with CustomPainter
-  class CustomLineChart extends StatelessWidget {
-    // Don't recreate what fl_chart already provides!
-  }
-  ```
-
-#### Available Chart Types
-- **LineChart** - Line graphs for trends over time
-- **BarChart** - Bar graphs for comparisons
-- **PieChart** - Pie charts for proportional data
-- **ScatterChart** - Scatter plots for data point distributions
-- **RadarChart** - Radar charts for multi-dimensional data
+- Use `fl_chart` package for all charts (NEVER create custom with CustomPainter)
+- Available: LineChart, BarChart, PieChart, ScatterChart, RadarChart
 
 ## Environment Setup
 
@@ -744,19 +299,3 @@ When adding new common widgets:
 - **Do not run the app directly** (requires simulator/emulator)
 - Prefer modifying existing files over creating new ones
 - Never include sensitive information in production code
-- Use `--delete-conflicting-outputs` option if code generation fails
-
-## Debugging Commands
-```bash
-# Clean and regenerate files
-flutter clean && flutter pub get && dart run build_runner build --delete-conflicting-outputs
-
-# Check Riverpod lints
-dart run custom_lint
-
-# iOS issues
-cd ios && pod install && cd ..
-
-# Android issues
-cd android && ./gradlew clean && cd ..
-```
