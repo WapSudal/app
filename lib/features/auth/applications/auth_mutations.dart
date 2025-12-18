@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/experimental/mutation.dart';
 
-import '../domain/entity/auth_user_entity.dart';
+import '../../../core/domain/entities/auth_user_entity.dart';
 
 /// Google 로그인 Mutation
 ///

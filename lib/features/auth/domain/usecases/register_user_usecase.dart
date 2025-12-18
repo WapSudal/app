@@ -1,5 +1,5 @@
 import '../../../../core/enums/user_role.dart';
-import '../../../../core/domain/entity/user_entity.dart';
+import '../../../../core/domain/entities/user_entity.dart';
 import '../repositories/user_repository.dart';
 
 /// 사용자 가입 완료 UseCase

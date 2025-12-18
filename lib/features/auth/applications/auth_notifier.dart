@@ -1,7 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../features/auth/data/providers/auth_data_providers.dart';
-import '../domain/entity/auth_user_entity.dart';
+import '../data/providers/auth_data_providers.dart';
+import '../../../core/domain/entities/auth_user_entity.dart';
 import 'auth_state.dart';
 
 part 'auth_notifier.g.dart';

@@ -1,4 +1,4 @@
-import '../../../../core/domain/entity/user_entity.dart';
+import '../../../../core/domain/entities/user_entity.dart';
 import '../repositories/user_repository.dart';
 
 /// 현재 사용자 정보 조회 UseCase

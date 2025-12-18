@@ -5,7 +5,7 @@ import '../../../../core/enums/user_role.dart';
 import '../../../connection/data/datasources/connection_local_datasource.dart';
 import '../../../connection/data/models/patient_summary_model.dart';
 import '../../../connection/data/models/patient_recent_record_model.dart';
-import '../../../../core/providers/registered_user_notifier.dart';
+import '../../../auth/applications/registered_user_notifier.dart';
 import 'caregiver_home_state.dart';
 
 part 'caregiver_home_notifier.g.dart';

@@ -8,8 +8,8 @@ import '../../../../core/presentation/widgets/app_icon.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../patients/presentation/widgets/patient_manage_bottom_sheet.dart';
-import '../../../../core/providers/registered_user_notifier.dart';
-import '../../../../core/providers/registered_user_state.dart';
+import '../../../auth/applications/registered_user_notifier.dart';
+import '../../../auth/applications/registered_user_state.dart';
 import '../widgets/caregiver_manage_bottom_sheet.dart';
 
 /// 프로필 화면 - 내 정보 및 전체 메뉴

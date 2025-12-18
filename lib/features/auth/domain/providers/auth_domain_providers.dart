@@ -1,12 +1,12 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../data/providers/user_data_providers.dart';
+import '../../data/providers/auth_data_providers.dart';
 import '../usecases/check_registration_usecase.dart';
 import '../usecases/clear_user_data_usecase.dart';
 import '../usecases/get_current_user_usecase.dart';
 import '../usecases/register_user_usecase.dart';
 
-part 'user_domain_providers.g.dart';
+part 'auth_domain_providers.g.dart';
 
 // ==================== UseCase Providers ====================
 

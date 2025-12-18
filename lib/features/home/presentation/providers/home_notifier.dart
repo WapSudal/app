@@ -1,7 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../health_record/domain/providers/health_record_usecase_providers.dart';
-import '../../../../core/providers/registered_user_notifier.dart';
+import '../../../auth/applications/registered_user_notifier.dart';
 import 'home_state.dart';
 
 part 'home_notifier.g.dart';

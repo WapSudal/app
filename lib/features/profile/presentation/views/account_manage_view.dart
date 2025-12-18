@@ -11,9 +11,9 @@ import '../../../../core/providers/secure_storage_provider.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../auth/data/providers/auth_data_providers.dart';
-import '../../../../core/providers/auth_notifier.dart';
-import '../../../../core/providers/auth_mutations.dart';
-import '../../../../core/providers/registered_user_notifier.dart';
+import '../../../auth/applications/auth_notifier.dart';
+import '../../../auth/applications/auth_mutations.dart';
+import '../../../auth/applications/registered_user_notifier.dart';
 
 /// 계정 관리 화면
 ///

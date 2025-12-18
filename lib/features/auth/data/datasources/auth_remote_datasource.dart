@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../../../core/providers/secure_storage_provider.dart';
-import '../../../../core/domain/entity/auth_user_entity.dart';
+import '../../../../core/domain/entities/auth_user_entity.dart';
 
 /// 인증 관련 예외
 class AuthException implements Exception {

@@ -9,8 +9,8 @@ import '../../../../core/presentation/widgets/app_loading_overlay.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../auth/data/providers/auth_data_providers.dart';
-import '../../../../core/providers/auth_mutations.dart';
-import '../../../../core/providers/auth_notifier.dart';
+import '../../../auth/applications/auth_mutations.dart';
+import '../../../auth/applications/auth_notifier.dart';
 import '../widgets/onboarding_content.dart';
 import '../widgets/page_indicator.dart';
 

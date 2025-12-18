@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/experimental/mutation.dart';
 
-import '../../../../core/domain/entity/user_entity.dart';
+import '../../../../core/domain/entities/user_entity.dart';
 
 /// 역할 선택 및 가입 완료 Mutation
 ///
