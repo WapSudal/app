@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/enums/user_role.dart';
 import '../../../../core/presentation/widgets/app_bar.dart';
 import '../../../../core/presentation/widgets/app_icon.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
+import '../../../patients/presentation/widgets/patient_manage_bottom_sheet.dart';
+import '../../../user/presentation/providers/current_user_state.dart';
+import '../../../user/presentation/providers/registered_user_notifier.dart';
 import '../widgets/caregiver_manage_bottom_sheet.dart';
 
 /// 프로필 화면 - 내 정보 및 전체 메뉴
-class ProfileView extends StatelessWidget {
+class ProfileView extends ConsumerWidget {
   const ProfileView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F6FB), // dashboard/bg
       appBar: CustomAppBar(
@@ -29,13 +34,13 @@ class ProfileView extends StatelessWidget {
                 child: Column(
                   children: [
                     // 계정 정보 카드
-                    _buildAccountInfoCard(context),
+                    _buildAccountInfoCard(context, ref),
                     const SizedBox(height: 8),
                     // 전체 메뉴 카드
                     _buildMenuCard(context),
                     const SizedBox(height: 8),
                     // 보호자/주치의 관리 카드
-                    _buildManageListCard(context),
+                    _buildManageListCard(context, ref),
                     const SizedBox(height: 12),
                     // 하단 안내 문구
                     _buildFooterText(context),
@@ -51,7 +56,9 @@ class ProfileView extends StatelessWidget {
   }
 
   /// 계정 정보 카드
-  Widget _buildAccountInfoCard(BuildContext context) {
+  Widget _buildAccountInfoCard(BuildContext context, WidgetRef ref) {
+    final user = ref.read(registeredUserProvider);
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -79,14 +86,14 @@ class ProfileView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '홍길동님',
+                  '${user.displayName}님',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     color: AppColorScheme.black100,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'jkw04257773@gmail.com',
+                  user.email,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: AppColorScheme.grey300,
                   ),
@@ -190,7 +197,9 @@ class ProfileView extends StatelessWidget {
   }
 
   /// 보호자/주치의 관리 카드
-  Widget _buildManageListCard(BuildContext context) {
+  Widget _buildManageListCard(BuildContext context, WidgetRef ref) {
+    final role = ref.read(registeredUserRoleProvider);
+
     return Container(
       decoration: BoxDecoration(
         color: AppColorScheme.white100,
@@ -198,37 +207,67 @@ class ProfileView extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // 보호자 관리
-          _buildManageButton(
-            context,
-            iconColor: AppColorScheme.primaryColor,
-            title: '보호자 관리',
-            requestCount: 1,
-            onTap: () {
-              CaregiverManageBottomSheet.show(
-                context: context,
-                type: ManageType.guardian,
-              );
-            },
-          ),
-          // 구분선
-          Container(
-            height: 1,
-            color: AppColorScheme.black100.withValues(alpha: 0.1),
-          ),
-          // 주치의 관리
-          _buildManageButton(
-            context,
-            iconColor: AppColorScheme.success,
-            title: '주치의 관리',
-            requestCount: 1,
-            onTap: () {
-              CaregiverManageBottomSheet.show(
-                context: context,
-                type: ManageType.physician,
-              );
-            },
-          ),
+          if (role == UserRole.generalUser) ...[
+            // 보호자 관리
+            _buildManageButton(
+              context,
+              icon: AppIcon(
+                Assets.icons.profile,
+                color: AppColorScheme.primaryColor,
+                size: 18,
+              ),
+              iconColor: AppColorScheme.primaryColor,
+              title: '보호자 관리',
+              trailingText: '요청 1건',
+              onTap: () {
+                CaregiverManageBottomSheet.show(
+                  context: context,
+                  type: ManageType.guardian,
+                );
+              },
+            ),
+            // 구분선
+            Container(
+              height: 1,
+              color: AppColorScheme.black100.withValues(alpha: 0.1),
+            ),
+            // 주치의 관리
+            _buildManageButton(
+              context,
+              icon: AppIcon(
+                Assets.icons.medicalKit,
+                color: AppColorScheme.success,
+                size: 18,
+              ),
+              iconColor: AppColorScheme.success,
+              title: '주치의 관리',
+              trailingText: '요청 1건',
+              onTap: () {
+                CaregiverManageBottomSheet.show(
+                  context: context,
+                  type: ManageType.physician,
+                );
+              },
+            ),
+          ],
+
+          if ([UserRole.guardian, UserRole.doctor].contains(role)) ...[
+            // 보호 대상자 관리
+            _buildManageButton(
+              context,
+              icon: AppIcon(
+                Assets.icons.profile,
+                color: AppColorScheme.primaryColor,
+                size: 18,
+              ),
+              iconColor: AppColorScheme.primaryColor,
+              title: '환자 연결 관리',
+              trailingText: '승인 대기중 1건',
+              onTap: () {
+                PatientManageBottomSheet.show(context: context);
+              },
+            ),
+          ],
         ],
       ),
     );
@@ -237,9 +276,10 @@ class ProfileView extends StatelessWidget {
   /// 관리 버튼 (보호자/주치의)
   Widget _buildManageButton(
     BuildContext context, {
+    required Widget icon,
     required Color iconColor,
     required String title,
-    required int requestCount,
+    String? trailingText,
     VoidCallback? onTap,
   }) {
     return InkWell(
@@ -255,13 +295,7 @@ class ProfileView extends StatelessWidget {
                 color: iconColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: AppIcon(
-                title == '보호자 관리'
-                    ? Assets.icons.profile
-                    : Assets.icons.medicalKit,
-                color: iconColor,
-                size: 18,
-              ),
+              child: icon,
             ),
 
             const SizedBox(width: 12),
@@ -277,20 +311,12 @@ class ProfileView extends StatelessWidget {
                     ),
                   ),
                   // 요청 건수
-                  if (requestCount > 0)
-                    Row(
-                      children: [
-                        Text(
-                          '요청 ',
-                          style: Theme.of(context).textTheme.labelSmall
-                              ?.copyWith(color: AppColorScheme.danger),
-                        ),
-                        Text(
-                          '$requestCount건',
-                          style: Theme.of(context).textTheme.labelSmall
-                              ?.copyWith(color: AppColorScheme.danger),
-                        ),
-                      ],
+                  if (trailingText?.isNotEmpty ?? false)
+                    Text(
+                      trailingText!,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: AppColorScheme.danger,
+                      ),
                     ),
                 ],
               ),

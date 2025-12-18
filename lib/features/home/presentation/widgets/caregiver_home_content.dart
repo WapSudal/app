@@ -148,11 +148,4 @@ class CaregiverHomeContent extends ConsumerWidget {
       context,
     ).showSnackBar(const SnackBar(content: Text('새로운 환자 연결 기능 (준비 중)')));
   }
-
-  void _navigateToExplore(BuildContext context) {
-    // TODO: 탐색 페이지로 이동
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('추천 콘텐츠 탐색 기능 (준비 중)')));
-  }
 }
