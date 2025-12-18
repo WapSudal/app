@@ -3,13 +3,7 @@ import '../../gen/assets.gen.dart';
 /// Navigation tab enum for bottom navigation bar
 ///
 /// Only used for general users
-enum NavTab {
-  home,
-  record,
-  analysis,
-  explore,
-  profile,
-}
+enum NavTab { home, record, analysis, explore, profile }
 
 extension NavTabExtension on NavTab {
   /// Display name for the tab (Korean)
@@ -56,7 +50,7 @@ extension NavTabExtension on NavTab {
       case NavTab.explore:
         return Assets.icons.compass;
       case NavTab.profile:
-        return Assets.icons.more;
+        return Assets.icons.person;
     }
   }
 
