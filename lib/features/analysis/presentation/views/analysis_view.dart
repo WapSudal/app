@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/presentation/widgets/app_bar.dart';
+import '../../../../core/presentation/widgets/app_flat_button.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../providers/analysis_notifier.dart';
 import '../providers/analysis_state.dart';
@@ -62,24 +63,10 @@ class AnalysisView extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           // 기록 입력하기 버튼
-          SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: ElevatedButton(
-              onPressed: () => context.push('/record/input'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColorScheme.primaryColor,
-                foregroundColor: AppColorScheme.white100,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                elevation: 0,
-              ),
-              child: const Text(
-                '기록 입력하기',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-              ),
-            ),
+          AppFlatButton(
+            text: '기록 입력하기',
+            onPressed: () => context.push('/record/input'),
+            isExpanded: true,
           ),
           const SizedBox(height: 12),
         ],
