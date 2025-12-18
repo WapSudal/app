@@ -119,12 +119,6 @@ class AllView extends StatelessWidget {
   /// 전체 메뉴 카드
   Widget _buildMenuCard(BuildContext context) {
     final menuItems = [
-      _MenuItem(emoji: '🩸', title: '혈압/혈당 및 기록', route: '/record'),
-      _MenuItem(emoji: '✏️', title: '데이터 입력', route: '/record/input'),
-      _MenuItem(emoji: '📉', title: '위험도 분석', route: '/analysis'),
-      _MenuItem(emoji: '⚡', title: 'What-if 시뮬레이션'),
-      _MenuItem(emoji: '🎬', title: '탐색', route: '/explore'),
-      _MenuItem(emoji: '🗂️', title: '보고서 관리'),
       _MenuItem(emoji: '⚙️', title: '계정 관리', route: '/account-management'),
     ];
 

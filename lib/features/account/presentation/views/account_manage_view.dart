@@ -84,12 +84,12 @@ class AccountManageView extends ConsumerWidget {
           children: [
             // 아이콘 배경
             Container(
-              padding: const EdgeInsets.all(4),
+              padding: const EdgeInsets.all(7),
               decoration: BoxDecoration(
                 color: iconColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: AppIcon(icon, color: iconColor, size: 24),
+              child: AppIcon(icon, color: iconColor, size: 21),
             ),
             const SizedBox(width: 12),
             // 타이틀
