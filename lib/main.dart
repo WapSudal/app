@@ -30,6 +30,17 @@ void main() async {
   );
 }
 
+class CustomScrollBehavior extends MaterialScrollBehavior {
+  const CustomScrollBehavior();
+
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) {
+    return const BouncingScrollPhysics(
+      parent: AlwaysScrollableScrollPhysics(),
+    );
+  }
+}
+
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
@@ -40,6 +51,7 @@ class MyApp extends ConsumerWidget {
     return MaterialApp.router(
       title: 'Stroke Spoiler',
       theme: AppTheme.lightTheme,
+      scrollBehavior: const CustomScrollBehavior(),
       routerConfig: router,
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
