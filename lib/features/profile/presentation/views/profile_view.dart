@@ -5,7 +5,7 @@ import '../../../../core/presentation/widgets/app_bar.dart';
 import '../../../../core/presentation/widgets/app_icon.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
-import '../widgets/guardian_manage_bottom_sheet.dart';
+import '../widgets/caregiver_manage_bottom_sheet.dart';
 
 /// 프로필 화면 - 내 정보 및 전체 메뉴
 class ProfileView extends StatelessWidget {
@@ -205,7 +205,7 @@ class ProfileView extends StatelessWidget {
             title: '보호자 관리',
             requestCount: 1,
             onTap: () {
-              GuardianManageBottomSheet.show(
+              CaregiverManageBottomSheet.show(
                 context: context,
                 type: ManageType.guardian,
               );
@@ -223,7 +223,7 @@ class ProfileView extends StatelessWidget {
             title: '주치의 관리',
             requestCount: 1,
             onTap: () {
-              GuardianManageBottomSheet.show(
+              CaregiverManageBottomSheet.show(
                 context: context,
                 type: ManageType.physician,
               );

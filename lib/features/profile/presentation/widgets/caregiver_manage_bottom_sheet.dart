@@ -41,8 +41,8 @@ class _AccountRequest {
 ///
 /// [ManageType]에 따라 보호자 또는 주치의 관리 모달을 표시합니다.
 /// "내 보호자/주치의" 탭과 "수락 요청" 탭으로 구성됩니다.
-class GuardianManageBottomSheet extends StatefulWidget {
-  const GuardianManageBottomSheet({super.key, required this.type});
+class CaregiverManageBottomSheet extends StatefulWidget {
+  const CaregiverManageBottomSheet({super.key, required this.type});
 
   /// 관리 타입 (보호자/주치의)
   final ManageType type;
@@ -57,16 +57,17 @@ class GuardianManageBottomSheet extends StatefulWidget {
       title: type == ManageType.guardian ? '보호자 관리' : '주치의 관리',
       heightRatio: 0.6,
       showCloseButton: true,
-      child: GuardianManageBottomSheet(type: type),
+      child: CaregiverManageBottomSheet(type: type),
     );
   }
 
   @override
-  State<GuardianManageBottomSheet> createState() =>
-      _GuardianManageBottomSheetState();
+  State<CaregiverManageBottomSheet> createState() =>
+      _CaregiverManageBottomSheetState();
 }
 
-class _GuardianManageBottomSheetState extends State<GuardianManageBottomSheet> {
+class _CaregiverManageBottomSheetState
+    extends State<CaregiverManageBottomSheet> {
   int _selectedTabIndex = 0;
 
   // 더미 데이터: 연결된 계정 목록
