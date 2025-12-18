@@ -66,7 +66,7 @@ class HomeProgressCard extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              '${recordsNeeded}개의 건강 정보 필요',
+              '$recordsNeeded개의 건강 정보 필요',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: AppColorScheme.primaryColor,
                 fontWeight: FontWeight.w600,

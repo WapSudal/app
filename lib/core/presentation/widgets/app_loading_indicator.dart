@@ -67,7 +67,8 @@ class _AppLoadingIndicatorState extends State<AppLoadingIndicator>
     final easedDistance = _easeInOutCubic(normalizedDistance);
 
     // 거리가 가까울수록 밝게 (1.0 - easedDistance)
-    final opacity = minOpacity + (maxOpacity - minOpacity) * (1.0 - easedDistance);
+    final opacity =
+        minOpacity + (maxOpacity - minOpacity) * (1.0 - easedDistance);
 
     return opacity.clamp(minOpacity, maxOpacity);
   }
@@ -101,8 +102,8 @@ class _AppLoadingIndicatorState extends State<AppLoadingIndicator>
                 child: Container(
                   width: squareSize,
                   height: squareSize,
-                  color: widget.color.withOpacity(
-                    _getOpacity(0, _controller.value),
+                  color: widget.color.withValues(
+                    alpha: _getOpacity(0, _controller.value),
                   ),
                 ),
               ),
@@ -113,8 +114,8 @@ class _AppLoadingIndicatorState extends State<AppLoadingIndicator>
                 child: Container(
                   width: squareSize,
                   height: squareSize,
-                  color: widget.color.withOpacity(
-                    _getOpacity(1, _controller.value),
+                  color: widget.color.withValues(
+                    alpha: _getOpacity(1, _controller.value),
                   ),
                 ),
               ),
@@ -125,8 +126,8 @@ class _AppLoadingIndicatorState extends State<AppLoadingIndicator>
                 child: Container(
                   width: squareSize,
                   height: squareSize,
-                  color: widget.color.withOpacity(
-                    _getOpacity(2, _controller.value),
+                  color: widget.color.withValues(
+                    alpha: _getOpacity(2, _controller.value),
                   ),
                 ),
               ),
@@ -137,8 +138,8 @@ class _AppLoadingIndicatorState extends State<AppLoadingIndicator>
                 child: Container(
                   width: squareSize,
                   height: squareSize,
-                  color: widget.color.withOpacity(
-                    _getOpacity(3, _controller.value),
+                  color: widget.color.withValues(
+                    alpha: _getOpacity(3, _controller.value),
                   ),
                 ),
               ),

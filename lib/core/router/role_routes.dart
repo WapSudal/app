@@ -5,6 +5,7 @@ import '../../features/analysis/presentation/views/analysis_view.dart';
 import '../../features/explore/presentation/views/explore_view.dart';
 import '../../features/health_record/presentation/views/health_record_view.dart';
 import '../../features/home/presentation/views/home_view.dart';
+import '../../features/patients/presentation/views/patients_view.dart';
 import '../enums/user_role.dart';
 
 /// 역할별 라우트 구성을 제공하는 클래스
@@ -87,12 +88,13 @@ class RoleRoutes {
     ),
   ];
 
-  /// 보호자 탭 구성 (3개 - 일부 미구현)
-  /// - 환자 목록: 관리 중인 환자 목록 (TODO: 미구현)
-  /// - 기록 조회: 환자의 건강 기록 조회 (읽기 전용)
-  /// - 분석: 환자의 건강 데이터 분석
+  /// 보호자 탭 구성 (4개)
+  /// - 홈: 보호자 전용 대시보드
+  /// - 내 환자: 관리 중인 환자 목록
+  /// - 탐색: 건강 정보 콘텐츠 탐색
+  /// - 전체: 전체 메뉴 및 설정
   static final List<StatefulShellBranch> _guardianBranches = [
-    // Tab 1: 환자 목록 (TODO: 추후 구현 예정 - 현재는 홈으로 대체)
+    // Tab 1: 홈
     StatefulShellBranch(
       routes: [
         GoRoute(
@@ -102,34 +104,45 @@ class RoleRoutes {
         ),
       ],
     ),
-    // Tab 2: 기록 조회 (읽기 전용)
+    // Tab 2: 내 환자
     StatefulShellBranch(
       routes: [
         GoRoute(
-          path: '/record',
-          name: 'record',
-          builder: (context, state) => const HealthRecordView(),
+          path: '/patients',
+          name: 'patients',
+          builder: (context, state) => const PatientsView(),
         ),
       ],
     ),
-    // Tab 3: 분석
+    // Tab 3: 탐색
     StatefulShellBranch(
       routes: [
         GoRoute(
-          path: '/analysis',
-          name: 'analysis',
-          builder: (context, state) => const AnalysisView(),
+          path: '/explore',
+          name: 'explore',
+          builder: (context, state) => const ExploreView(),
+        ),
+      ],
+    ),
+    // Tab 4: 전체
+    StatefulShellBranch(
+      routes: [
+        GoRoute(
+          path: '/profile',
+          name: 'more',
+          builder: (context, state) => const ProfileView(),
         ),
       ],
     ),
   ];
 
-  /// 주치의 탭 구성 (3개 - 보호자와 동일)
-  /// - 환자 목록: 관리 중인 환자 목록 (TODO: 미구현)
-  /// - 기록 조회: 환자의 건강 기록 조회 (읽기 전용)
-  /// - 분석: 환자의 건강 데이터 분석
+  /// 주치의 탭 구성 (4개 - 보호자와 동일)
+  /// - 홈: 주치의 전용 대시보드
+  /// - 내 환자: 관리 중인 환자 목록
+  /// - 탐색: 건강 정보 콘텐츠 탐색
+  /// - 전체: 전체 메뉴 및 설정
   static final List<StatefulShellBranch> _doctorBranches = [
-    // Tab 1: 환자 목록 (TODO: 추후 구현 예정 - 현재는 홈으로 대체)
+    // Tab 1: 홈
     StatefulShellBranch(
       routes: [
         GoRoute(
@@ -139,23 +152,33 @@ class RoleRoutes {
         ),
       ],
     ),
-    // Tab 2: 기록 조회 (읽기 전용)
+    // Tab 2: 내 환자
     StatefulShellBranch(
       routes: [
         GoRoute(
-          path: '/record',
-          name: 'record',
-          builder: (context, state) => const HealthRecordView(),
+          path: '/patients',
+          name: 'patients',
+          builder: (context, state) => const PatientsView(),
         ),
       ],
     ),
-    // Tab 3: 분석
+    // Tab 3: 탐색
     StatefulShellBranch(
       routes: [
         GoRoute(
-          path: '/analysis',
-          name: 'analysis',
-          builder: (context, state) => const AnalysisView(),
+          path: '/explore',
+          name: 'explore',
+          builder: (context, state) => const ExploreView(),
+        ),
+      ],
+    ),
+    // Tab 4: 전체
+    StatefulShellBranch(
+      routes: [
+        GoRoute(
+          path: '/profile',
+          name: 'more',
+          builder: (context, state) => const ProfileView(),
         ),
       ],
     ),

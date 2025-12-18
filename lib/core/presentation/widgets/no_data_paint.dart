@@ -1,65 +1,70 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/color_scheme.dart';
-import '../../../../gen/assets.gen.dart';
+import '../../theme/color_scheme.dart';
+import '../../../gen/assets.gen.dart';
 
-/// 빈 상태 카드 (데이터 없음)
+/// 데이터/환자 없음 카드
+/// 환자, 보호자, 주치의 역할 공통.
 ///
-/// Figma: Record - 1 (Card/None)
-/// 데이터가 없을 때 표시되는 카드입니다.
-class HealthRecordEmptyCard extends StatelessWidget {
-  const HealthRecordEmptyCard({super.key});
+/// Figma: Card/None
+class NoDataPaint extends StatelessWidget {
+  const NoDataPaint({super.key, required this.title, required this.subtitle});
+
+  final String title;
+  final String subtitle;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColorScheme.white100,
-        borderRadius: BorderRadius.circular(16),
+    // return Container(
+    //   width: double.infinity,
+    //   padding: const EdgeInsets.all(16),
+    //   decoration: BoxDecoration(
+    //     color: AppColorScheme.white100,
+    //     borderRadius: BorderRadius.circular(16),
+    //   ),
+    //   child:
+    // );
+
+    return CustomPaint(
+      painter: _DashedBorderPainter(
+        color: AppColorScheme.white500,
+        strokeWidth: 1.5,
+        borderRadius: 12,
+        dashWidth: 6,
+        dashSpace: 4,
       ),
-      child: CustomPaint(
-        painter: _DashedBorderPainter(
-          color: AppColorScheme.white500,
-          strokeWidth: 1.5,
-          borderRadius: 12,
-          dashWidth: 6,
-          dashSpace: 4,
-        ),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // 아이콘
-              Padding(
-                padding: const EdgeInsets.all(9),
-                child: Assets.icons.compass.svg(
-                  width: 72,
-                  height: 72,
-                  colorFilter: ColorFilter.mode(
-                    AppColorScheme.grey500,
-                    BlendMode.srcIn,
-                  ),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // 아이콘
+            Padding(
+              padding: EdgeInsets.all(9),
+              child: Assets.icons.compass.svg(
+                width: 72,
+                height: 72,
+                colorFilter: ColorFilter.mode(
+                  AppColorScheme.grey500,
+                  BlendMode.srcIn,
                 ),
               ),
-              // 텍스트 영역
-              Text(
-                '아직 데이터가 없네요',
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: AppColorScheme.grey300,
-                  fontWeight: FontWeight.w500,
-                ),
+            ),
+            // 텍스트 영역
+            Text(
+              title,
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: AppColorScheme.grey300,
+                fontWeight: FontWeight.w500,
               ),
-              Text(
-                '꾸준히 건강 데이터를 입력해주세요!',
-                style: Theme.of(
-                  context,
-                ).textTheme.labelSmall?.copyWith(color: AppColorScheme.grey500),
-              ),
-            ],
-          ),
+            ),
+            Text(
+              subtitle,
+              style: Theme.of(
+                context,
+              ).textTheme.labelSmall?.copyWith(color: AppColorScheme.grey500),
+            ),
+          ],
         ),
       ),
     );

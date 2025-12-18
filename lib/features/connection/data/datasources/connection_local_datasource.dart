@@ -1,5 +1,8 @@
 import '../models/connection_model.dart';
+import '../models/patient_summary_model.dart';
+import '../models/patient_recent_record_model.dart';
 import '../../domain/entities/patient_search_info_entity.dart';
+import '../../domain/entities/patient_summary_entity.dart';
 import '../../../../core/enums/connection_type.dart';
 import '../../../../core/enums/connection_status.dart';
 import '../../../../core/enums/sharing_scope.dart';
@@ -20,18 +23,33 @@ class ConnectionLocalDataSource {
       name: '김환자',
       email: 'patient1@test.com',
       birthDate: DateTime(1980, 1, 1),
+      riskScore: 54,
+      riskLevel: PatientRiskLevel.warning,
+      systolicBP: 145,
+      diastolicBP: 92,
+      dataCount: 12,
     ),
     'patient2_uid': _MockUser(
       uid: 'patient2_uid',
       name: '이환자',
       email: 'patient2@test.com',
       birthDate: DateTime(1975, 5, 15),
+      riskScore: 32,
+      riskLevel: PatientRiskLevel.danger,
+      systolicBP: 168,
+      diastolicBP: 105,
+      dataCount: 8,
     ),
     'patient3_uid': _MockUser(
       uid: 'patient3_uid',
       name: '박환자',
       email: 'patient3@test.com',
       birthDate: DateTime(1990, 12, 30),
+      riskScore: 15,
+      riskLevel: PatientRiskLevel.safe,
+      systolicBP: 118,
+      diastolicBP: 78,
+      dataCount: 25,
     ),
     // 보호자
     'guardian1_uid': _MockUser(
@@ -49,40 +67,137 @@ class ConnectionLocalDataSource {
     ),
   };
 
+  // 환자별 최근 기록 (Mock)
+  final List<PatientRecentRecordModel> _mockRecentRecords = [];
+
   ConnectionLocalDataSource() {
     // 초기 더미 연결 데이터 (선택사항)
     _initializeMockConnections();
+    _initializeMockRecentRecords();
   }
 
   /// 초기 더미 연결 생성
   void _initializeMockConnections() {
-    // 필요시 초기 연결 데이터 추가
-    // 예: 보호자1이 환자1에게 이미 연결 요청한 상태
-    /*
-    _connections.add(
+    // 보호자1이 환자 3명과 연결된 상태 (Guardian 홈 테스트용)
+    _connections.addAll([
       ConnectionModel(
         id: 'conn_1',
         patientId: 'patient1_uid',
         connectorId: 'guardian1_uid',
         type: ConnectionType.guardian,
-        status: ConnectionStatus.pending,
+        status: ConnectionStatus.accepted,
         scope: SharingScope.full,
-        requestedAt: DateTime.now().subtract(Duration(days: 1)),
+        requestedAt: DateTime.now().subtract(const Duration(days: 30)),
+        respondedAt: DateTime.now().subtract(const Duration(days: 29)),
         connectorName: '홍보호',
         connectorEmail: 'guardian1@test.com',
         patientName: '김환자',
         patientEmail: 'patient1@test.com',
       ),
-    );
-    */
+      ConnectionModel(
+        id: 'conn_2',
+        patientId: 'patient2_uid',
+        connectorId: 'guardian1_uid',
+        type: ConnectionType.guardian,
+        status: ConnectionStatus.accepted,
+        scope: SharingScope.full,
+        requestedAt: DateTime.now().subtract(const Duration(days: 20)),
+        respondedAt: DateTime.now().subtract(const Duration(days: 19)),
+        connectorName: '홍보호',
+        connectorEmail: 'guardian1@test.com',
+        patientName: '이환자',
+        patientEmail: 'patient2@test.com',
+      ),
+      ConnectionModel(
+        id: 'conn_3',
+        patientId: 'patient3_uid',
+        connectorId: 'guardian1_uid',
+        type: ConnectionType.guardian,
+        status: ConnectionStatus.accepted,
+        scope: SharingScope.summary,
+        requestedAt: DateTime.now().subtract(const Duration(days: 10)),
+        respondedAt: DateTime.now().subtract(const Duration(days: 9)),
+        connectorName: '홍보호',
+        connectorEmail: 'guardian1@test.com',
+        patientName: '박환자',
+        patientEmail: 'patient3@test.com',
+      ),
+      // 주치의1도 환자 2명과 연결 (Doctor 홈 테스트용)
+      ConnectionModel(
+        id: 'conn_4',
+        patientId: 'patient1_uid',
+        connectorId: 'doctor1_uid',
+        type: ConnectionType.doctor,
+        status: ConnectionStatus.accepted,
+        scope: SharingScope.full,
+        requestedAt: DateTime.now().subtract(const Duration(days: 60)),
+        respondedAt: DateTime.now().subtract(const Duration(days: 59)),
+        connectorName: '최의사',
+        connectorEmail: 'doctor1@test.com',
+        patientName: '김환자',
+        patientEmail: 'patient1@test.com',
+      ),
+      ConnectionModel(
+        id: 'conn_5',
+        patientId: 'patient2_uid',
+        connectorId: 'doctor1_uid',
+        type: ConnectionType.doctor,
+        status: ConnectionStatus.accepted,
+        scope: SharingScope.full,
+        requestedAt: DateTime.now().subtract(const Duration(days: 45)),
+        respondedAt: DateTime.now().subtract(const Duration(days: 44)),
+        connectorName: '최의사',
+        connectorEmail: 'doctor1@test.com',
+        patientName: '이환자',
+        patientEmail: 'patient2@test.com',
+      ),
+    ]);
+  }
+
+  /// 초기 더미 최근 기록 생성
+  void _initializeMockRecentRecords() {
+    final now = DateTime.now();
+    _mockRecentRecords.addAll([
+      PatientRecentRecordModel(
+        recordId: 'record_1',
+        patientId: 'patient1_uid',
+        patientName: '김환자',
+        recordedAt: now.subtract(const Duration(hours: 2)),
+        systolicBP: 145,
+        diastolicBP: 92,
+      ),
+      PatientRecentRecordModel(
+        recordId: 'record_2',
+        patientId: 'patient2_uid',
+        patientName: '이환자',
+        recordedAt: now.subtract(const Duration(hours: 5)),
+        systolicBP: 168,
+        diastolicBP: 105,
+        bloodSugar: 142,
+      ),
+      PatientRecentRecordModel(
+        recordId: 'record_3',
+        patientId: 'patient3_uid',
+        patientName: '박환자',
+        recordedAt: now.subtract(const Duration(days: 1)),
+        systolicBP: 118,
+        diastolicBP: 78,
+        bloodSugar: 95,
+      ),
+      PatientRecentRecordModel(
+        recordId: 'record_4',
+        patientId: 'patient1_uid',
+        patientName: '김환자',
+        recordedAt: now.subtract(const Duration(days: 2)),
+        bloodSugar: 128,
+      ),
+    ]);
   }
 
   /// 환자 검색 (이름 + 생년월일 + 이메일로 정확히 일치)
   String? _findPatientId(PatientSearchInfoEntity searchInfo) {
-    final normalizedSearchEmail =
-        searchInfo.email.trim().toLowerCase();
-    final normalizedSearchName =
-        searchInfo.name.trim().replaceAll(' ', '');
+    final normalizedSearchEmail = searchInfo.email.trim().toLowerCase();
+    final normalizedSearchName = searchInfo.name.trim().replaceAll(' ', '');
 
     for (final entry in _mockUsers.entries) {
       final user = entry.value;
@@ -332,16 +447,117 @@ class ConnectionLocalDataSource {
   Future<ConnectionModel> getConnectionById({
     required String connectionId,
   }) async {
-    await Future.delayed(Duration(milliseconds: 200));
+    await Future.delayed(const Duration(milliseconds: 200));
 
-    final connection =
-        _connections.where((conn) => conn.id == connectionId).firstOrNull;
+    final connection = _connections
+        .where((conn) => conn.id == connectionId)
+        .firstOrNull;
 
     if (connection == null) {
       throw NotFoundException('연결을 찾을 수 없습니다');
     }
 
     return connection;
+  }
+
+  // ==================== Guardian/Doctor 홈 전용 API ====================
+
+  /// 연결된 환자 요약 목록 조회 (Guardian/Doctor 홈용)
+  ///
+  /// [currentUserId]: 현재 로그인한 보호자/주치의 ID
+  /// [type]: 연결 유형 필터 (null이면 모든 유형)
+  Future<List<PatientSummaryModel>> getConnectedPatientsSummary({
+    required String currentUserId,
+    ConnectionType? type,
+  }) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    // 현재 사용자가 연결자(보호자/주치의)인 활성 연결만 필터링
+    final activeConnections = _connections.where((conn) {
+      final isConnector = conn.connectorId == currentUserId;
+      final isAccepted = conn.status == ConnectionStatus.accepted;
+      final matchesType = type == null || conn.type == type;
+      return isConnector && isAccepted && matchesType;
+    }).toList();
+
+    // 연결된 환자들의 요약 정보 생성
+    return activeConnections.map((conn) {
+      final patient = _mockUsers[conn.patientId];
+      if (patient == null) {
+        throw NotFoundException('환자 정보를 찾을 수 없습니다: ${conn.patientId}');
+      }
+
+      return PatientSummaryModel(
+        patientId: conn.patientId,
+        name: patient.name,
+        profileImageUrl: null,
+        riskLevel: patient.riskLevel ?? PatientRiskLevel.unknown,
+        riskScore: patient.riskScore ?? 0,
+        systolicBP: patient.systolicBP,
+        diastolicBP: patient.diastolicBP,
+        dataCount: patient.dataCount ?? 0,
+        lastRecordedAt: _getLastRecordedAt(conn.patientId),
+        scope: conn.scope,
+        connectionId: conn.id,
+      );
+    }).toList();
+  }
+
+  /// 고위험 환자 목록 조회 (Guardian/Doctor 홈의 "주의가 필요한 환자" 섹션)
+  Future<List<PatientSummaryModel>> getHighRiskPatients({
+    required String currentUserId,
+    ConnectionType? type,
+  }) async {
+    final allPatients = await getConnectedPatientsSummary(
+      currentUserId: currentUserId,
+      type: type,
+    );
+
+    // Warning 또는 Danger 상태인 환자만 필터링
+    return allPatients.where((p) {
+      return p.riskLevel == PatientRiskLevel.warning ||
+          p.riskLevel == PatientRiskLevel.danger;
+    }).toList();
+  }
+
+  /// 최근 환자 기록 목록 조회 (Guardian/Doctor 홈의 "최근 작성된 기록" 섹션)
+  ///
+  /// 연결된 환자들의 기록만 반환하며, 시간순으로 정렬됨
+  Future<List<PatientRecentRecordModel>> getRecentPatientRecords({
+    required String currentUserId,
+    ConnectionType? type,
+    int limit = 10,
+  }) async {
+    await Future.delayed(const Duration(milliseconds: 200));
+
+    // 연결된 환자 ID 목록
+    final connectedPatientIds = _connections
+        .where((conn) {
+          final isConnector = conn.connectorId == currentUserId;
+          final isAccepted = conn.status == ConnectionStatus.accepted;
+          final matchesType = type == null || conn.type == type;
+          return isConnector && isAccepted && matchesType;
+        })
+        .map((conn) => conn.patientId)
+        .toSet();
+
+    // 연결된 환자들의 기록만 필터링 후 시간순 정렬
+    final filteredRecords =
+        _mockRecentRecords
+            .where((record) => connectedPatientIds.contains(record.patientId))
+            .toList()
+          ..sort((a, b) => b.recordedAt.compareTo(a.recordedAt));
+
+    return filteredRecords.take(limit).toList();
+  }
+
+  /// 환자별 마지막 기록 시간 조회
+  DateTime? _getLastRecordedAt(String patientId) {
+    final records =
+        _mockRecentRecords.where((r) => r.patientId == patientId).toList()
+          ..sort((a, b) => b.recordedAt.compareTo(a.recordedAt));
+
+    return records.isNotEmpty ? records.first.recordedAt : null;
   }
 }
 
@@ -352,10 +568,22 @@ class _MockUser {
   final String email;
   final DateTime birthDate;
 
+  // 환자 전용 필드 (보호자/주치의는 null)
+  final int? riskScore;
+  final PatientRiskLevel? riskLevel;
+  final int? systolicBP;
+  final int? diastolicBP;
+  final int? dataCount;
+
   _MockUser({
     required this.uid,
     required this.name,
     required this.email,
     required this.birthDate,
+    this.riskScore,
+    this.riskLevel,
+    this.systolicBP,
+    this.diastolicBP,
+    this.dataCount,
   });
 }

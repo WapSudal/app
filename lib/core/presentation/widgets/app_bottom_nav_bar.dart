@@ -19,10 +19,12 @@ class AppBottomNavBar extends StatelessWidget {
     super.key,
     required this.currentIndex,
     required this.onTabChanged,
+    required this.tabs,
   });
 
   final int currentIndex;
   final ValueChanged<int> onTabChanged;
+  final List<BaseNavTab> tabs;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +56,7 @@ class AppBottomNavBar extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: NavTab.values.asMap().entries.map((entry) {
+          children: tabs.asMap().entries.map((entry) {
             final index = entry.key;
             final tab = entry.value;
 

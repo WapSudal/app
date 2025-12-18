@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/presentation/widgets/no_data_card.dart';
 import '../providers/home_notifier.dart';
 import '../providers/home_state.dart';
-import 'home_fast_menu_card.dart';
-import 'home_no_data_card.dart';
+import 'general_fast_menu_card.dart';
+import '../../../../core/presentation/widgets/no_data_paint.dart';
 import 'home_progress_card.dart';
-import 'home_risk_analysis_card.dart';
-import 'home_weekly_stats_card.dart';
+import 'general_home_risk_analysis_card.dart';
+import 'home_splash_card.dart';
+import 'general_home_weekly_stats_card.dart';
 import 'home_welcome_card.dart';
 
 /// 일반 사용자 홈 컨텐츠
@@ -42,6 +44,18 @@ class GeneralUserHomeContent extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (homeState.recordCount == 0 && canManageOwnHealth)
+            // 첫 방문 스플래시 카드
+            ...[
+              HomeSplashCard(
+                title: '만나서 반가워요!',
+                description: '첫번째 건강 데이터를 입력하여 시작해볼까요?',
+                emoji: '✍️',
+                buttonText: '기록 입력하기',
+                onButtonPressed: () => context.push('/record/input'),
+              ),
+              const SizedBox(height: 8),
+            ],
             // 환영 카드
             HomeWelcomeCard(displayName: displayName),
             const SizedBox(height: 8),
@@ -49,13 +63,13 @@ class GeneralUserHomeContent extends ConsumerWidget {
             _buildRecordBasedCard(context, homeState),
             const SizedBox(height: 8),
             // 이번 주 기록 통계 카드
-            HomeWeeklyStatsCard(
+            GeneralHomeWeeklyStatsCard(
               weeklyRecordCount: homeState.thisWeekRecordCount,
               unreadNotificationCount: 0, // 목업 데이터
             ),
             const SizedBox(height: 8),
             // 빠른 메뉴 카드
-            HomeFastMenuCard(
+            GeneralFastMenuCard(
               onNewDataInput: () => context.push('/record/input'),
               onRiskPrediction: () {
                 // TODO: 위험도 예측 페이지로 이동
@@ -79,7 +93,10 @@ class GeneralUserHomeContent extends ConsumerWidget {
 
     // 0개: 데이터 없음 카드
     if (recordCount == 0) {
-      return const HomeNoDataCard();
+      return const NoDataCard(
+        title: '아직 데이터가 없네요',
+        subtitle: '꾸준히 건강 데이터를 입력해주세요!',
+      );
     }
 
     // 1~2개: 진행 상태 카드
@@ -93,7 +110,7 @@ class GeneralUserHomeContent extends ConsumerWidget {
 
     // 3개 이상: 위험도 분석 카드
     if (homeState.riskAnalysisResult != null) {
-      return HomeRiskAnalysisCard(
+      return GeneralHomeRiskAnalysisCard(
         riskAnalysisResult: homeState.riskAnalysisResult!,
         onTap: () {
           // TODO: 위험도 상세 페이지로 이동
@@ -102,6 +119,9 @@ class GeneralUserHomeContent extends ConsumerWidget {
     }
 
     // Fallback: 데이터 없음 카드
-    return const HomeNoDataCard();
+    return const NoDataCard(
+      title: '아직 데이터가 없네요',
+      subtitle: '꾸준히 건강 데이터를 입력해주세요!',
+    );
   }
 }

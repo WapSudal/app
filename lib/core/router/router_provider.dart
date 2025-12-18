@@ -99,7 +99,10 @@ GoRouter router(Ref ref) {
       if (userRole != null)
         StatefulShellRoute.indexedStack(
           builder: (context, state, navigationShell) {
-            return BottomNavShell(navigationShell: navigationShell);
+            return BottomNavShell(
+              navigationShell: navigationShell,
+              userRole: userRole,
+            );
           },
           branches: RoleRoutes.getBranchesForRole(userRole),
         ),

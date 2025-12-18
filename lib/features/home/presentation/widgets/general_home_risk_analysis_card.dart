@@ -10,8 +10,8 @@ import '../providers/home_state.dart';
 /// - 내 위험도 헤더
 /// - 반원 게이지 그래프 + 위험도 퍼센트
 /// - 갱신 날짜
-class HomeRiskAnalysisCard extends StatelessWidget {
-  const HomeRiskAnalysisCard({
+class GeneralHomeRiskAnalysisCard extends StatelessWidget {
+  const GeneralHomeRiskAnalysisCard({
     super.key,
     required this.riskAnalysisResult,
     this.onTap,

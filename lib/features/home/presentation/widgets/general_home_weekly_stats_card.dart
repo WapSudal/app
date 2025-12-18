@@ -6,8 +6,8 @@ import '../../../../core/theme/color_scheme.dart';
 /// Figma: Vertical Card (node-id=467:3765, 467:3772)
 /// - 이번 주 작성 기록
 /// - 읽지 않은 알림 (목업)
-class HomeWeeklyStatsCard extends StatelessWidget {
-  const HomeWeeklyStatsCard({
+class GeneralHomeWeeklyStatsCard extends StatelessWidget {
+  const GeneralHomeWeeklyStatsCard({
     super.key,
     required this.weeklyRecordCount,
     this.unreadNotificationCount = 0,
@@ -73,7 +73,7 @@ class HomeWeeklyStatsCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${count}개',
+                  '$count개',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: AppColorScheme.primaryColor,
                     fontWeight: FontWeight.w600,

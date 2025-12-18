@@ -52,9 +52,7 @@ class LoadingOverlay {
 
 /// 로딩 오버레이 위젯 (내부 구현)
 class _LoadingOverlayWidget extends StatelessWidget {
-  const _LoadingOverlayWidget({
-    required this.message,
-  });
+  const _LoadingOverlayWidget({required this.message});
 
   final String message;
 
@@ -69,7 +67,7 @@ class _LoadingOverlayWidget extends StatelessWidget {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
               child: Container(
-                color: AppColorScheme.black100.withOpacity(0.3),
+                color: AppColorScheme.black100.withValues(alpha: 0.3),
               ),
             ),
           ),
@@ -88,8 +86,8 @@ class _LoadingOverlayWidget extends StatelessWidget {
                 Text(
                   message,
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: AppColorScheme.white100,
-                      ),
+                    color: AppColorScheme.white100,
+                  ),
                 ),
               ],
             ),

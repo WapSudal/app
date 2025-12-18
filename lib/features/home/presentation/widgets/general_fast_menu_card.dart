@@ -5,8 +5,9 @@ import '../../../../gen/assets.gen.dart';
 /// 빠른 메뉴 카드
 ///
 /// Figma: Home/FastMenu
-class HomeFastMenuCard extends StatelessWidget {
-  const HomeFastMenuCard({
+/// TODO: Fast Menu Card caregiver_fast_menu_card.dart 와 해당 파일 통합 필요
+class GeneralFastMenuCard extends StatelessWidget {
+  const GeneralFastMenuCard({
     super.key,
     this.onNewDataInput,
     this.onRiskPrediction,

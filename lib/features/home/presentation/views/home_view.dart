@@ -11,9 +11,8 @@ import '../../../auth/presentation/providers/auth_mutations.dart';
 import '../../../user/presentation/providers/registered_user_notifier.dart';
 import '../providers/home_notifier.dart';
 import '../providers/home_state.dart';
-import '../widgets/doctor_home_content.dart';
+import '../widgets/caregiver_home_content.dart';
 import '../widgets/general_user_home_content.dart';
-import '../widgets/guardian_home_content.dart';
 
 /// 홈 화면
 ///
@@ -74,15 +73,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
           canManageOwnHealth: homeState.canManageOwnHealth,
         );
       case UserRole.guardian:
-        return GuardianHomeContent(
-          displayName: displayName,
-          canAccessGuardianFeatures: homeState.canAccessGuardianFeatures,
-        );
       case UserRole.doctor:
-        return DoctorHomeContent(
-          displayName: displayName,
-          canManagePatients: homeState.canManagePatients,
-        );
+        // Guardian과 Doctor는 동일한 CaregiverHomeContent 사용
+        return CaregiverHomeContent(displayName: displayName);
       default:
         throw UnimplementedError('지원되지 않는 사용자 역할입니다.');
     }

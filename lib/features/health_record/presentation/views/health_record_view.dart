@@ -3,11 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/presentation/widgets/app_bar.dart';
 import '../../../../core/presentation/widgets/app_bottom_sheet.dart';
+import '../../../../core/presentation/widgets/no_data_card.dart';
+import '../../../../core/presentation/widgets/no_data_paint.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../providers/health_record_notifier.dart';
 import '../providers/health_record_state.dart';
 import '../widgets/health_record_detail_bottom_sheet_content.dart';
-import '../widgets/health_record_empty_card.dart';
 import '../widgets/health_record_recent_list_card.dart';
 import '../widgets/health_record_stats_card.dart';
 import '../widgets/health_record_status_card.dart';
@@ -58,7 +59,12 @@ class HealthRecordView extends ConsumerWidget {
       child: Column(
         children: [
           // 빈 상태 카드 (Expanded로 남은 공간 채우기)
-          const Expanded(child: HealthRecordEmptyCard()),
+          const Expanded(
+            child: NoDataCard(
+              title: '아직 데이터가 없네요',
+              subtitle: '꾸준히 건강 데이터를 입력해주세요!',
+            ),
+          ),
           const SizedBox(height: 8),
           // 기록 입력하기 버튼
           SizedBox(

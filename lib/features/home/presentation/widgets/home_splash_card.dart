@@ -6,9 +6,20 @@ import '../../../../core/theme/color_scheme.dart';
 ///
 /// Figma: Home/Splash
 class HomeSplashCard extends StatelessWidget {
-  const HomeSplashCard({super.key, required this.onInputPressed});
+  const HomeSplashCard({
+    super.key,
+    required this.title,
+    required this.description,
+    required this.emoji,
+    required this.buttonText,
+    required this.onButtonPressed,
+  });
 
-  final VoidCallback onInputPressed;
+  final String title;
+  final String description;
+  final String emoji;
+  final String buttonText;
+  final VoidCallback onButtonPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +38,7 @@ class HomeSplashCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '만나서 반가워요!',
+                title,
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   color: AppColorScheme.black100,
                   fontWeight: FontWeight.w600,
@@ -35,7 +46,7 @@ class HomeSplashCard extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                '첫번째 건강 데이터를 입력하여 시작해볼까요?',
+                description,
                 style: Theme.of(
                   context,
                 ).textTheme.bodyLarge?.copyWith(color: AppColorScheme.grey200),
@@ -49,7 +60,7 @@ class HomeSplashCard extends StatelessWidget {
               width: 72,
               height: 72,
               child: Text(
-                '✍️',
+                emoji,
                 style: const TextStyle(fontSize: 56),
                 textAlign: TextAlign.center,
               ),
@@ -60,8 +71,8 @@ class HomeSplashCard extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: AppFlatButton(
-              text: '기록 입력하기',
-              onPressed: onInputPressed,
+              text: buttonText,
+              onPressed: onButtonPressed,
               isExpanded: true,
             ),
           ),
