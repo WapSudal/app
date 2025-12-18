@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/presentation/widgets/no_data_card.dart';
 import '../../../connection/domain/entities/patient_summary_entity.dart';
+import '../../../patients/presentation/widgets/patient_manage_bottom_sheet.dart';
 import '../providers/caregiver_home_notifier.dart';
 import '../providers/caregiver_home_state.dart';
 import 'caregiver_fast_menu_card.dart';
@@ -100,16 +102,13 @@ class CaregiverHomeContent extends ConsumerWidget {
             // 빠른 메뉴 카드
             CaregiverFastMenuCard(
               onNewPatientConnection: () {
-                // TODO: 새로운 환자 연결 페이지로 이동
-                _navigateToPatientConnection(context);
+                PatientManageBottomSheet.show(context: context);
               },
               onPatientList: () {
-                // TODO: 환자 목록 페이지로 이동
-                _navigateToPatientList(context);
+                context.go('/patients');
               },
               onContentExplore: () {
-                // TODO: 추천 콘텐츠 탐색 페이지로 이동
-                _navigateToExplore(context);
+                context.go('/explore');
               },
             ),
           ],
@@ -148,13 +147,6 @@ class CaregiverHomeContent extends ConsumerWidget {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('새로운 환자 연결 기능 (준비 중)')));
-  }
-
-  void _navigateToPatientList(BuildContext context) {
-    // TODO: 환자 목록 페이지로 이동
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('환자 목록 기능 (준비 중)')));
   }
 
   void _navigateToExplore(BuildContext context) {
