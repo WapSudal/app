@@ -88,6 +88,8 @@ class NotificationElement extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -99,8 +101,8 @@ class NotificationElement extends StatelessWidget {
             // 카테고리
             Text(
               notification.category.label,
-              style: const TextStyle(
-                fontFamily: 'Pretendard Variable',
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontFamily: 'Pretendard',
                 fontSize: 11,
                 fontWeight: FontWeight.w400,
                 height: 18 / 11,
@@ -127,7 +129,7 @@ class NotificationElement extends StatelessWidget {
                 Text(
                   _getTimeAgo(notification.createdAt),
                   style: const TextStyle(
-                    fontFamily: 'Pretendard Variable',
+                    fontFamily: 'Pretendard',
                     fontSize: 11,
                     fontWeight: FontWeight.w400,
                     height: 18 / 11,

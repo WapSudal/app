@@ -329,14 +329,13 @@ class _BloodPressureLineChart extends StatelessWidget {
           // 수축기 혈압 (빨간색)
           LineChartBarData(
             spots: systolicSpots,
-            isCurved: true,
             color: const Color(0xFFFF6B6B),
             barWidth: 2,
             dotData: FlDotData(
               show: true,
               getDotPainter: (spot, percent, barData, index) {
                 return FlDotCirclePainter(
-                  radius: 4,
+                  radius: 3,
                   color: const Color(0xFFFF6B6B),
                   strokeWidth: 2,
                   strokeColor: AppColorScheme.white100,
@@ -348,14 +347,13 @@ class _BloodPressureLineChart extends StatelessWidget {
           // 이완기 혈압 (파란색)
           LineChartBarData(
             spots: diastolicSpots,
-            isCurved: true,
             color: AppColorScheme.primaryColor,
             barWidth: 2,
             dotData: FlDotData(
               show: true,
               getDotPainter: (spot, percent, barData, index) {
                 return FlDotCirclePainter(
-                  radius: 4,
+                  radius: 3,
                   color: AppColorScheme.primaryColor,
                   strokeWidth: 2,
                   strokeColor: AppColorScheme.white100,
@@ -484,14 +482,13 @@ class _BloodSugarLineChart extends StatelessWidget {
         lineBarsData: [
           LineChartBarData(
             spots: spots,
-            isCurved: true,
             color: const Color(0xFFFFB946),
             barWidth: 2,
             dotData: FlDotData(
               show: true,
               getDotPainter: (spot, percent, barData, index) {
                 return FlDotCirclePainter(
-                  radius: 4,
+                  radius: 3,
                   color: const Color(0xFFFFB946),
                   strokeWidth: 2,
                   strokeColor: AppColorScheme.white100,
