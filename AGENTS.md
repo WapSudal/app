@@ -2,6 +2,8 @@
 
 This file provides guidance to AI Agents when working with code in this repository.
 
+프로토타입 프로젝트이므로, 실제 API 백엔드 연동은 고려하지 않음.
+
 IMPORTANT! NOTE: This project is currently being set up, and the content described below may not have been fully implemented. This is due to the fact that the content below is from another completed project. Please proceed as if you are aiming for the structure below.
 
 ## Project Overview
@@ -77,9 +79,7 @@ lib/
         │   └── providers/      # Data layer providers
         ├── domain/
         │   ├── entities/       # Domain entities
-        │   ├── repositories/   # Repository interfaces
-        │   ├── usecases/       # Business logic UseCases
-        │   └── providers/      # UseCase providers
+        │   └── repositories/   # Repository interfaces
         └── presentation/
             ├── views/          # UI screens (Widgets)
             ├── providers/      # State management providers
@@ -97,8 +97,7 @@ lib/
 #### Domain Layer  
 - **entities**: Business domain entities (`@freezed`)
 - **repositories**: Repository interfaces (abstract classes)
-- **usecases**: Single responsibility business logic
-- Naming: `*Entity` (e.g., `UserEntity`), `*UseCase` (e.g., `LoginUseCase`)
+- Naming: `*Entity` (e.g., `UserEntity`)
 
 #### Presentation Layer
 - **views**: UI screens (`ConsumerWidget` or `ConsumerStatefulWidget`)
@@ -200,8 +199,6 @@ lib/
 
 ### 11. Provider Layer Separation
 - **Data Layer**: DataSource and Repository providers only
-- **Domain Layer**: UseCase providers only
-- NEVER mix UseCase providers in Data layer
 
 ### 12. Color Opacity Usage
 - Use `withValues(alpha:)` NOT `withOpacity()` (deprecated)
@@ -287,7 +284,7 @@ lib/
 ## Testing
 - Maintain test directory structure for each feature
 - Use Mockito (`@GenerateMocks` annotation)
-- UseCase and Repository tests are required
+- Repository tests are required
 
 ## API Integration
 - Swagger documentation: **To be added**
