@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../../core/enums/user_role.dart';
+import '../../../analysis/domain/entities/risk_assessment_entity.dart';
 import '../../../health_record/domain/entities/health_record_entity.dart';
 
 part 'home_state.freezed.dart';
@@ -29,7 +30,7 @@ abstract class HomeState with _$HomeState {
     @Default([]) List<HealthRecordEntity> healthRecords,
 
     /// 최신 위험도 분석 결과 (목업 데이터)
-    RiskAnalysisResult? riskAnalysisResult,
+    RiskAssessmentEntity? riskAssessment,
   }) = _HomeState;
 
   /// 역할 기반 초기 상태 생성
@@ -56,20 +57,6 @@ abstract class RiskAnalysisResult with _$RiskAnalysisResult {
     /// 갱신 날짜
     required DateTime updatedAt,
   }) = _RiskAnalysisResult;
-}
-
-/// 위험도 레벨
-enum RiskLevel {
-  unknown('Unknown', null),
-  low('낮음', 0xFF71CE6E),
-  medium('보통', 0xFFF7DB34),
-  higher('주의', 0xFFFF9500),
-  high('높음', 0xFFFF4130);
-
-  const RiskLevel(this.label, this.color);
-
-  final String label;
-  final int? color;
 }
 
 // ==================== Extensions ====================

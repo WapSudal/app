@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../analysis/domain/entities/risk_assessment_entity.dart';
 import '../../../health_record/domain/providers/health_record_usecase_providers.dart';
 import '../../../auth/applications/registered_user_notifier.dart';
 import 'home_state.dart';
@@ -39,18 +40,24 @@ class HomeNotifier extends _$HomeNotifier {
       final records = await getAllHealthRecordsUseCase();
 
       // 3개 이상이면 목업 위험도 분석 결과 생성
-      RiskAnalysisResult? riskAnalysis;
+      RiskAssessmentEntity? riskAssessment;
       if (records.length >= 3) {
-        riskAnalysis = RiskAnalysisResult(
-          riskPercentage: 13, // 목업 데이터
+        riskAssessment = RiskAssessmentEntity(
+          riskScore: 13, // 목업 데이터
           riskLevel: RiskLevel.low,
-          updatedAt: DateTime(2025, 11, 28), // 목업 데이터
+          strokeProbability: 8,
+          assessedAt: DateTime(2025, 11, 28), // 목업 데이터
+          nextCheckupRecommended: DateTime(2025, 12, 28),
+          rankPercentile: 20,
+          groupAverageScore: 25,
+          riskFactors: [],
+          aiRecommendation: '현재 건강 상태를 잘 유지하고 계십니다.',
         );
       }
 
       state = baseState.copyWith(
         healthRecords: records,
-        riskAnalysisResult: riskAnalysis,
+        riskAssessment: riskAssessment,
       );
     } catch (e) {
       // 에러 발생 시 빈 목록 유지

@@ -108,9 +108,9 @@ class GeneralUserHomeContent extends ConsumerWidget {
     }
 
     // 3개 이상: 위험도 분석 카드
-    if (homeState.riskAnalysisResult != null) {
+    if (homeState.riskAssessment != null) {
       return GeneralHomeRiskAnalysisCard(
-        riskAnalysisResult: homeState.riskAnalysisResult!,
+        riskAssessment: homeState.riskAssessment!,
         onTap: () {
           // TODO: 위험도 상세 페이지로 이동
         },
