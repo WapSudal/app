@@ -12,9 +12,9 @@ abstract class ConnectionLocalDataSource {
     ConnectionType? type,
     ConnectionStatus? status,
   });
-  Future<void> acceptConnection({required String connectionId});
-  Future<void> rejectConnection({required String connectionId});
-  Future<void> revokeConnection({required String connectionId});
+  Future<void> acceptConnection({required String connectorEmail});
+  Future<void> rejectConnection({required String connectorEmail});
+  Future<void> revokeConnection({required String connectorEmail});
   Future<bool> canAccessPatientData({
     required String patientEmail,
     required SharingScope requiredScope,

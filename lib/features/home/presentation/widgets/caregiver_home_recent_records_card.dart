@@ -136,10 +136,7 @@ class CaregiverHomeRecentRecordsCard extends StatelessWidget {
             children: [
               Text(
                 '최근 작성된 기록',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: AppColorScheme.black100,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(context).textTheme.headlineSmall,
               ),
               if (onViewAllTap != null)
                 GestureDetector(
@@ -190,13 +187,7 @@ class CaregiverHomeRecentRecordsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '최근 작성된 기록',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: AppColorScheme.black100,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          Text('최근 작성된 기록', style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 24),
           Center(
             child: Column(

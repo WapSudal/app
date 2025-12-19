@@ -56,7 +56,7 @@ class PatientsView extends ConsumerWidget {
       child: Column(
         children: [
           // 빈 상태 카드 (Expanded로 남은 공간 채우기)
-          !state.hasPatients
+          state.hasPatients
               ? Expanded(
                   child: ListView.separated(
                     padding: const EdgeInsets.only(bottom: 12),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/enums/connection_type.dart';
 import '../../../../core/enums/user_role.dart';
 import '../../../../core/presentation/widgets/app_bar.dart';
 import '../../../../core/presentation/widgets/app_icon.dart';
@@ -218,11 +219,11 @@ class ProfileView extends ConsumerWidget {
               ),
               iconColor: AppColorScheme.primaryColor,
               title: '보호자 관리',
-              trailingText: '요청 1건',
+              // trailingText: '요청 1건',
               onTap: () {
                 CaregiverManageBottomSheet.show(
                   context: context,
-                  type: ManageType.guardian,
+                  connectionType: ConnectionType.guardian,
                 );
               },
             ),
@@ -241,11 +242,11 @@ class ProfileView extends ConsumerWidget {
               ),
               iconColor: AppColorScheme.success,
               title: '주치의 관리',
-              trailingText: '요청 1건',
+              // trailingText: '요청 1건',
               onTap: () {
                 CaregiverManageBottomSheet.show(
                   context: context,
-                  type: ManageType.physician,
+                  connectionType: ConnectionType.doctor,
                 );
               },
             ),
@@ -262,7 +263,7 @@ class ProfileView extends ConsumerWidget {
               ),
               iconColor: AppColorScheme.primaryColor,
               title: '환자 연결 관리',
-              trailingText: '승인 대기중 1건',
+              // trailingText: '승인 대기중 1건',
               onTap: () {
                 PatientManageBottomSheet.show(context: context);
               },

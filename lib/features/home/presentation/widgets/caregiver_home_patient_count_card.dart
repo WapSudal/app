@@ -10,8 +10,8 @@ class CaregiverHomePatientCountCard extends StatelessWidget {
   const CaregiverHomePatientCountCard({
     super.key,
     required this.title,
-    required this.count,
-    required this.unit,
+    required this.emoji,
+    required this.content,
     this.countColor,
     this.backgroundColor,
   });
@@ -19,11 +19,10 @@ class CaregiverHomePatientCountCard extends StatelessWidget {
   /// 카드 제목 (예: "관리 중인 환자 수", "고위험 환자")
   final String title;
 
-  /// 숫자 값
-  final int count;
+  /// 카드 이모지 (예: "🩺", "⚠️")
+  final String emoji;
 
-  /// 단위 (예: "명")
-  final String unit;
+  final String content;
 
   /// 숫자 색상 (null이면 기본 색상)
   final Color? countColor;
@@ -42,32 +41,27 @@ class CaregiverHomePatientCountCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: AppColorScheme.grey200),
-          ),
-          const SizedBox(height: 8),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
             children: [
               Text(
-                '$count',
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                  color: countColor ?? AppColorScheme.black100,
-                  fontWeight: FontWeight.w700,
-                ),
+                emoji,
+                style: const TextStyle(fontSize: 24, fontFamily: 'TossFace'),
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: 8),
               Text(
-                unit,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: countColor ?? AppColorScheme.black100,
-                ),
+                title,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: AppColorScheme.grey300),
               ),
             ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            content,
+            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+              color: AppColorScheme.primaryColor,
+            ),
           ),
         ],
       ),
@@ -94,8 +88,8 @@ class CaregiverHomePatientCountRow extends StatelessWidget {
         Expanded(
           child: CaregiverHomePatientCountCard(
             title: '관리 중인 환자 수',
-            count: totalPatientCount,
-            unit: '명',
+            emoji: '👤',
+            content: '$totalPatientCount명',
           ),
         ),
         const SizedBox(width: 8),
@@ -103,11 +97,8 @@ class CaregiverHomePatientCountRow extends StatelessWidget {
         Expanded(
           child: CaregiverHomePatientCountCard(
             title: '고위험 환자',
-            count: highRiskPatientCount,
-            unit: '명',
-            countColor: highRiskPatientCount > 0
-                ? AppColorScheme.danger
-                : AppColorScheme.black100,
+            emoji: '⚠️',
+            content: '$highRiskPatientCount명',
           ),
         ),
       ],

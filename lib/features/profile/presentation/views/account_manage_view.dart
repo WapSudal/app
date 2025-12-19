@@ -155,6 +155,7 @@ class AccountManageView extends ConsumerWidget {
                 await repository.signOut();
 
                 tsx.get(authProvider.notifier).clearUser();
+                tsx.get(registeredUserProvider.notifier).resetState();
               });
             },
           ),

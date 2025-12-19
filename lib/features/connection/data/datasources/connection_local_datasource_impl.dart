@@ -58,28 +58,16 @@ class ConnectionLocalDataSourceImpl implements ConnectionLocalDataSource {
     return newConnection;
   }
 
-  @override
-  Future<List<ConnectionModel>> getCurrentConnections({
-    ConnectionType? type,
-    ConnectionStatus? status,
-  }) async {
-    final email = _getCurrentUserEmail();
+  /// 필터링 없이 모든 연결을 가져옵니다 (내부 사용)
+  Future<List<ConnectionModel>> _getAllConnections() async {
     final jsonString = _prefs.getString(_ConnectionStorageKeys.connections);
     if (jsonString == null) return [];
 
     try {
       final List<dynamic> jsonList = jsonDecode(jsonString);
-      final connections = jsonList
+      return jsonList
           .map((json) => ConnectionModel.fromJson(json as Map<String, dynamic>))
-          .where(
-            (connection) =>
-                (connection.patientEmail == email ||
-                    connection.connectorEmail == email) &&
-                (type == null || connection.type == type) &&
-                (status == null || connection.status == status),
-          )
           .toList();
-      return connections;
     } catch (e) {
       // 파싱 오류 - 빈 리스트 반환
       return [];
@@ -87,62 +75,99 @@ class ConnectionLocalDataSourceImpl implements ConnectionLocalDataSource {
   }
 
   @override
-  Future<void> acceptConnection({required String connectionId}) async {
-    final connections = await getCurrentConnections();
-    final index = connections.indexWhere(
-      (connection) => connection.id == connectionId,
+  Future<List<ConnectionModel>> getCurrentConnections({
+    ConnectionType? type,
+    ConnectionStatus? status,
+  }) async {
+    final email = _getCurrentUserEmail();
+    final allConnections = await _getAllConnections();
+
+    return allConnections
+        .where(
+          (connection) =>
+              (connection.patientEmail == email ||
+                  connection.connectorEmail == email) &&
+              (type == null || connection.type == type) &&
+              (status == null || connection.status == status),
+        )
+        .toList();
+  }
+
+  @override
+  Future<void> acceptConnection({required String connectorEmail}) async {
+    final email = _getCurrentUserEmail();
+    final allConnections = await _getAllConnections();
+    final index = allConnections.indexWhere(
+      (connection) =>
+          connection.patientEmail == email &&
+          connection.connectorEmail == connectorEmail &&
+          connection.status == ConnectionStatus.pending,
     );
 
     if (index == -1) {
       throw Exception('연결 요청을 찾을 수 없습니다.');
     }
 
-    final updatedConnection = connections[index].copyWith(
+    final updatedConnection = allConnections[index].copyWith(
       status: ConnectionStatus.accepted,
     );
-    connections[index] = updatedConnection;
+    allConnections[index] = updatedConnection;
 
-    final jsonString = jsonEncode(connections.map((c) => c.toJson()).toList());
+    final jsonString = jsonEncode(
+      allConnections.map((c) => c.toJson()).toList(),
+    );
     await _prefs.setString(_ConnectionStorageKeys.connections, jsonString);
   }
 
   @override
-  Future<void> rejectConnection({required String connectionId}) async {
-    final connections = await getCurrentConnections();
-    final index = connections.indexWhere(
-      (connection) => connection.id == connectionId,
+  Future<void> rejectConnection({required String connectorEmail}) async {
+    final email = _getCurrentUserEmail();
+    final allConnections = await _getAllConnections();
+    final index = allConnections.indexWhere(
+      (connection) =>
+          connection.patientEmail == email &&
+          connection.connectorEmail == connectorEmail &&
+          connection.status == ConnectionStatus.pending,
     );
 
     if (index == -1) {
       throw Exception('연결 요청을 찾을 수 없습니다.');
     }
 
-    final updatedConnection = connections[index].copyWith(
+    final updatedConnection = allConnections[index].copyWith(
       status: ConnectionStatus.rejected,
     );
-    connections[index] = updatedConnection;
+    allConnections[index] = updatedConnection;
 
-    final jsonString = jsonEncode(connections.map((c) => c.toJson()).toList());
+    final jsonString = jsonEncode(
+      allConnections.map((c) => c.toJson()).toList(),
+    );
     await _prefs.setString(_ConnectionStorageKeys.connections, jsonString);
   }
 
   @override
-  Future<void> revokeConnection({required String connectionId}) async {
-    final connections = await getCurrentConnections();
-    final index = connections.indexWhere(
-      (connection) => connection.id == connectionId,
+  Future<void> revokeConnection({required String connectorEmail}) async {
+    final email = _getCurrentUserEmail();
+    final allConnections = await _getAllConnections();
+    final index = allConnections.indexWhere(
+      (connection) =>
+          connection.connectorEmail == connectorEmail &&
+          connection.patientEmail == email &&
+          connection.status == ConnectionStatus.accepted,
     );
 
     if (index == -1) {
       throw Exception('연결 요청을 찾을 수 없습니다.');
     }
 
-    final updatedConnection = connections[index].copyWith(
+    final updatedConnection = allConnections[index].copyWith(
       status: ConnectionStatus.revoked,
     );
-    connections[index] = updatedConnection;
+    allConnections[index] = updatedConnection;
 
-    final jsonString = jsonEncode(connections.map((c) => c.toJson()).toList());
+    final jsonString = jsonEncode(
+      allConnections.map((c) => c.toJson()).toList(),
+    );
     await _prefs.setString(_ConnectionStorageKeys.connections, jsonString);
   }
 

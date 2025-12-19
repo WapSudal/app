@@ -13,7 +13,7 @@ class LinkedAccountInfoTile extends StatelessWidget {
     required this.name,
     required this.email,
     this.profileImage,
-    this.onDelete,
+    this.onRevoke,
   });
 
   /// 이름
@@ -26,7 +26,7 @@ class LinkedAccountInfoTile extends StatelessWidget {
   final String? profileImage;
 
   /// 삭제 버튼 콜백
-  final VoidCallback? onDelete;
+  final VoidCallback? onRevoke;
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +95,7 @@ class LinkedAccountInfoTile extends StatelessWidget {
 
   Widget _buildDeleteButton(BuildContext context) {
     return GestureDetector(
-      onTap: onDelete,
+      onTap: onRevoke,
       child: Container(
         height: 28,
         padding: const EdgeInsets.symmetric(horizontal: 12),

@@ -38,18 +38,18 @@ class ConnectionRepositoryImpl implements ConnectionRepository {
   }
 
   @override
-  Future<void> acceptConnection({required String connectionId}) {
-    return localDataSource.acceptConnection(connectionId: connectionId);
+  Future<void> acceptConnection({required String connectorEmail}) {
+    return localDataSource.acceptConnection(connectorEmail: connectorEmail);
   }
 
   @override
-  Future<void> rejectConnection({required String connectionId}) {
-    return localDataSource.rejectConnection(connectionId: connectionId);
+  Future<void> rejectConnection({required String connectorEmail}) {
+    return localDataSource.rejectConnection(connectorEmail: connectorEmail);
   }
 
   @override
-  Future<void> revokeConnection({required String connectionId}) {
-    return localDataSource.revokeConnection(connectionId: connectionId);
+  Future<void> revokeConnection({required String connectorEmail}) {
+    return localDataSource.revokeConnection(connectorEmail: connectorEmail);
   }
 
   @override

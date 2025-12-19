@@ -53,7 +53,14 @@ class RegisteredUser extends _$RegisteredUser {
     }
   }
 
-  /// 사용자 정보 초기화 (로그아웃 시 호출)
+  /// 사용자 상태 초기화 (로그아웃 시 호출)
+  ///
+  /// 로컬 데이터는 보존하고 메모리 상의 상태만 초기화
+  void resetState() {
+    state = const RegisteredUserState(isInitializing: false);
+  }
+
+  /// 사용자 정보 초기화 (로컬 데이터 삭제 포함)
   Future<void> clear() async {
     try {
       final repository = ref.read(userRepositoryProvider);
