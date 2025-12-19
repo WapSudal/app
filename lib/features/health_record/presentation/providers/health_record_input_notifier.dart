@@ -1,10 +1,10 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../analysis/presentation/providers/analysis_notifier.dart';
 import '../../../home/presentation/providers/home_notifier.dart';
+import '../../data/providers/health_record_repository_provider.dart';
 import 'health_record_input_state.dart';
 import 'health_record_mutations.dart';
 import '../../domain/entities/health_record_entity.dart';
-import '../../domain/providers/health_record_usecase_providers.dart';
 import '../../../../core/enums/smoking_status.dart';
 import '../../../../core/enums/drinking_level.dart';
 import 'health_record_notifier.dart';
@@ -72,9 +72,9 @@ class HealthRecordInput extends _$HealthRecordInput {
     if (!state.hasAnyData) return;
 
     saveHealthRecordMutation.run(ref, (tsx) async {
-      final useCase = tsx.get(saveHealthRecordUseCaseProvider);
+      final repository = tsx.get(healthRecordRepositoryProvider);
 
-      await useCase(
+      await repository.saveHealthRecord(
         recordedAt: DateTime.now(),
         weight: double.tryParse(state.weight),
         height: double.tryParse(state.height),

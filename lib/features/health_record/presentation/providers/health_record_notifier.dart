@@ -1,7 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../health_record/domain/entities/health_record_entity.dart';
-import '../../../health_record/domain/providers/health_record_usecase_providers.dart';
+import '../../data/providers/health_record_repository_provider.dart';
 import 'health_record_state.dart';
 
 part 'health_record_notifier.g.dart';
@@ -15,8 +15,8 @@ class HealthRecord extends _$HealthRecord {
   }
 
   Future<List<HealthRecordEntity>> _fetchAllRecords() async {
-    final useCase = ref.read(getAllHealthRecordsUseCaseProvider);
-    return await useCase();
+    final repository = ref.read(healthRecordRepositoryProvider);
+    return await repository.getAllHealthRecords();
   }
 
   /// 기간 필터 변경
@@ -48,8 +48,8 @@ class HealthRecord extends _$HealthRecord {
 
     try {
       // UseCase를 통해 실제 삭제 수행
-      final deleteUseCase = ref.read(deleteHealthRecordUseCaseProvider);
-      await deleteUseCase(recordId);
+      final repository = ref.read(healthRecordRepositoryProvider);
+      await repository.deleteHealthRecord(recordId);
 
       // 삭제 성공 시 로컬 상태 업데이트
       final updatedRecords = currentState.healthRecords
