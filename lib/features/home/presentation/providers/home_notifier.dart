@@ -37,10 +37,8 @@ class HomeNotifier extends _$HomeNotifier {
       healthRecords: healthRecords,
       riskSummary: riskSummary,
       analysisAvailability: analysisAvailability,
-      role: role,
       canManagePatients: role.canManagePatients,
       canAccessGuardianFeatures: role.canAccessGuardianFeatures,
-      canManageOwnHealth: role.canManageOwnHealth,
     );
   }
 }

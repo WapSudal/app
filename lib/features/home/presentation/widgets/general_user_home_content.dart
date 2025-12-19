@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/presentation/widgets/app_loading_indicator.dart';
 import '../../../../core/presentation/widgets/no_data_card.dart';
+import '../../../../core/theme/color_scheme.dart';
 import '../providers/home_notifier.dart';
 import '../providers/home_state.dart';
 import 'general_fast_menu_card.dart';
@@ -23,64 +25,74 @@ import 'home_welcome_card.dart';
 /// - 이번 주 기록 통계 카드
 /// - 빠른 메뉴 카드
 class GeneralUserHomeContent extends ConsumerWidget {
-  const GeneralUserHomeContent({
-    super.key,
-    this.displayName,
-    required this.canManageOwnHealth,
-  });
+  const GeneralUserHomeContent({super.key, this.displayName});
 
   final String? displayName;
-  final bool canManageOwnHealth;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final homeState = ref.watch(homeProvider).requireValue;
+    final homeState = ref.watch(homeProvider);
 
-    return Container(
-      color: const Color(0xFFF7F6FB), // dashboard/bg
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (homeState.recordCount == 0 && canManageOwnHealth)
-            // 첫 방문 스플래시 카드
-            ...[
-              HomeSplashCard(
-                title: '만나서 반가워요!',
-                description: '첫번째 건강 데이터를 입력하여 시작해볼까요?',
-                emoji: '✍️',
-                buttonText: '기록 입력하기',
-                onButtonPressed: () => context.push('/record/input'),
+    return homeState.when(
+      data: (state) => Container(
+        color: const Color(0xFFF7F6FB), // dashboard/bg
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (state.recordCount == 0)
+              // 첫 방문 스플래시 카드
+              ...[
+                HomeSplashCard(
+                  title: '만나서 반가워요!',
+                  description: '첫번째 건강 데이터를 입력하여 시작해볼까요?',
+                  emoji: '✍️',
+                  buttonText: '기록 입력하기',
+                  onButtonPressed: () => context.push('/record/input'),
+                ),
+                const SizedBox(height: 8),
+              ],
+              // 환영 카드
+              HomeWelcomeCard(displayName: displayName),
+              const SizedBox(height: 8),
+              // 기록 개수에 따른 조건부 렌더링
+              _buildRecordBasedCard(context, state),
+              const SizedBox(height: 8),
+              // 이번 주 기록 통계 카드
+              GeneralHomeWeeklyStatsCard(
+                weeklyRecordCount: state.thisWeekRecordCount,
+                unreadNotificationCount: 0, // 목업 데이터
               ),
               const SizedBox(height: 8),
+              // 빠른 메뉴 카드
+              GeneralFastMenuCard(
+                onNewDataInput: () => context.push('/record/input'),
+                onRiskPrediction: () {
+                  // TODO: 위험도 예측 페이지로 이동
+                },
+                onFutureSimulation: () {
+                  // TODO: 미래 예측 시뮬레이션 페이지로 이동
+                },
+                onContentExplore: () {
+                  // TODO: 추천 콘텐츠 탐색 페이지로 이동
+                },
+              ),
             ],
-            // 환영 카드
-            HomeWelcomeCard(displayName: displayName),
-            const SizedBox(height: 8),
-            // 기록 개수에 따른 조건부 렌더링
-            _buildRecordBasedCard(context, homeState),
-            const SizedBox(height: 8),
-            // 이번 주 기록 통계 카드
-            GeneralHomeWeeklyStatsCard(
-              weeklyRecordCount: homeState.thisWeekRecordCount,
-              unreadNotificationCount: 0, // 목업 데이터
-            ),
-            const SizedBox(height: 8),
-            // 빠른 메뉴 카드
-            GeneralFastMenuCard(
-              onNewDataInput: () => context.push('/record/input'),
-              onRiskPrediction: () {
-                // TODO: 위험도 예측 페이지로 이동
-              },
-              onFutureSimulation: () {
-                // TODO: 미래 예측 시뮬레이션 페이지로 이동
-              },
-              onContentExplore: () {
-                // TODO: 추천 콘텐츠 탐색 페이지로 이동
-              },
-            ),
-          ],
+          ),
+        ),
+      ),
+      loading: () => const Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [AppLoadingIndicator(), Text('불러오는 중')],
+        ),
+      ),
+      error: (error, stack) => Center(
+        child: Text(
+          '데이터를 불러오는 중 오류가 발생했습니다.\n$error',
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: AppColorScheme.grey400),
         ),
       ),
     );

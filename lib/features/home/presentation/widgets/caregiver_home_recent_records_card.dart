@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
-import '../../../connection/domain/entities/patient_recent_record_entity.dart';
+import '../../../health_record/domain/entities/health_record_entity.dart';
 
 /// 최근 기록 요소 위젯
 ///
@@ -15,7 +15,7 @@ class CaregiverHomeRecordElement extends StatelessWidget {
     this.onTap,
   });
 
-  final PatientRecentRecordEntity record;
+  final HealthRecordEntity record;
   final VoidCallback? onTap;
 
   @override
@@ -48,7 +48,7 @@ class CaregiverHomeRecordElement extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    record.patientName,
+                    'record.patientName',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: AppColorScheme.black100,
                       fontWeight: FontWeight.w600,
@@ -56,7 +56,7 @@ class CaregiverHomeRecordElement extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    record.primaryValueDisplay,
+                    'record.primaryValueDisplay',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: AppColorScheme.grey200,
                     ),
@@ -66,7 +66,7 @@ class CaregiverHomeRecordElement extends StatelessWidget {
             ),
             // 날짜
             Text(
-              record.getRelativeTimeDisplay(now),
+              'unknown',
               style: Theme.of(
                 context,
               ).textTheme.labelSmall?.copyWith(color: AppColorScheme.grey300),
@@ -101,10 +101,10 @@ class CaregiverHomeRecentRecordsCard extends StatelessWidget {
   });
 
   /// 최근 기록 목록
-  final List<PatientRecentRecordEntity> records;
+  final List<HealthRecordEntity> records;
 
   /// 기록 탭 콜백
-  final void Function(PatientRecentRecordEntity record)? onRecordTap;
+  final void Function(HealthRecordEntity record)? onRecordTap;
 
   /// "전체보기" 탭 콜백
   final VoidCallback? onViewAllTap;

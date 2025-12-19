@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/domain/entities/user_entity.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
-import '../../../connection/domain/entities/patient_summary_entity.dart';
+import '../../../health_record/domain/entities/health_record_entity.dart';
 
 /// 환자 정보 요소 위젯
 ///
@@ -12,16 +13,15 @@ class CaregiverHomePatientInfoElement extends StatelessWidget {
   const CaregiverHomePatientInfoElement({
     super.key,
     required this.patient,
-    this.onTap,
+    required this.record,
   });
 
-  final PatientSummaryEntity patient;
-  final VoidCallback? onTap;
+  final UserEntity patient;
+  final HealthRecordEntity record;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
@@ -37,7 +37,7 @@ class CaregiverHomePatientInfoElement extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    patient.name,
+                    patient.displayName ?? '',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: AppColorScheme.black100,
                       fontWeight: FontWeight.w600,
@@ -52,14 +52,15 @@ class CaregiverHomePatientInfoElement extends StatelessWidget {
             _buildInfoColumn(
               context,
               label: '혈압',
-              value: patient.bloodPressureDisplay ?? '-',
+              value:
+                  '${record.systolicBP ?? '-'} / ${record.diastolicBP ?? '-'}',
             ),
             const SizedBox(width: 16),
             // 데이터 건수
             _buildInfoColumn(
               context,
               label: '데이터',
-              value: patient.dataCountDisplay,
+              value: 'patient.dataCountDisplay',
             ),
             const SizedBox(width: 8),
             // 화살표
@@ -82,9 +83,9 @@ class CaregiverHomePatientInfoElement extends StatelessWidget {
       width: 44,
       height: 44,
       decoration: BoxDecoration(
-        color: _getRiskBackgroundColor().withValues(alpha: 0.15),
+        color: AppColorScheme.grey300,
         shape: BoxShape.circle,
-        border: Border.all(color: _getRiskBackgroundColor(), width: 2),
+        border: Border.all(color: AppColorScheme.grey300, width: 2),
       ),
       child: ClipOval(
         child: Assets.icons.defaultProfile.svg(width: 44, height: 44),
@@ -96,15 +97,14 @@ class CaregiverHomePatientInfoElement extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: _getRiskBackgroundColor().withValues(alpha: 0.1),
+        color: AppColorScheme.grey300,
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
-        patient.riskScoreDisplay,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: _getRiskBackgroundColor(),
-          fontWeight: FontWeight.w600,
-        ),
+        '33점',
+        style: Theme.of(
+          context,
+        ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w600),
       ),
     );
   }
@@ -134,10 +134,6 @@ class CaregiverHomePatientInfoElement extends StatelessWidget {
       ],
     );
   }
-
-  Color _getRiskBackgroundColor() {
-    return Color(patient.riskLevel.colorValue);
-  }
 }
 
 /// "주의가 필요한 환자" 섹션 카드
@@ -147,15 +143,11 @@ class CaregiverHomeWarningPatientsCard extends StatelessWidget {
   const CaregiverHomeWarningPatientsCard({
     super.key,
     required this.patients,
-    this.onPatientTap,
     this.maxDisplay = 2,
   });
 
   /// 고위험 환자 목록
-  final List<PatientSummaryEntity> patients;
-
-  /// 환자 탭 콜백
-  final void Function(PatientSummaryEntity patient)? onPatientTap;
+  final List<UserEntity> patients;
 
   /// 최대 표시 개수
   final int maxDisplay;
@@ -213,9 +205,13 @@ class CaregiverHomeWarningPatientsCard extends StatelessWidget {
                   ),
                 CaregiverHomePatientInfoElement(
                   patient: patient,
-                  onTap: onPatientTap != null
-                      ? () => onPatientTap!(patient)
-                      : null,
+                  record: HealthRecordEntity(
+                    id: 'record-id',
+                    patientEmail: patient.email,
+                    recordedAt: DateTime.now(),
+                    systolicBP: 150,
+                    diastolicBP: 95,
+                  ), // 더미 데이터
                 ),
               ],
             );

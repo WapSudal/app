@@ -7,7 +7,7 @@ import '../../../../core/providers/shared_preferences_provider.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/repositories/user_repository.dart';
 import '../datasources/auth_remote_datasource.dart';
-import '../datasources/mock_user_local_datasource.dart';
+import '../datasources/user_local_datasource_impl.dart';
 import '../repositories/auth_repository_impl.dart';
 import '../repositories/user_repository_impl.dart';
 
@@ -49,14 +49,20 @@ AuthRepository authRepository(Ref ref) {
 
 /// Mock 사용자 로컬 데이터 소스 Provider
 @Riverpod(keepAlive: true)
-MockUserLocalDataSource mockUserLocalDataSource(Ref ref) {
-  return MockUserLocalDataSource(prefs: ref.watch(sharedPreferencesProvider));
+UserLocalDataSourceImpl userLocalDataSource(Ref ref) {
+  return UserLocalDataSourceImpl(
+    prefs: ref.watch(sharedPreferencesProvider),
+    getCurrentUserEmail: () {
+      final user = FirebaseAuth.instance.currentUser;
+      return user?.email ?? '';
+    },
+  );
 }
 
 /// UserRepository Provider
 @Riverpod(keepAlive: true)
 UserRepository userRepository(Ref ref) {
   return UserRepositoryImpl(
-    localDataSource: ref.watch(mockUserLocalDataSourceProvider),
+    localDataSource: ref.watch(userLocalDataSourceProvider),
   );
 }

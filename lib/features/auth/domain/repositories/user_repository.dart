@@ -26,6 +26,9 @@ abstract class UserRepository {
   /// 가입되지 않은 경우 null 반환
   Future<UserEntity?> getCurrentUser();
 
+  /// 모든 사용자 정보 조회
+  Future<List<UserEntity>> getAllUsers();
+
   /// 가입 여부 확인
   ///
   /// Firebase Auth로 로그인은 했지만 역할 선택(가입)이 완료되지 않은 경우 false

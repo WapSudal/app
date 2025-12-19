@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../../../core/enums/user_role.dart';
 import '../../../analysis/domain/entities/analysis_entity.dart';
 import '../../../health_record/domain/entities/health_record_entity.dart';
 
@@ -14,10 +13,6 @@ part 'home_state.freezed.dart';
 @freezed
 abstract class HomeState with _$HomeState {
   const factory HomeState({
-    /// 현재 사용자 역할
-    /// TODO: riverpod 프로바이더로 사용하도록 삭제 필요
-    @Default(UserRole.generalUser) UserRole role,
-
     /// 환자 관리 권한 (의료인만)
     @Default(false) bool canManagePatients,
 
@@ -41,12 +36,6 @@ abstract class HomeState with _$HomeState {
 // ==================== Extensions ====================
 
 extension HomeStateX on HomeState {
-  /// 역할 표시 이름
-  String get roleDisplayName => role.displayName;
-
-  /// 역할 설명
-  String get roleDescription => role.description;
-
   /// 건강 기록 개수
   int get recordCount => healthRecords.length;
 

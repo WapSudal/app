@@ -15,11 +15,11 @@ abstract class ConnectionEntity with _$ConnectionEntity {
     /// 연결 ID
     required String id,
 
-    /// 환자 ID
-    required String patientId,
+    /// 환자 이메일
+    required String patientEmail,
 
-    /// 연결자 ID (보호자 또는 주치의)
-    required String connectorId,
+    /// 연결자 이메일 (보호자 또는 주치의)
+    required String connectorEmail,
 
     /// 연결 유형 (보호자 또는 주치의)
     required ConnectionType type,
@@ -32,28 +32,10 @@ abstract class ConnectionEntity with _$ConnectionEntity {
 
     /// 연결 요청 시각
     required DateTime requestedAt,
-
-    /// 수락/거절 시각
-    DateTime? respondedAt,
-
-    /// 해제 시각
-    DateTime? revokedAt,
-
-    /// 연결자 이름 (환자가 요청을 확인할 때 표시용)
-    required String connectorName,
-
-    /// 연결자 이메일
-    String? connectorEmail,
-
-    /// 환자 이름 (보호자/주치의가 목록에서 볼 때 표시용)
-    required String patientName,
-
-    /// 환자 이메일
-    String? patientEmail,
   }) = _ConnectionEntity;
+}
 
-  const ConnectionEntity._();
-
+extension ConnectionEntityX on ConnectionEntity {
   /// 활성 연결 여부
   bool get isActive => status.isActive;
 
@@ -64,8 +46,7 @@ abstract class ConnectionEntity with _$ConnectionEntity {
   bool get isTerminated => status.isTerminated;
 
   /// 건강 기록 접근 가능 여부
-  bool get canAccessHealthRecords =>
-      isActive && scope.canAccessHealthRecords;
+  bool get canAccessHealthRecords => isActive && scope.canAccessHealthRecords;
 
   /// 위험도 분석 접근 가능 여부
   bool get canAccessRiskAnalysis => isActive && scope.canAccessRiskAnalysis;
@@ -75,17 +56,4 @@ abstract class ConnectionEntity with _$ConnectionEntity {
 
   /// 알림 수신 가능 여부
   bool get canReceiveAlerts => isActive && scope.canReceiveAlerts;
-
-  /// 연결 지속 시간 (수락된 경우)
-  Duration? get connectionDuration {
-    if (respondedAt == null || !isActive) return null;
-    final endTime = revokedAt ?? DateTime.now();
-    return endTime.difference(respondedAt!);
-  }
-
-  /// 대기 시간 (아직 응답하지 않은 경우)
-  Duration get waitingDuration {
-    final endTime = respondedAt ?? DateTime.now();
-    return endTime.difference(requestedAt);
-  }
 }

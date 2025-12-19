@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/domain/entities/user_entity.dart';
 import '../../../../core/presentation/widgets/app_icon.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
-import '../../../connection/domain/entities/patient_summary_entity.dart';
 
 /// 환자 리스트 아이템 위젯
 ///
@@ -12,7 +12,7 @@ import '../../../connection/domain/entities/patient_summary_entity.dart';
 class PatientListItem extends StatelessWidget {
   const PatientListItem({super.key, required this.patient, this.onTap});
 
-  final PatientSummaryEntity patient;
+  final UserEntity patient;
   final VoidCallback? onTap;
 
   @override
@@ -52,14 +52,14 @@ class PatientListItem extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: AppColorScheme.white300,
-        image: patient.profileImageUrl != null
+        image: patient.photoUrl != null
             ? DecorationImage(
-                image: NetworkImage(patient.profileImageUrl!),
+                image: NetworkImage(patient.photoUrl!),
                 fit: BoxFit.cover,
               )
             : null,
       ),
-      child: patient.profileImageUrl == null
+      child: patient.photoUrl == null
           ? const Icon(Icons.person, size: 24, color: AppColorScheme.grey400)
           : null,
     );
@@ -74,7 +74,7 @@ class PatientListItem extends StatelessWidget {
         Row(
           children: [
             Text(
-              patient.name,
+              patient.displayName ?? '',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: AppColorScheme.black100,
@@ -93,7 +93,7 @@ class PatientListItem extends StatelessWidget {
 
   /// 상태 칩 (건강/주의/위험)
   Widget _buildStatusChip(BuildContext context) {
-    final chipColor = Color(patient.riskLevel.colorValue);
+    final chipColor = AppColorScheme.success;
     final chipBackgroundColor = chipColor.withValues(alpha: 0.15);
 
     return Container(
@@ -103,7 +103,7 @@ class PatientListItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
-        patient.riskLevel.label,
+        '건강',
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
           color: chipColor,
           fontWeight: FontWeight.w600,
@@ -117,12 +117,10 @@ class PatientListItem extends StatelessWidget {
     final infoItems = <String>[];
 
     // 혈압 정보
-    if (patient.bloodPressureDisplay != null) {
-      infoItems.add('혈압 ${patient.bloodPressureDisplay}');
-    }
+    infoItems.add('혈압 120/80');
 
     // 데이터 건수
-    infoItems.add('기록 ${patient.dataCountDisplay}');
+    infoItems.add('혈당 50');
 
     return Text(
       infoItems.join(' · '),

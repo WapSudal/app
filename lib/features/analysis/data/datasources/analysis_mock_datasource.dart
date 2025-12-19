@@ -1,13 +1,13 @@
-import '../../../health_record/data/datasources/health_record_datasource.dart';
+import '../../../health_record/data/datasources/health_record_local_datasource.dart';
 import '../models/analysis_model.dart';
 import 'analysis_datasource.dart';
 
 /// 분석 데이터 소스 (목업 데이터 제공)
 class AnalysisMockDataSource implements AnalysisDataSource {
-  final HealthRecordDataSource _healthRecordDataSource;
+  final HealthRecordLocalDataSource _healthRecordDataSource;
 
   AnalysisMockDataSource({
-    required HealthRecordDataSource healthRecordDataSource,
+    required HealthRecordLocalDataSource healthRecordDataSource,
   }) : _healthRecordDataSource = healthRecordDataSource;
 
   @override

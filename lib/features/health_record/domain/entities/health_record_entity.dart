@@ -8,6 +8,7 @@ part 'health_record_entity.freezed.dart';
 abstract class HealthRecordEntity with _$HealthRecordEntity {
   const factory HealthRecordEntity({
     required String id,
+    required String patientEmail,
     required DateTime recordedAt,
     double? weight,
     double? height,

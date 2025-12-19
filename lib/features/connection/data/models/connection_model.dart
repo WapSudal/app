@@ -13,18 +13,12 @@ part 'connection_model.g.dart';
 abstract class ConnectionModel with _$ConnectionModel {
   const factory ConnectionModel({
     required String id,
-    required String patientId,
-    required String connectorId,
+    required String patientEmail,
+    required String connectorEmail,
     required ConnectionType type,
     required ConnectionStatus status,
     required SharingScope scope,
     required DateTime requestedAt,
-    DateTime? respondedAt,
-    DateTime? revokedAt,
-    required String connectorName,
-    String? connectorEmail,
-    required String patientName,
-    String? patientEmail,
   }) = _ConnectionModel;
 
   factory ConnectionModel.fromJson(Map<String, dynamic> json) =>
@@ -37,37 +31,12 @@ extension ConnectionModelX on ConnectionModel {
   ConnectionEntity toEntity() {
     return ConnectionEntity(
       id: id,
-      patientId: patientId,
-      connectorId: connectorId,
+      patientEmail: patientEmail,
+      connectorEmail: connectorEmail,
       type: type,
       status: status,
       scope: scope,
       requestedAt: requestedAt,
-      respondedAt: respondedAt,
-      revokedAt: revokedAt,
-      connectorName: connectorName,
-      connectorEmail: connectorEmail,
-      patientName: patientName,
-      patientEmail: patientEmail,
-    );
-  }
-
-  /// Entity를 Model로 변환 (정적 메서드)
-  static ConnectionModel fromEntity(ConnectionEntity entity) {
-    return ConnectionModel(
-      id: entity.id,
-      patientId: entity.patientId,
-      connectorId: entity.connectorId,
-      type: entity.type,
-      status: entity.status,
-      scope: entity.scope,
-      requestedAt: entity.requestedAt,
-      respondedAt: entity.respondedAt,
-      revokedAt: entity.revokedAt,
-      connectorName: entity.connectorName,
-      connectorEmail: entity.connectorEmail,
-      patientName: entity.patientName,
-      patientEmail: entity.patientEmail,
     );
   }
 }

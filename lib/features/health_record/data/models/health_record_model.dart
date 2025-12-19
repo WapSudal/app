@@ -10,6 +10,7 @@ part 'health_record_model.g.dart';
 abstract class HealthRecordModel with _$HealthRecordModel {
   const factory HealthRecordModel({
     required String id,
+    required String patientEmail,
     required String recordedAt,
     double? weight,
     double? height,
@@ -32,6 +33,7 @@ extension HealthRecordModelX on HealthRecordModel {
   HealthRecordEntity toEntity() {
     return HealthRecordEntity(
       id: id,
+      patientEmail: patientEmail,
       recordedAt: DateTime.parse(recordedAt),
       weight: weight,
       height: height,
@@ -45,25 +47,6 @@ extension HealthRecordModelX on HealthRecordModel {
       drinkingLevel: drinkingLevel != null
           ? DrinkingLevel.values.firstWhere((e) => e.name == drinkingLevel)
           : null,
-      exerciseHours: exerciseHours,
-      memo: memo,
-    );
-  }
-}
-
-extension HealthRecordEntityX on HealthRecordEntity {
-  HealthRecordModel toModel() {
-    return HealthRecordModel(
-      id: id,
-      recordedAt: recordedAt.toIso8601String(),
-      weight: weight,
-      height: height,
-      bmi: bmi,
-      systolicBP: systolicBP,
-      diastolicBP: diastolicBP,
-      bloodSugar: bloodSugar,
-      smokingStatus: smokingStatus?.name,
-      drinkingLevel: drinkingLevel?.name,
       exerciseHours: exerciseHours,
       memo: memo,
     );
