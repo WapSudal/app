@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/presentation/widgets/app_bar.dart';
-import '../../domain/entities/what_if_scenario_entity.dart';
+import '../../domain/entities/analysis_entity.dart';
 import '../widgets/what_if_widgets.dart';
 
 /// What-if 시뮬레이션 화면
@@ -12,7 +12,7 @@ import '../widgets/what_if_widgets.dart';
 class WhatIfSimulationView extends StatefulWidget {
   const WhatIfSimulationView({super.key, required this.simulation});
 
-  final WhatIfSimulationEntity simulation;
+  final WhatIfSimulationReportEntity simulation;
 
   @override
   State<WhatIfSimulationView> createState() => _WhatIfSimulationViewState();

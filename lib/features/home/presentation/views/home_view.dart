@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/experimental/mutation.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../core/enums/user_role.dart';
-import '../../../../core/presentation/helpers/snackbar_helper.dart';
 import '../../../../core/presentation/widgets/app_bar.dart';
 import '../../../../core/presentation/widgets/app_loading_indicator.dart';
+import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
-import '../../../auth/applications/auth_mutations.dart';
 import '../../../auth/applications/registered_user_notifier.dart';
 import '../providers/home_notifier.dart';
 import '../providers/home_state.dart';
@@ -32,23 +29,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
     final homeState = ref.watch(homeProvider);
     final registeredUserState = ref.watch(registeredUserProvider);
     final user = registeredUserState.user;
-    final signOutState = ref.watch(signOutMutation);
-
-    // 로그아웃 Mutation 상태 처리
-    ref.listen(signOutMutation, (previous, next) {
-      switch (next) {
-        case MutationSuccess():
-          if (context.mounted) {
-            context.go('/onboarding');
-          }
-        case MutationError(:final error):
-          showErrorSnackBar(context, error);
-        default:
-          break;
-      }
-    });
-
-    final isLoading = signOutState is MutationPending;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F6FB), // dashboard/bg
@@ -58,14 +38,22 @@ class _HomeViewState extends ConsumerState<HomeView> {
       ),
       body: SafeArea(
         bottom: false,
-        child: isLoading
-            ? const Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [AppLoadingIndicator(), Text('불러오는 중')],
-                ),
-              )
-            : _buildContent(homeState, user?.displayName),
+        child: homeState.when(
+          data: (state) => _buildContent(state, user?.displayName),
+          loading: () => const Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [AppLoadingIndicator(), Text('불러오는 중')],
+            ),
+          ),
+          error: (error, stack) => Center(
+            child: Text(
+              '데이터를 불러오는 중 오류가 발생했습니다.\n$error',
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: AppColorScheme.grey400),
+            ),
+          ),
+        ),
       ),
     );
   }

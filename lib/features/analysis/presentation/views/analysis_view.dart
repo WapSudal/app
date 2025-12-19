@@ -51,7 +51,7 @@ class AnalysisView extends ConsumerWidget {
     WidgetRef ref,
     AnalysisState state,
   ) {
-    if (!state.canAnalyze) {
+    if (!(state.analysisAvailability.canAnalyze)) {
       return _buildEmptyContent(context, state);
     }
     return _buildDataContent(context, ref, state);
@@ -65,7 +65,9 @@ class AnalysisView extends ConsumerWidget {
         children: [
           // 빈 상태 카드 (Expanded로 남은 공간 채우기)
           Expanded(
-            child: AnalysisEmptyCard(analysisStatus: state.analysisStatus),
+            child: AnalysisEmptyCard(
+              analysisAvailability: state.analysisAvailability,
+            ),
           ),
           const SizedBox(height: 8),
           // 기록 입력하기 버튼

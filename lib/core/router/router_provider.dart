@@ -1,8 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../features/analysis/domain/entities/risk_assessment_entity.dart';
-import '../../features/analysis/domain/entities/what_if_scenario_entity.dart';
+import '../../features/analysis/domain/entities/analysis_entity.dart';
 import '../../features/analysis/presentation/views/risk_measurement_view.dart';
 import '../../features/analysis/presentation/views/what_if_simulation_view.dart';
 import '../../features/auth/applications/auth_notifier.dart';
@@ -123,7 +122,7 @@ GoRouter router(Ref ref) {
         path: '/analysis/risk-measurement',
         name: 'riskMeasurement',
         builder: (context, state) {
-          final riskAssessment = state.extra as RiskAssessmentEntity;
+          final riskAssessment = state.extra as RiskAssessmentReportEntity;
           return RiskMeasurementView(riskAssessment: riskAssessment);
         },
       ),
@@ -131,7 +130,7 @@ GoRouter router(Ref ref) {
         path: '/analysis/what-if',
         name: 'whatIfSimulation',
         builder: (context, state) {
-          final simulation = state.extra as WhatIfSimulationEntity;
+          final simulation = state.extra as WhatIfSimulationReportEntity;
           return WhatIfSimulationView(simulation: simulation);
         },
       ),

@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../../core/enums/user_role.dart';
-import '../../../analysis/domain/entities/risk_assessment_entity.dart';
+import '../../../analysis/domain/entities/analysis_entity.dart';
 import '../../../health_record/domain/entities/health_record_entity.dart';
 
 part 'home_state.freezed.dart';
@@ -15,6 +15,7 @@ part 'home_state.freezed.dart';
 abstract class HomeState with _$HomeState {
   const factory HomeState({
     /// 현재 사용자 역할
+    /// TODO: riverpod 프로바이더로 사용하도록 삭제 필요
     @Default(UserRole.generalUser) UserRole role,
 
     /// 환자 관리 권한 (의료인만)
@@ -29,34 +30,12 @@ abstract class HomeState with _$HomeState {
     /// 건강 기록 목록
     @Default([]) List<HealthRecordEntity> healthRecords,
 
+    /// 분석 가능 여부
+    required AnalysisAvailabilityEntity analysisAvailability,
+
     /// 최신 위험도 분석 결과 (목업 데이터)
-    RiskAssessmentEntity? riskAssessment,
+    RiskAssessmentReportEntity? riskAssessment,
   }) = _HomeState;
-
-  /// 역할 기반 초기 상태 생성
-  factory HomeState.fromRole(UserRole role) {
-    return HomeState(
-      role: role,
-      canManagePatients: role.canManagePatients,
-      canAccessGuardianFeatures: role.canAccessGuardianFeatures,
-      canManageOwnHealth: role.canManageOwnHealth,
-    );
-  }
-}
-
-/// 위험도 분석 결과 (목업)
-@freezed
-abstract class RiskAnalysisResult with _$RiskAnalysisResult {
-  const factory RiskAnalysisResult({
-    /// 위험도 퍼센트 (0~100)
-    required int riskPercentage,
-
-    /// 위험도 레벨
-    required RiskLevel riskLevel,
-
-    /// 갱신 날짜
-    required DateTime updatedAt,
-  }) = _RiskAnalysisResult;
 }
 
 // ==================== Extensions ====================
@@ -85,10 +64,4 @@ extension HomeStateX on HomeState {
         .where((record) => record.recordedAt.isAfter(startOfWeekDate))
         .length;
   }
-
-  /// 분석 가능 여부 (3개 이상의 기록 필요)
-  bool get canAnalyze => recordCount >= 3;
-
-  /// 분석 가능까지 필요한 기록 개수
-  int get recordsNeededForAnalysis => (3 - recordCount).clamp(0, 3);
 }

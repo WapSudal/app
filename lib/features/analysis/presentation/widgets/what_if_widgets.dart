@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/presentation/widgets/app_segmented_tab_bar.dart';
 import '../../../../core/theme/color_scheme.dart';
-import '../../domain/entities/what_if_scenario_entity.dart';
+import '../../domain/entities/analysis_entity.dart';
 import 'analysis_common_widgets.dart';
 
 /// What-if 시뮬레이션 상단 스플래시 카드

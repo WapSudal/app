@@ -1,8 +1,9 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../../../../core/enums/risk_level.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
-import '../../../analysis/domain/entities/risk_assessment_entity.dart';
+import '../../../analysis/domain/entities/analysis_entity.dart';
 
 /// 위험도 분석 카드 (3개 이상 기록 시)
 ///
@@ -18,7 +19,7 @@ class GeneralHomeRiskAnalysisCard extends StatelessWidget {
   });
 
   /// 위험도 분석 결과
-  final RiskAssessmentEntity riskAssessment;
+  final RiskAssessmentReportEntity riskAssessment;
 
   /// 카드 탭 콜백
   final VoidCallback? onTap;

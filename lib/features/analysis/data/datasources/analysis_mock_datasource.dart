@@ -1,19 +1,45 @@
-import '../models/risk_assessment_model.dart';
-import '../models/what_if_scenario_model.dart';
+import '../models/analysis_model.dart';
+import 'analysis_datasource.dart';
 
 /// 분석 데이터 소스 (목업 데이터 제공)
-class AnalysisMockDataSource {
-  /// 분석 가능 여부에 따른 위험도 측정 결과 반환
-  Future<RiskAssessmentModel?> getRiskAssessment({
-    required int recordCount,
-  }) async {
+class AnalysisMockDataSource implements AnalysisDataSource {
+  @override
+  Future<AnalysisAvailabilityModel> getAnalysisAvailability() async {
+    // 네트워크 지연 시뮬레이션
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    return const AnalysisAvailabilityModel(
+      canAnalyze: false,
+      requiredRecordCount: 3,
+      currentRecordCount: 0,
+    );
+  }
+
+  @override
+  Future<RiskPredictionSummaryModel?> getRiskPredictionSummary() async {
     // 네트워크 지연 시뮬레이션
     await Future.delayed(const Duration(milliseconds: 500));
 
-    // 3개 미만의 기록이면 null 반환 (분석 불가)
-    if (recordCount < 3) return null;
+    return const RiskPredictionSummaryModel(
+      riskScore: 13,
+      riskLevel: 'low',
+      strokeProbability: 10,
+    );
+  }
 
-    return const RiskAssessmentModel(
+  @override
+  Future<RiskPredictionSummaryModel?> getRiskPredictionSummaryByUserId(
+    String userId,
+  ) async {
+    return getRiskPredictionSummary();
+  }
+
+  @override
+  Future<RiskAssessmentReportModel?> getRiskAssessmentReport() async {
+    // 네트워크 지연 시뮬레이션
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    return const RiskAssessmentReportModel(
       riskScore: 13,
       riskLevel: 'low',
       strokeProbability: 10,
@@ -42,15 +68,17 @@ class AnalysisMockDataSource {
     );
   }
 
-  /// What-if 시뮬레이션 결과 반환
-  Future<WhatIfSimulationModel?> getWhatIfSimulation({
-    required int recordCount,
-  }) async {
+  @override
+  Future<RiskAssessmentReportModel?> getRiskAssessmentReportByUserId(
+    String userId,
+  ) async {
+    return getRiskAssessmentReport();
+  }
+
+  @override
+  Future<WhatIfSimulationReportModel?> getWhatIfSimulationReport() async {
     // 네트워크 지연 시뮬레이션
     await Future.delayed(const Duration(milliseconds: 500));
-
-    // 3개 미만의 기록이면 null 반환 (분석 불가)
-    if (recordCount < 3) return null;
 
     const recommendedScenario = WhatIfScenarioModel(
       id: 'quit_smoking',
@@ -77,7 +105,7 @@ class AnalysisMockDataSource {
       changes: ['금연 상태로 변경'],
     );
 
-    return WhatIfSimulationModel(
+    return WhatIfSimulationReportModel(
       currentRiskScore: 20,
       maxPossibleReduction: 20,
       scenarioCount: 4,
@@ -144,5 +172,12 @@ class AnalysisMockDataSource {
         ),
       ],
     );
+  }
+
+  @override
+  Future<WhatIfSimulationReportModel?> getWhatIfSimulationReportByUserId(
+    String userId,
+  ) async {
+    return getWhatIfSimulationReport();
   }
 }

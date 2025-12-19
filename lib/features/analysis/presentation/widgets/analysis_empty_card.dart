@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/presentation/widgets/no_data_paint.dart';
 import '../../../../core/theme/color_scheme.dart';
-import '../../domain/entities/analysis_status_entity.dart';
+import '../../domain/entities/analysis_entity.dart';
 import 'analysis_common_widgets.dart';
 
 /// 분석 빈 상태 카드 (데이터 부족)
@@ -11,9 +11,9 @@ import 'analysis_common_widgets.dart';
 /// 분석에 필요한 건강 데이터가 부족할 때 표시되는 카드입니다.
 /// 진행 상태 헤더, 프로그레스 바, 빈 상태 메시지를 포함합니다.
 class AnalysisEmptyCard extends StatelessWidget {
-  const AnalysisEmptyCard({super.key, required this.analysisStatus});
+  const AnalysisEmptyCard({super.key, required this.analysisAvailability});
 
-  final AnalysisStatusEntity analysisStatus;
+  final AnalysisAvailabilityEntity analysisAvailability;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,11 @@ class AnalysisEmptyCard extends StatelessWidget {
           _buildProgressHeader(context),
           const SizedBox(height: 16),
           // 진행 바
-          AnalysisProgressBar(progress: analysisStatus.progress),
+          AnalysisProgressBar(
+            progress:
+                analysisAvailability.currentRecordCount /
+                analysisAvailability.requiredRecordCount,
+          ),
           const SizedBox(height: 12),
           // 빈 상태 카드
           Expanded(
@@ -59,7 +63,7 @@ class AnalysisEmptyCard extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              '${analysisStatus.recordsNeeded}개의 건강 정보 필요',
+              '${analysisAvailability.requiredRecordCount - analysisAvailability.currentRecordCount}개의 건강 정보 필요',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: AppColorScheme.primaryColor,
                 fontWeight: FontWeight.w600,

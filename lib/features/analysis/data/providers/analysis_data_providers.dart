@@ -7,15 +7,15 @@ import '../repositories/analysis_repository_impl.dart';
 part 'analysis_data_providers.g.dart';
 
 /// Mock DataSource Provider
-@riverpod
+@Riverpod(keepAlive: true)
 AnalysisMockDataSource analysisMockDataSource(Ref ref) {
   return AnalysisMockDataSource();
 }
 
 /// Analysis Repository Provider
-@riverpod
+@Riverpod(keepAlive: true)
 AnalysisRepository analysisRepository(Ref ref) {
   return AnalysisRepositoryImpl(
-    mockDataSource: ref.watch(analysisMockDataSourceProvider),
+    dataSource: ref.watch(analysisMockDataSourceProvider),
   );
 }

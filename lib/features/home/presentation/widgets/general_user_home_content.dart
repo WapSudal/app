@@ -34,7 +34,7 @@ class GeneralUserHomeContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final homeState = ref.watch(homeProvider);
+    final homeState = ref.watch(homeProvider).requireValue;
 
     return Container(
       color: const Color(0xFFF7F6FB), // dashboard/bg
@@ -88,10 +88,10 @@ class GeneralUserHomeContent extends ConsumerWidget {
 
   /// 기록 개수에 따른 카드 렌더링
   Widget _buildRecordBasedCard(BuildContext context, HomeState homeState) {
-    final recordCount = homeState.recordCount;
+    final analysisAvailability = homeState.analysisAvailability;
 
     // 0개: 데이터 없음 카드
-    if (recordCount == 0) {
+    if (homeState.recordCount == 0) {
       return const NoDataCard(
         title: '아직 데이터가 없네요',
         subtitle: '꾸준히 건강 데이터를 입력해주세요!',
@@ -99,10 +99,12 @@ class GeneralUserHomeContent extends ConsumerWidget {
     }
 
     // 1~2개: 진행 상태 카드
-    if (recordCount < 3) {
+    if (homeState.analysisAvailability.canAnalyze) {
       return HomeProgressCard(
-        recordCount: recordCount,
-        recordsNeeded: homeState.recordsNeededForAnalysis,
+        recordCount: homeState.recordCount,
+        recordsNeeded:
+            analysisAvailability.requiredRecordCount -
+            analysisAvailability.currentRecordCount,
         onInputPressed: () => context.push('/record/input'),
       );
     }
