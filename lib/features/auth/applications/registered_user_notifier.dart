@@ -1,7 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/domain/entities/user_entity.dart';
-import '../domain/providers/auth_domain_providers.dart';
+import '../data/providers/auth_data_providers.dart';
 import 'registered_user_state.dart';
 
 part 'registered_user_notifier.g.dart';
@@ -26,8 +26,9 @@ class RegisteredUser extends _$RegisteredUser {
   /// 초기 사용자 정보 로드
   Future<void> _initializeUser() async {
     try {
-      final getCurrentUser = ref.read(getCurrentUserUseCaseProvider);
-      final user = await getCurrentUser();
+      final repository = ref.read(userRepositoryProvider);
+
+      final user = await repository.getCurrentUser();
 
       state = state.copyWith(user: user, isInitializing: false);
     } catch (e) {
@@ -43,8 +44,8 @@ class RegisteredUser extends _$RegisteredUser {
   /// 사용자 정보 새로고침
   Future<void> refresh() async {
     try {
-      final getCurrentUser = ref.read(getCurrentUserUseCaseProvider);
-      final user = await getCurrentUser();
+      final repository = ref.read(userRepositoryProvider);
+      final user = await repository.getCurrentUser();
 
       state = state.copyWith(user: user);
     } catch (e) {
@@ -55,8 +56,8 @@ class RegisteredUser extends _$RegisteredUser {
   /// 사용자 정보 초기화 (로그아웃 시 호출)
   Future<void> clear() async {
     try {
-      final clearUserData = ref.read(clearUserDataUseCaseProvider);
-      await clearUserData();
+      final repository = ref.read(userRepositoryProvider);
+      await repository.clearUserData();
 
       state = const RegisteredUserState(isInitializing: false);
     } catch (e) {

@@ -9,7 +9,6 @@ import '../../../../core/presentation/widgets/app_loading_overlay.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../auth/data/providers/auth_data_providers.dart';
-import '../../../auth/domain/providers/auth_domain_providers.dart';
 import '../../../auth/applications/auth_mutations.dart';
 import '../../../auth/applications/auth_notifier.dart';
 import '../../../auth/applications/auth_state.dart';
@@ -219,8 +218,8 @@ class _RoleSelectViewState extends ConsumerState<RoleSelectView> {
       }
 
       // UseCase를 통해 사용자 등록
-      final registerUser = tsx.get(registerUserUseCaseProvider);
-      final user = await registerUser(
+      final repository = tsx.get(userRepositoryProvider);
+      final user = await repository.registerUser(
         uid: authUser.uid,
         email: authUser.email ?? '',
         displayName: authUser.displayName,
