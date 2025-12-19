@@ -24,7 +24,10 @@ class HealthRecordStatusCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 이모지
-          Text(healthStatus.emoji, style: const TextStyle(fontSize: 64)),
+          Text(
+            healthStatus.emoji,
+            style: const TextStyle(fontSize: 64, fontFamily: 'TossFace'),
+          ),
           const SizedBox(height: 12),
           // 타이틀
           Text(

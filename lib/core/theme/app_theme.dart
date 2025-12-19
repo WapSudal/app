@@ -6,8 +6,8 @@ class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
-      fontFamily: 'TossFace',
-      fontFamilyFallback: const ['Pretendard'],
+      fontFamily: 'Pretendard',
+      fontFamilyFallback: const ['TossFace'],
       textTheme: AppTextTheme.textTheme,
       colorScheme: AppColorScheme.lightColorScheme,
       pageTransitionsTheme: const PageTransitionsTheme(
