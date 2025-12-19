@@ -19,6 +19,7 @@ abstract class RiskPredictionSummaryEntity with _$RiskPredictionSummaryEntity {
     required int riskScore,
     required RiskLevel riskLevel,
     required int strokeProbability,
+    required DateTime assessedAt,
   }) = _RiskPredictionSummaryEntity;
 }
 

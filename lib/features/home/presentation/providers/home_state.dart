@@ -28,13 +28,13 @@ abstract class HomeState with _$HomeState {
     @Default(false) bool canManageOwnHealth,
 
     /// 건강 기록 목록
-    @Default([]) List<HealthRecordEntity> healthRecords,
+    required List<HealthRecordEntity> healthRecords,
 
     /// 분석 가능 여부
     required AnalysisAvailabilityEntity analysisAvailability,
 
     /// 최신 위험도 분석 결과 (목업 데이터)
-    RiskAssessmentReportEntity? riskAssessment,
+    RiskPredictionSummaryEntity? riskSummary,
   }) = _HomeState;
 }
 

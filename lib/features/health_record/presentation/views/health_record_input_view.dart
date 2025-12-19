@@ -139,26 +139,6 @@ class _HealthRecordInputViewState extends ConsumerState<HealthRecordInputView> {
                           children: [
                             Expanded(
                               child: AppLinedTextField(
-                                label: '체중 (kg)',
-                                controller: _weightController,
-                                keyboardType:
-                                    const TextInputType.numberWithOptions(
-                                      decimal: true,
-                                    ),
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                    RegExp(r'^\d*\.?\d*'),
-                                  ),
-                                ],
-                                onChanged: ref
-                                    .read(healthRecordInputProvider.notifier)
-                                    .updateWeight,
-                                isExpanded: true,
-                              ),
-                            ),
-                            const SizedBox(width: 20),
-                            Expanded(
-                              child: AppLinedTextField(
                                 label: '키 (cm)',
                                 controller: _heightController,
                                 keyboardType:
@@ -173,6 +153,26 @@ class _HealthRecordInputViewState extends ConsumerState<HealthRecordInputView> {
                                 onChanged: ref
                                     .read(healthRecordInputProvider.notifier)
                                     .updateHeight,
+                                isExpanded: true,
+                              ),
+                            ),
+                            const SizedBox(width: 20),
+                            Expanded(
+                              child: AppLinedTextField(
+                                label: '체중 (kg)',
+                                controller: _weightController,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                      decimal: true,
+                                    ),
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp(r'^\d*\.?\d*'),
+                                  ),
+                                ],
+                                onChanged: ref
+                                    .read(healthRecordInputProvider.notifier)
+                                    .updateWeight,
                                 isExpanded: true,
                               ),
                             ),

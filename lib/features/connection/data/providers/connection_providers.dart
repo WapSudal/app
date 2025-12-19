@@ -15,7 +15,7 @@ ConnectionLocalDataSource connectionLocalDataSource(Ref ref) {
   return ConnectionLocalDataSource(prefs);
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 ConnectionRepository connectionRepository(Ref ref) {
   final localDataSource = ref.watch(connectionLocalDataSourceProvider);
 

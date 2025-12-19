@@ -26,6 +26,7 @@ abstract class RiskPredictionSummaryModel with _$RiskPredictionSummaryModel {
     required int riskScore,
     required String riskLevel,
     required int strokeProbability,
+    required String assessedAt,
   }) = _RiskPredictionSummaryModel;
 
   factory RiskPredictionSummaryModel.fromJson(Map<String, dynamic> json) =>
@@ -122,6 +123,7 @@ extension RiskPredictionSummaryModelX on RiskPredictionSummaryModel {
       riskScore: riskScore,
       riskLevel: _parseRiskLevel(riskLevel),
       strokeProbability: strokeProbability,
+      assessedAt: DateTime.parse(assessedAt),
     );
   }
 

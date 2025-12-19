@@ -1,17 +1,29 @@
+import '../../../health_record/data/datasources/health_record_datasource.dart';
 import '../models/analysis_model.dart';
 import 'analysis_datasource.dart';
 
 /// 분석 데이터 소스 (목업 데이터 제공)
 class AnalysisMockDataSource implements AnalysisDataSource {
+  final HealthRecordDataSource _healthRecordDataSource;
+
+  AnalysisMockDataSource({
+    required HealthRecordDataSource healthRecordDataSource,
+  }) : _healthRecordDataSource = healthRecordDataSource;
+
   @override
   Future<AnalysisAvailabilityModel> getAnalysisAvailability() async {
     // 네트워크 지연 시뮬레이션
     await Future.delayed(const Duration(milliseconds: 300));
 
-    return const AnalysisAvailabilityModel(
-      canAnalyze: false,
-      requiredRecordCount: 3,
-      currentRecordCount: 0,
+    // 실제 건강 기록 개수 조회
+    final healthRecords = await _healthRecordDataSource.getHealthRecords();
+    const requiredCount = 3;
+    final currentCount = healthRecords.length;
+
+    return AnalysisAvailabilityModel(
+      canAnalyze: currentCount >= requiredCount,
+      requiredRecordCount: requiredCount,
+      currentRecordCount: currentCount,
     );
   }
 
@@ -24,6 +36,7 @@ class AnalysisMockDataSource implements AnalysisDataSource {
       riskScore: 13,
       riskLevel: 'low',
       strokeProbability: 10,
+      assessedAt: '2025-12-18T10:00:00Z',
     );
   }
 

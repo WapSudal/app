@@ -14,12 +14,12 @@ import '../../../analysis/domain/entities/analysis_entity.dart';
 class GeneralHomeRiskAnalysisCard extends StatelessWidget {
   const GeneralHomeRiskAnalysisCard({
     super.key,
-    required this.riskAssessment,
+    required this.riskSummary,
     this.onTap,
   });
 
   /// 위험도 분석 결과
-  final RiskAssessmentReportEntity riskAssessment;
+  final RiskPredictionSummaryEntity riskSummary;
 
   /// 카드 탭 콜백
   final VoidCallback? onTap;
@@ -92,8 +92,8 @@ class GeneralHomeRiskAnalysisCard extends StatelessWidget {
             height: 100,
             child: CustomPaint(
               painter: _RiskGaugePainter(
-                percentage: riskAssessment.riskScore,
-                riskLevel: riskAssessment.riskLevel,
+                percentage: riskSummary.riskScore,
+                riskLevel: riskSummary.riskLevel,
               ),
               child: Align(
                 alignment: Alignment.bottomCenter,
@@ -106,7 +106,7 @@ class GeneralHomeRiskAnalysisCard extends StatelessWidget {
                       _buildRiskChip(context),
                       // 퍼센트
                       Text(
-                        '${riskAssessment.riskScore}%',
+                        '${riskSummary.riskScore}%',
                         style: Theme.of(context).textTheme.headlineLarge
                             ?.copyWith(
                               color: AppColorScheme.black100,
@@ -136,8 +136,8 @@ class GeneralHomeRiskAnalysisCard extends StatelessWidget {
   }
 
   Widget _buildRiskChip(BuildContext context) {
-    final chipColor = riskAssessment.riskLevel.color != null
-        ? Color(riskAssessment.riskLevel.color!)
+    final chipColor = riskSummary.riskLevel.color != null
+        ? Color(riskSummary.riskLevel.color!)
         : AppColorScheme.grey300;
 
     return Container(
@@ -147,7 +147,7 @@ class GeneralHomeRiskAnalysisCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(9999),
       ),
       child: Text(
-        riskAssessment.riskLevel.label,
+        riskSummary.riskLevel.label,
         style: Theme.of(
           context,
         ).textTheme.bodySmall?.copyWith(color: chipColor, letterSpacing: -0.32),
@@ -156,7 +156,7 @@ class GeneralHomeRiskAnalysisCard extends StatelessWidget {
   }
 
   Widget _buildUpdatedDate(BuildContext context) {
-    final date = riskAssessment.assessedAt;
+    final date = riskSummary.assessedAt;
     final formattedDate =
         '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}';
 
@@ -172,7 +172,7 @@ class GeneralHomeRiskAnalysisCard extends StatelessWidget {
   }
 
   String _getRiskMessage() {
-    switch (riskAssessment.riskLevel) {
+    switch (riskSummary.riskLevel) {
       case RiskLevel.unknown:
         return '분석 기록이 없습니다';
       case RiskLevel.low:

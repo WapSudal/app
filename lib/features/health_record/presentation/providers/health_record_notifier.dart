@@ -16,7 +16,7 @@ class HealthRecord extends _$HealthRecord {
 
   Future<List<HealthRecordEntity>> _fetchAllRecords() async {
     final repository = ref.read(healthRecordRepositoryProvider);
-    return await repository.getAllHealthRecords();
+    return await repository.getHealthRecords();
   }
 
   /// 기간 필터 변경
@@ -47,7 +47,6 @@ class HealthRecord extends _$HealthRecord {
     if (currentState == null) return;
 
     try {
-      // UseCase를 통해 실제 삭제 수행
       final repository = ref.read(healthRecordRepositoryProvider);
       await repository.deleteHealthRecord(recordId);
 

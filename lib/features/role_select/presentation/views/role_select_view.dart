@@ -217,7 +217,6 @@ class _RoleSelectViewState extends ConsumerState<RoleSelectView> {
         throw Exception('로그인이 필요합니다.');
       }
 
-      // UseCase를 통해 사용자 등록
       final repository = tsx.get(userRepositoryProvider);
       final user = await repository.registerUser(
         uid: authUser.uid,

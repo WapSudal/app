@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/enums/user_role.dart';
 import '../../../analysis/data/providers/analysis_data_providers.dart';
 import '../../../auth/applications/registered_user_notifier.dart';
+import '../../../health_record/data/providers/health_record_repository_provider.dart';
 import 'home_state.dart';
 
 part 'home_notifier.g.dart';
@@ -21,22 +22,25 @@ class HomeNotifier extends _$HomeNotifier {
     final registeredUserState = ref.watch(registeredUserProvider);
     final user = registeredUserState.user;
 
+    if (user == null) throw Exception('User not found');
+
+    final healthRecordRepository = ref.watch(healthRecordRepositoryProvider);
     final analysisRepository = ref.watch(analysisRepositoryProvider);
 
     final analysisAvailability = await analysisRepository
         .getAnalysisAvailability();
+    final healthRecords = await healthRecordRepository.getHealthRecords();
+    final riskSummary = await analysisRepository.getRiskPredictionSummary();
 
-    if (user != null) {
-      final role = user.role;
-      return HomeState(
-        analysisAvailability: analysisAvailability,
-        role: role,
-        canManagePatients: role.canManagePatients,
-        canAccessGuardianFeatures: role.canAccessGuardianFeatures,
-        canManageOwnHealth: role.canManageOwnHealth,
-      );
-    }
-
-    return HomeState(analysisAvailability: analysisAvailability);
+    final role = user.role;
+    return HomeState(
+      healthRecords: healthRecords,
+      riskSummary: riskSummary,
+      analysisAvailability: analysisAvailability,
+      role: role,
+      canManagePatients: role.canManagePatients,
+      canAccessGuardianFeatures: role.canAccessGuardianFeatures,
+      canManageOwnHealth: role.canManageOwnHealth,
+    );
   }
 }
