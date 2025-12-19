@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/color_scheme.dart';
+import '../providers/notification_providers.dart';
 import 'notification_element.dart';
 import 'notification_filter.dart';
 
@@ -8,102 +10,64 @@ import 'notification_filter.dart';
 ///
 /// 타이틀, 필터, 알림 리스트를 포함합니다.
 /// [AppBottomSheet]의 child로 사용됩니다.
-class NotificationBottomSheetContent extends StatefulWidget {
+class NotificationBottomSheetContent extends ConsumerWidget {
   const NotificationBottomSheetContent({super.key});
 
   @override
-  State<NotificationBottomSheetContent> createState() =>
-      _NotificationBottomSheetContentState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedFilter = ref.watch(notificationFilterProvider);
+    final filteredNotificationsAsync = ref.watch(filteredNotificationsProvider);
 
-class _NotificationBottomSheetContentState
-    extends State<NotificationBottomSheetContent> {
-  NotificationFilterType _selectedFilter = NotificationFilterType.all;
-
-  // 임시 알림 데이터
-  final List<NotificationItem> _notifications = const [
-    NotificationItem(
-      id: '1',
-      category: NotificationCategory.healthRecord,
-      message: '이제 위험도 측정을 확인할 수 있어요.',
-      timeAgo: '1분 전',
-      isRead: false,
-    ),
-    NotificationItem(
-      id: '2',
-      category: NotificationCategory.prediction,
-      message: '이번 주 위험도 분석이 완료되었습니다.',
-      timeAgo: '3시간 전',
-      isRead: false,
-    ),
-    NotificationItem(
-      id: '3',
-      category: NotificationCategory.reminder,
-      message: '오늘 건강 기록을 작성해주세요.',
-      timeAgo: '1일 전',
-      isRead: true,
-    ),
-    NotificationItem(
-      id: '4',
-      category: NotificationCategory.system,
-      message: '앱이 최신 버전으로 업데이트되었습니다.',
-      timeAgo: '3일 전',
-      isRead: true,
-    ),
-  ];
-
-  List<NotificationItem> get _filteredNotifications {
-    switch (_selectedFilter) {
-      case NotificationFilterType.all:
-        return _notifications;
-      case NotificationFilterType.unread:
-        return _notifications.where((n) => !n.isRead).toList();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // 필터 (고정)
         NotificationFilter(
-          selectedFilter: _selectedFilter,
+          selectedFilter: selectedFilter,
           onFilterChanged: (filter) {
-            setState(() {
-              _selectedFilter = filter;
-            });
+            ref.read(notificationFilterProvider.notifier).setFilter(filter);
           },
         ),
         const SizedBox(height: 16),
 
         // 알림 리스트 (스크롤 가능)
         Expanded(
-          child: ListView.builder(
-            itemCount: _filteredNotifications.isEmpty
-                ? 1
-                : _filteredNotifications.length,
-            itemBuilder: (context, index) {
-              if (_filteredNotifications.isEmpty) {
-                return _buildEmptyState();
+          child: filteredNotificationsAsync.when(
+            data: (notifications) {
+              if (notifications.isEmpty) {
+                return _buildEmptyState(selectedFilter);
               }
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: NotificationElement(
-                  notification: _filteredNotifications[index],
-                  onTap: () {
-                    // TODO: 알림 상세 또는 관련 화면으로 이동
-                  },
-                ),
+              return ListView.builder(
+                itemCount: notifications.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: NotificationElement(
+                      notification: notifications[index],
+                      onTap: () {
+                        // 알림 읽음 처리
+                        ref
+                            .read(notificationProvider.notifier)
+                            .markAsRead(notifications[index].id);
+                      },
+                    ),
+                  );
+                },
               );
             },
+            loading: () => const Center(
+              child: CircularProgressIndicator(),
+            ),
+            error: (error, stack) => Center(
+              child: Text('알림을 불러오는데 실패했습니다: $error'),
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(NotificationFilterType selectedFilter) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 40),
       alignment: Alignment.center,
@@ -117,7 +81,7 @@ class _NotificationBottomSheetContentState
           ),
           const SizedBox(height: 12),
           Text(
-            _selectedFilter == NotificationFilterType.unread
+            selectedFilter == NotificationFilterType.unread
                 ? '읽지 않은 알림이 없습니다'
                 : '알림이 없습니다',
             style: const TextStyle(

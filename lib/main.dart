@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'core/providers/shared_preferences_provider.dart';
 import 'core/router/router_provider.dart';
 import 'core/theme/app_theme.dart';
+import 'features/connection/data/providers/connection_providers.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -19,12 +20,21 @@ void main() async {
   // SharedPreferences 초기화 (Mock 데이터 저장소)
   final sharedPreferences = await SharedPreferences.getInstance();
 
+  // ProviderContainer 생성 (데이터 초기화용)
+  final container = ProviderContainer(
+    overrides: [
+      // SharedPreferences Provider override
+      sharedPreferencesProvider.overrideWithValue(sharedPreferences),
+    ],
+  );
+
+  // Connection LocalDataSource 초기화 (영속성 데이터 로드)
+  final connectionDataSource = container.read(connectionLocalDataSourceProvider);
+  await connectionDataSource.initialize();
+
   runApp(
-    ProviderScope(
-      overrides: [
-        // SharedPreferences Provider override
-        sharedPreferencesProvider.overrideWithValue(sharedPreferences),
-      ],
+    UncontrolledProviderScope(
+      container: container,
       child: const MyApp(),
     ),
   );

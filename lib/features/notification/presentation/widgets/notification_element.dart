@@ -1,35 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/color_scheme.dart';
-
-/// 알림 카테고리 타입
-enum NotificationCategory {
-  healthRecord('건강 기록', '✅️'),
-  prediction('위험도 예측', '📊'),
-  reminder('리마인더', '⏰'),
-  system('시스템', '⚙️');
-
-  const NotificationCategory(this.label, this.emoji);
-  final String label;
-  final String emoji;
-}
-
-/// 알림 데이터 모델 (임시)
-class NotificationItem {
-  const NotificationItem({
-    required this.id,
-    required this.category,
-    required this.message,
-    required this.timeAgo,
-    this.isRead = false,
-  });
-
-  final String id;
-  final NotificationCategory category;
-  final String message;
-  final String timeAgo;
-  final bool isRead;
-}
+import '../../domain/entities/notification.dart';
 
 /// 알림 리스트 아이템 위젯
 ///
@@ -46,8 +18,30 @@ class NotificationElement extends StatelessWidget {
     this.onTap,
   });
 
-  final NotificationItem notification;
+  final NotificationEntity notification;
   final VoidCallback? onTap;
+
+  /// 시간 차이를 한국어 문자열로 변환
+  String _getTimeAgo(DateTime createdAt) {
+    final now = DateTime.now();
+    final difference = now.difference(createdAt);
+
+    if (difference.inMinutes < 1) {
+      return '방금 전';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}분 전';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}시간 전';
+    } else if (difference.inDays < 30) {
+      return '${difference.inDays}일 전';
+    } else if (difference.inDays < 365) {
+      final months = (difference.inDays / 30).floor();
+      return '$months개월 전';
+    } else {
+      final years = (difference.inDays / 365).floor();
+      return '$years년 전';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +125,7 @@ class NotificationElement extends StatelessWidget {
                   const SizedBox(width: 8),
                 ],
                 Text(
-                  notification.timeAgo,
+                  _getTimeAgo(notification.createdAt),
                   style: const TextStyle(
                     fontFamily: 'Pretendard Variable',
                     fontSize: 11,

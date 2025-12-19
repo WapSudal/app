@@ -10,6 +10,7 @@ import '../../domain/usecases/accept_connection_usecase.dart';
 import '../../domain/usecases/reject_connection_usecase.dart';
 import '../../domain/usecases/get_my_connections_usecase.dart';
 import '../../domain/usecases/revoke_connection_usecase.dart';
+import '../../../../core/providers/shared_preferences_provider.dart';
 
 part 'connection_providers.g.dart';
 
@@ -18,7 +19,8 @@ part 'connection_providers.g.dart';
 /// Connection LocalDataSource Provider (Singleton)
 @Riverpod(keepAlive: true)
 ConnectionLocalDataSource connectionLocalDataSource(Ref ref) {
-  return ConnectionLocalDataSource();
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return ConnectionLocalDataSource(prefs);
 }
 
 // ==================== Repository ====================

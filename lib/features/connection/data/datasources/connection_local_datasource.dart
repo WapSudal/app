@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../models/connection_model.dart';
 import '../models/patient_summary_model.dart';
 import '../models/patient_recent_record_model.dart';
@@ -8,12 +11,17 @@ import '../../../../core/enums/connection_status.dart';
 import '../../../../core/enums/sharing_scope.dart';
 import '../../../../core/exceptions/app_exception.dart';
 
-/// Connection LocalDataSource (Mock)
+/// Connection LocalDataSource (Mock with Persistence)
 ///
-/// 인메모리 데이터로 연결 관리 기능을 시뮬레이션합니다
+/// 인메모리 데이터로 연결 관리 기능을 시뮬레이션하며,
+/// SharedPreferences를 통해 영속성을 제공합니다
 class ConnectionLocalDataSource {
+  final SharedPreferences _prefs;
+
+  static const _connectionsKey = 'connections_list';
+
   // 인메모리 연결 저장소
-  final List<ConnectionModel> _connections = [];
+  List<ConnectionModel> _connections = [];
 
   // 더미 사용자 데이터 (UID -> 사용자 정보)
   final Map<String, _MockUser> _mockUsers = {
@@ -70,10 +78,48 @@ class ConnectionLocalDataSource {
   // 환자별 최근 기록 (Mock)
   final List<PatientRecentRecordModel> _mockRecentRecords = [];
 
-  ConnectionLocalDataSource() {
-    // 초기 더미 연결 데이터 (선택사항)
-    _initializeMockConnections();
+  ConnectionLocalDataSource(this._prefs);
+
+  /// 앱 시작 시 저장된 데이터를 로드합니다
+  ///
+  /// main.dart에서 호출되어야 합니다
+  Future<void> initialize() async {
+    // SharedPreferences에서 연결 데이터 로드
+    final savedData = _prefs.getString(_connectionsKey);
+
+    if (savedData != null) {
+      try {
+        final List<dynamic> jsonList = jsonDecode(savedData);
+        _connections = jsonList
+            .map((json) => ConnectionModel.fromJson(json as Map<String, dynamic>))
+            .toList();
+      } catch (e) {
+        // 파싱 실패 시 초기 Mock 데이터로 시작
+        _connections = [];
+        await _prefs.remove(_connectionsKey);
+      }
+    }
+
+    // 첫 실행이거나 데이터가 없으면 초기 Mock 데이터 생성
+    if (_connections.isEmpty) {
+      _initializeMockConnections();
+      await _persistConnections();
+    }
+
+    // Mock 최근 기록은 항상 초기화 (영속성 불필요)
     _initializeMockRecentRecords();
+  }
+
+  /// 연결 데이터를 SharedPreferences에 저장합니다
+  Future<void> _persistConnections() async {
+    try {
+      final jsonList = _connections.map((conn) => conn.toJson()).toList();
+      final jsonString = jsonEncode(jsonList);
+      await _prefs.setString(_connectionsKey, jsonString);
+    } catch (e) {
+      // 저장 실패는 무시 (인메모리 데이터는 유지됨)
+      // 프로덕션에서는 로깅 필요
+    }
   }
 
   /// 초기 더미 연결 생성
@@ -272,6 +318,7 @@ class ConnectionLocalDataSource {
     );
 
     _connections.add(connection);
+    await _persistConnections();
     return connection;
   }
 
@@ -318,6 +365,7 @@ class ConnectionLocalDataSource {
     );
 
     _connections[index] = updated;
+    await _persistConnections();
     return updated;
   }
 
@@ -352,6 +400,7 @@ class ConnectionLocalDataSource {
     );
 
     _connections[index] = updated;
+    await _persistConnections();
     return updated;
   }
 
@@ -413,6 +462,7 @@ class ConnectionLocalDataSource {
     );
 
     _connections[index] = updated;
+    await _persistConnections();
   }
 
   /// 환자 데이터 접근 권한 확인

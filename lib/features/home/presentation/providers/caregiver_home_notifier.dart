@@ -5,6 +5,7 @@ import '../../../../core/enums/user_role.dart';
 import '../../../connection/data/datasources/connection_local_datasource.dart';
 import '../../../connection/data/models/patient_summary_model.dart';
 import '../../../connection/data/models/patient_recent_record_model.dart';
+import '../../../connection/data/providers/connection_providers.dart';
 import '../../../auth/applications/registered_user_notifier.dart';
 import 'caregiver_home_state.dart';
 
@@ -21,7 +22,7 @@ class CaregiverHomeNotifier extends _$CaregiverHomeNotifier {
 
   @override
   CaregiverHomeState build() {
-    _dataSource = ConnectionLocalDataSource();
+    _dataSource = ref.watch(connectionLocalDataSourceProvider);
 
     // registeredUserProvider에서 역할 정보 가져와서 State 초기화
     final registeredUserState = ref.watch(registeredUserProvider);
