@@ -1,9 +1,9 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import '../../../../core/enums/health_record_period_filter.dart';
 import '../../../../core/presentation/widgets/app_segmented_tab_bar.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../domain/entities/health_record_entity.dart';
-import '../providers/health_record_state.dart';
 
 /// 혈압/혈당 변화율 카드
 ///
@@ -12,19 +12,23 @@ import '../providers/health_record_state.dart';
 class HealthRecordStatsCard extends StatelessWidget {
   const HealthRecordStatsCard({
     super.key,
-    required this.recordState,
+    required this.selectedPeriodIndex,
+    required this.filteredRecordCount,
+    required this.averageBPString,
+    required this.averageBloodSugar,
+    required this.filteredRecords,
     required this.onPeriodChanged,
   });
 
-  final HealthRecordState recordState;
+  final int selectedPeriodIndex;
+  final int filteredRecordCount;
+  final String averageBPString;
+  final int? averageBloodSugar;
+  final List<HealthRecordEntity> filteredRecords;
   final ValueChanged<HealthRecordPeriodFilter> onPeriodChanged;
 
   @override
   Widget build(BuildContext context) {
-    final periodIndex = HealthRecordPeriodFilter.values.indexOf(
-      recordState.periodFilter,
-    );
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -44,7 +48,7 @@ class HealthRecordStatsCard extends StatelessWidget {
             items: HealthRecordPeriodFilter.values
                 .map((f) => SegmentedTabItem(label: f.label, value: f))
                 .toList(),
-            selectedIndex: periodIndex,
+            selectedIndex: selectedPeriodIndex,
             onItemSelected: (index) {
               onPeriodChanged(HealthRecordPeriodFilter.values[index]);
             },
@@ -82,7 +86,7 @@ class HealthRecordStatsCard extends StatelessWidget {
             child: _buildStatItem(
               context,
               label: '총 기록',
-              value: '${recordState.filteredRecordCount}회',
+              value: '$filteredRecordCount회',
             ),
           ),
           // 평균 혈압
@@ -90,7 +94,7 @@ class HealthRecordStatsCard extends StatelessWidget {
             child: _buildStatItem(
               context,
               label: '평균 혈압',
-              value: recordState.averageBPString ?? '-',
+              value: averageBPString,
             ),
           ),
           // 평균 혈당
@@ -98,7 +102,7 @@ class HealthRecordStatsCard extends StatelessWidget {
             child: _buildStatItem(
               context,
               label: '평균 혈당',
-              value: recordState.averageBloodSugar?.toString() ?? '-',
+              value: averageBloodSugar?.toString() ?? '-',
             ),
           ),
         ],
@@ -138,7 +142,7 @@ class HealthRecordStatsCard extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Text(
-            '${recordState.periodFilter.label}간 혈압 변화',
+            '${HealthRecordPeriodFilter.values[selectedPeriodIndex].label}간 혈압 변화',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               color: AppColorScheme.black100,
               letterSpacing: -0.4,
@@ -147,7 +151,7 @@ class HealthRecordStatsCard extends StatelessWidget {
         ),
         SizedBox(
           height: 200,
-          child: _BloodPressureLineChart(records: recordState.filteredRecords),
+          child: _BloodPressureLineChart(records: filteredRecords),
         ),
         const SizedBox(height: 8),
         // 범례
@@ -177,7 +181,7 @@ class HealthRecordStatsCard extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Text(
-            '${recordState.periodFilter.label}간 혈당 변화',
+            '${HealthRecordPeriodFilter.values[selectedPeriodIndex].label}간 혈당 변화',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               color: AppColorScheme.black100,
               letterSpacing: -0.4,
@@ -186,7 +190,7 @@ class HealthRecordStatsCard extends StatelessWidget {
         ),
         SizedBox(
           height: 200,
-          child: _BloodSugarLineChart(records: recordState.filteredRecords),
+          child: _BloodSugarLineChart(records: filteredRecords),
         ),
         const SizedBox(height: 8),
         // 범례

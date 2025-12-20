@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/enums/health_record_period_filter.dart';
 import '../../../../core/presentation/widgets/app_bar.dart';
 import '../../../../core/presentation/widgets/app_bottom_sheet.dart';
 import '../../../../core/presentation/widgets/app_flat_button.dart';
@@ -99,7 +100,13 @@ class HealthRecordView extends ConsumerWidget {
           const SizedBox(height: 8),
           // 통계 카드
           HealthRecordStatsCard(
-            recordState: recordState,
+            selectedPeriodIndex: HealthRecordPeriodFilter.values.indexOf(
+              recordState.periodFilter,
+            ),
+            filteredRecordCount: recordState.filteredRecordCount,
+            averageBPString: recordState.averageBPString ?? '-',
+            averageBloodSugar: recordState.averageBloodSugar,
+            filteredRecords: recordState.filteredRecords,
             onPeriodChanged: (filter) {
               ref
                   .read(healthRecordProvider.notifier)

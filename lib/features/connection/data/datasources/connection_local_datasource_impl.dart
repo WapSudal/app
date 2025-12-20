@@ -178,15 +178,18 @@ class ConnectionLocalDataSourceImpl implements ConnectionLocalDataSource {
   }) async {
     final email = _getCurrentUserEmail();
     final connections = await getCurrentConnections(
-      type: ConnectionType.guardian,
       status: ConnectionStatus.accepted,
     );
+
+    print(
+      'patientEmail: $patientEmail, email: $email, requiredScope: $requiredScope',
+    );
+    print(connections);
 
     return connections.any(
       (connection) =>
           connection.patientEmail == patientEmail &&
-          connection.connectorEmail == email &&
-          connection.scope.index >= requiredScope.index,
+          connection.connectorEmail == email,
     );
   }
 }

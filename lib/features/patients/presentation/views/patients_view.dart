@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/presentation/widgets/app_bar.dart';
 import '../../../../core/presentation/widgets/app_flat_button.dart';
@@ -68,7 +69,7 @@ class PatientsView extends ConsumerWidget {
                       return PatientListItem(
                         patient: patient,
                         onTap: () {
-                          // TODO: 환자 상세 화면으로 라우팅
+                          context.push('/patients/${patient.email}/detail');
                         },
                       );
                     },

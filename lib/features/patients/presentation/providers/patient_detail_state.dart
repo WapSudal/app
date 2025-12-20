@@ -2,27 +2,46 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../../core/enums/health_record_period_filter.dart';
 import '../../../../core/enums/health_status_level.dart';
+import '../../../analysis/domain/entities/analysis_entity.dart';
 import '../../../health_record/domain/entities/health_record_entity.dart';
 
-part 'health_record_state.freezed.dart';
+part 'patient_detail_state.freezed.dart';
 
-/// 기록 탭 화면 상태
+/// 분석 화면 상태
 @freezed
-abstract class HealthRecordState with _$HealthRecordState {
-  const factory HealthRecordState({
+abstract class PatientDetailState with _$PatientDetailState {
+  const factory PatientDetailState({
+    @Default(PatientDetailTab.summary) PatientDetailTab selectedTab,
+
     /// 건강 기록 목록
-    @Default([]) List<HealthRecordEntity> healthRecords,
+    required List<HealthRecordEntity> healthRecords,
 
     /// 선택된 기간 필터 (7일, 30일, 전체)
     @Default(HealthRecordPeriodFilter.week)
     HealthRecordPeriodFilter periodFilter,
-  }) = _HealthRecordState;
+
+    required AnalysisAvailabilityEntity analysisAvailability,
+
+    /// 위험도 측정 결과 (분석 가능 시에만 존재)
+    RiskAssessmentReportEntity? riskAssessment,
+
+    /// What-if 시뮬레이션 결과 (분석 가능 시에만 존재)
+    WhatIfSimulationReportEntity? whatIfSimulation,
+  }) = _PatientDetailState;
 }
 
-// ==================== Extensions ====================
+enum PatientDetailTab {
+  summary('기본 정보'),
+  riskAssessment('위험도'),
+  whatIfSimulation('시뮬레이션');
 
-// TODO: patient_detail_state.dart 와의 중복. 개선 필요.
-extension HealthRecordStateX on HealthRecordState {
+  const PatientDetailTab(this.label);
+
+  final String label;
+}
+
+// TODO: health_record_state.dart 와의 로직 중복. 개선 필요.
+extension PatientDetailStateX on PatientDetailState {
   /// 데이터 존재 여부
   bool get hasData => healthRecords.isNotEmpty;
 

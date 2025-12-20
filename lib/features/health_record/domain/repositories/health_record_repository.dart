@@ -25,8 +25,5 @@ abstract class HealthRecordRepository {
 
   Future<HealthRecordEntity?> getLatestHealthRecordByEmail(String patientEmail);
 
-  /// 연결된 모든 환자의 건강 기록 조회 (보호자/주치의용)
-  ///
-  /// Returns: Map<patientEmail, List<HealthRecordEntity>>
   Future<List<HealthRecordEntity>> getAllConnectedPatientsHealthRecords();
 }

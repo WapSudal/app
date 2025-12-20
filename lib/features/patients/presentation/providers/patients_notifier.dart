@@ -27,7 +27,7 @@ class PatientsNotifier extends _$PatientsNotifier {
 
     final patients = users.where((user) {
       return connections.any(
-        (connection) => connection.connectorEmail == user.email,
+        (connection) => connection.patientEmail == user.email,
       );
     }).toList();
 
