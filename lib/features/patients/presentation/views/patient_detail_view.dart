@@ -7,7 +7,10 @@ import '../../../../core/presentation/widgets/app_bar.dart';
 import '../../../../core/presentation/widgets/app_bottom_sheet.dart';
 import '../../../../core/presentation/widgets/app_loading_indicator.dart';
 import '../../../../core/presentation/widgets/app_segmented_tab_bar.dart';
+import '../../../../core/presentation/widgets/no_data_card.dart';
 import '../../../../core/theme/color_scheme.dart';
+import '../../../analysis/presentation/widgets/risk_assessment_content.dart';
+import '../../../analysis/presentation/widgets/what_if_simulation_content.dart';
 import '../../../health_record/presentation/widgets/health_record_detail_bottom_sheet_content.dart';
 import '../../../health_record/presentation/widgets/health_record_recent_list_card.dart';
 import '../../../health_record/presentation/widgets/health_record_stats_card.dart';
@@ -56,7 +59,8 @@ class _PatientDetailViewState extends ConsumerState<PatientDetailView> {
   Widget _buildContent(PatientDetailState state) {
     final periodIndex = PatientDetailTab.values.indexOf(state.selectedTab);
 
-    return SingleChildScrollView(
+    return Container(
+      height: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Column(
         children: [
@@ -77,8 +81,39 @@ class _PatientDetailViewState extends ConsumerState<PatientDetailView> {
           ),
           const SizedBox(height: 12),
           // 여기에 실제 환자 상세 정보를 표시하는 위젯들을 추가하세요.
-          if (state.selectedTab == PatientDetailTab.summary)
-            _buildSummaryTabContent(state),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  if (state.selectedTab == PatientDetailTab.summary)
+                    state.healthRecords.isEmpty
+                        ? NoDataCard(
+                            title: '아직 데이터가 없네요',
+                            subtitle: '환자가 건강 기록을 더 작성하면\n상태와 통계 정보를 확인할 수 있어요',
+                          )
+                        : _buildSummaryTabContent(state),
+                  if (state.selectedTab == PatientDetailTab.riskAssessment)
+                    state.analysisAvailability.canAnalyze
+                        ? RiskAssessmentContent(
+                            riskAssessment: state.riskAssessment!,
+                          )
+                        : NoDataCard(
+                            title: '아직 데이터가 없네요',
+                            subtitle: '환자가 건강 기록을 더 작성하면\n분석 결과를 확인할 수 있어요',
+                          ),
+                  if (state.selectedTab == PatientDetailTab.whatIfSimulation)
+                    state.analysisAvailability.canAnalyze
+                        ? WhatIfSimulationContent(
+                            simulation: state.whatIfSimulation!,
+                          )
+                        : NoDataCard(
+                            title: '아직 데이터가 없네요',
+                            subtitle: '환자가 건강 기록을 더 작성하면\n분석 결과를 확인할 수 있어요',
+                          ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

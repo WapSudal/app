@@ -1,43 +1,35 @@
-import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
 
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+
 import '../../../../core/enums/risk_level.dart';
-import '../../../../core/presentation/widgets/app_bar.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../domain/entities/analysis_entity.dart';
-import '../widgets/analysis_common_widgets.dart';
+import 'analysis_common_widgets.dart';
 
-/// 위험도 측정 결과 화면 (Analyze-3-1)
-class RiskMeasurementView extends StatelessWidget {
-  const RiskMeasurementView({super.key, required this.riskAssessment});
+class RiskAssessmentContent extends StatelessWidget {
+  const RiskAssessmentContent({super.key, required this.riskAssessment});
 
   final RiskAssessmentReportEntity riskAssessment;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF7F6FB),
-      appBar: CustomAppBar(mode: AppBarMode.subpage, title: '위험도 측정'),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: Column(
-          children: [
-            // 다음 검진 권장 카드
-            _buildNextCheckupCard(context),
-            const SizedBox(height: 8),
-            // 현재 위험도 카드
-            _buildCurrentRiskCard(),
-            const SizedBox(height: 8),
-            // 집단 내 건강 순위 카드
-            _buildRankCard(),
-            const SizedBox(height: 8),
-            // 주요 위험 요인 카드
-            _buildRiskFactorsCard(context),
-            const SizedBox(height: 24),
-          ],
-        ),
-      ),
+    return Column(
+      children: [
+        // 다음 검진 권장 카드
+        _buildNextCheckupCard(context),
+        const SizedBox(height: 8),
+        // 현재 위험도 카드
+        _buildCurrentRiskCard(),
+        const SizedBox(height: 8),
+        // 집단 내 건강 순위 카드
+        _buildRankCard(),
+        const SizedBox(height: 8),
+        // 주요 위험 요인 카드
+        _buildRiskFactorsCard(context),
+        const SizedBox(height: 24),
+      ],
     );
   }
 

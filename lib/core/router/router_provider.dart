@@ -2,7 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/analysis/domain/entities/analysis_entity.dart';
-import '../../features/analysis/presentation/views/risk_measurement_view.dart';
+import '../../features/analysis/presentation/views/risk_assessment_view.dart';
 import '../../features/analysis/presentation/views/what_if_simulation_view.dart';
 import '../../features/auth/applications/auth_notifier.dart';
 import '../../features/auth/applications/registered_user_notifier.dart';
@@ -123,7 +123,7 @@ GoRouter router(Ref ref) {
         name: 'riskMeasurement',
         builder: (context, state) {
           final riskAssessment = state.extra as RiskAssessmentReportEntity;
-          return RiskMeasurementView(riskAssessment: riskAssessment);
+          return RiskAssessmentView(riskAssessment: riskAssessment);
         },
       ),
       GoRoute(
