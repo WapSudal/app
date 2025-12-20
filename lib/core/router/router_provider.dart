@@ -119,8 +119,8 @@ GoRouter router(Ref ref) {
       ),
       // Analysis feature routes
       GoRoute(
-        path: '/analysis/risk-measurement',
-        name: 'riskMeasurement',
+        path: '/analysis/risk-assessment',
+        name: 'riskAssessment',
         builder: (context, state) {
           final riskAssessment = state.extra as RiskAssessmentReportEntity;
           return RiskAssessmentView(riskAssessment: riskAssessment);

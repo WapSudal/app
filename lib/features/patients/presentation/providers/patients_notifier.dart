@@ -1,9 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../../core/domain/entities/user_entity.dart';
 import '../../../../core/enums/connection_status.dart';
-import '../../../../core/enums/connection_type.dart';
-import '../../../../core/enums/sharing_scope.dart';
 import '../../../auth/data/providers/auth_data_providers.dart';
 import '../../../connection/data/providers/connection_data_providers.dart';
 import 'patients_state.dart';

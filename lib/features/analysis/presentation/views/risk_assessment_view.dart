@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'dart:math' as math;
 
-import '../../../../core/enums/risk_level.dart';
 import '../../../../core/presentation/widgets/app_bar.dart';
-import '../../../../core/theme/color_scheme.dart';
 import '../../domain/entities/analysis_entity.dart';
-import '../widgets/analysis_common_widgets.dart';
 import '../widgets/risk_assessment_content.dart';
 
 /// 위험도 측정 결과 화면 (Analyze-3-1)

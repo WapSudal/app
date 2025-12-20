@@ -19,7 +19,7 @@ class AnalysisMenuContent extends ConsumerWidget {
       child: Column(
         children: [
           // 위험도 측정 카드
-          _buildRiskMeasurementCard(context, ref),
+          _buildRiskAssessmentCard(context, ref),
           const SizedBox(height: 8),
           // What-if 시뮬레이션 카드
           _buildWhatIfSimulationCard(context, ref),
@@ -29,7 +29,7 @@ class AnalysisMenuContent extends ConsumerWidget {
     );
   }
 
-  Widget _buildRiskMeasurementCard(BuildContext context, WidgetRef ref) {
+  Widget _buildRiskAssessmentCard(BuildContext context, WidgetRef ref) {
     return AnalysisCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,7 +77,7 @@ class AnalysisMenuContent extends ConsumerWidget {
               final riskAssessment = await notifier.loadRiskAssessment();
               if (riskAssessment != null && context.mounted) {
                 context.push(
-                  '/analysis/risk-measurement',
+                  '/analysis/risk-assessment',
                   extra: riskAssessment,
                 );
               }
