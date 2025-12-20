@@ -3,8 +3,12 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/enums/health_record_period_filter.dart';
 import '../../../analysis/data/providers/analysis_data_providers.dart';
 import '../../../analysis/domain/entities/analysis_entity.dart';
+import '../../../auth/applications/registered_user_notifier.dart';
+import '../../../connection/data/providers/connection_data_providers.dart';
 import '../../../health_record/data/providers/health_record_repository_provider.dart';
+import '../../../home/presentation/providers/home_notifier.dart';
 import 'patient_detail_state.dart';
+import 'patients_notifier.dart';
 
 part 'patient_detail_notifier.g.dart';
 
@@ -105,5 +109,25 @@ class PatientDetailNotifier extends _$PatientDetailNotifier {
       // 삭제 실패 시 에러 상태로 변경
       state = AsyncValue.error(error, stackTrace);
     }
+  }
+
+  /// 환자와의 연결 끊기 (보호자/주치의가 호출)
+  Future<void> revokePatientConnection() async {
+    final connectionRepository = ref.read(connectionRepositoryProvider);
+    final currentUser = ref.read(registeredUserProvider).user;
+
+    if (currentUser == null) {
+      throw Exception('로그인된 사용자를 찾을 수 없습니다.');
+    }
+
+    // 보호자/주치의가 환자와의 연결을 끊음
+    // connectorEmail은 보호자/주치의 자신의 이메일
+    await connectionRepository.revokeConnection(
+      connectorEmail: currentUser.email,
+    );
+
+    // 연결 해제 후 관련 provider들 새로고침
+    ref.invalidate(homeProvider);
+    ref.invalidate(patientsProvider);
   }
 }

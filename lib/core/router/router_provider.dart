@@ -6,6 +6,7 @@ import '../../features/analysis/presentation/views/risk_assessment_view.dart';
 import '../../features/analysis/presentation/views/what_if_simulation_view.dart';
 import '../../features/auth/applications/auth_notifier.dart';
 import '../../features/auth/applications/registered_user_notifier.dart';
+import '../../features/patients/presentation/views/patient_detail_view.dart';
 import '../../features/profile/presentation/views/account_manage_view.dart';
 import '../../features/health_record/presentation/views/health_record_all_view.dart';
 import '../../features/health_record/presentation/views/health_record_input_view.dart';
@@ -139,6 +140,15 @@ GoRouter router(Ref ref) {
         path: '/account-management',
         name: 'accountManagement',
         builder: (context, state) => const AccountManageView(),
+      ),
+      GoRoute(
+        path: '/patients/:patientEmail/detail',
+        name: 'patientDetail',
+        builder: (context, state) {
+          final patientEmail = state.pathParameters['patientEmail']!;
+
+          return PatientDetailView(patientEmail: patientEmail);
+        },
       ),
     ],
   );

@@ -1,6 +1,5 @@
 import 'package:go_router/go_router.dart';
 
-import '../../features/patients/presentation/views/patient_detail_view.dart';
 import '../../features/profile/presentation/views/profile_view.dart';
 import '../../features/analysis/presentation/views/analysis_view.dart';
 import '../../features/explore/presentation/views/explore_view.dart';
@@ -112,17 +111,6 @@ class RoleRoutes {
           path: '/patients',
           name: 'patients',
           builder: (context, state) => const PatientsView(),
-          routes: [
-            GoRoute(
-              path: ':patientEmail/detail',
-              name: 'patientDetail',
-              builder: (context, state) {
-                final patientEmail = state.pathParameters['patientEmail']!;
-
-                return PatientDetailView(patientEmail: patientEmail);
-              },
-            ),
-          ],
         ),
       ],
     ),

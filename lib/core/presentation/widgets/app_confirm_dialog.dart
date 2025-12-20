@@ -140,10 +140,7 @@ class AppConfirmDialog extends StatelessWidget {
                     // 제목
                     Text(
                       title,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: AppColorScheme.black100,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: Theme.of(context).textTheme.headlineSmall,
                       textAlign: TextAlign.center,
                     ),
                     // 설명
@@ -151,7 +148,7 @@ class AppConfirmDialog extends StatelessWidget {
                       const SizedBox(height: 8),
                       Text(
                         description!,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: AppColorScheme.black500,
                         ),
                         textAlign: TextAlign.center,
