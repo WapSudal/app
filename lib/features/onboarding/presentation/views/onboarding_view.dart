@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/presentation/helpers/snackbar_helper.dart';
 import '../../../../core/presentation/widgets/app_icon.dart';
 import '../../../../core/presentation/widgets/app_loading_overlay.dart';
+import '../../../../core/storage/first_launch_provider.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../auth/data/providers/auth_data_providers.dart';
@@ -108,6 +109,8 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
       switch (next) {
         case MutationSuccess():
           if (mounted) {
+            // 온보딩 완료 표시
+            ref.read(firstLaunchProvider.notifier).markAsCompleted();
             context.go('/role-select');
           }
         case MutationError(:final error):

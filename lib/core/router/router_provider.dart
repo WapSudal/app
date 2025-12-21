@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../storage/first_launch_provider.dart';
 import '../../features/analysis/domain/entities/analysis_entity.dart';
 import '../../features/analysis/presentation/views/risk_assessment_view.dart';
 import '../../features/analysis/presentation/views/what_if_simulation_view.dart';
@@ -20,13 +21,17 @@ import 'role_routes.dart';
 part 'router_provider.g.dart';
 
 /// 인증이 필요하지 않은 경로 목록
-const _publicRoutes = ['/', '/onboarding'];
+const _publicRoutes = ['/', '/onboarding', '/role-select'];
 
 /// 역할 선택 경로
 const _roleSelectRoute = '/role-select';
 
 @Riverpod(keepAlive: true)
 GoRouter router(Ref ref) {
+  // 첫 실행 여부 구독
+  final firstLaunchState = ref.watch(firstLaunchProvider);
+  final isFirstLaunch = firstLaunchState.value ?? true;
+
   // 인증 상태 구독
   final isAuthenticated = ref.watch(isAuthenticatedProvider);
 
@@ -49,10 +54,11 @@ GoRouter router(Ref ref) {
 
       // === 인증 관련 리다이렉트 ===
 
-      // 인증되지 않은 상태에서 protected route 접근 시 온보딩으로
+      // 인증되지 않은 상태에서 protected route 접근 시
       final isPublicRoute = _publicRoutes.contains(currentPath);
       if (!isAuthenticated && !isPublicRoute) {
-        return '/onboarding';
+        // 첫 실행이면 온보딩으로, 아니면 역할 선택으로
+        return isFirstLaunch ? '/onboarding' : _roleSelectRoute;
       }
 
       // 인증된 상태에서 온보딩 접근 시

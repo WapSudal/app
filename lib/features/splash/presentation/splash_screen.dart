@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/storage/first_launch_provider.dart';
 import '../../../core/theme/color_scheme.dart';
 import '../../../gen/assets.gen.dart';
 import '../../auth/data/providers/auth_data_providers.dart';
@@ -51,7 +52,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     ]);
 
     if (mounted) {
-      // 인증 상태에 따라 분기
+      // 첫 실행 여부 확인
+      final firstLaunchState = ref.read(firstLaunchProvider);
+      final isFirstLaunch = firstLaunchState.value ?? true;
+
+      // 첫 실행이면 온보딩으로
+      if (isFirstLaunch) {
+        context.go('/onboarding');
+        return;
+      }
+
+      // 이후 실행: 인증 상태에 따라 분기
       final isAuthenticated = ref.read(isAuthenticatedProvider);
 
       if (isAuthenticated) {
@@ -62,7 +73,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           context.go('/role-select');
         }
       } else {
-        context.go('/onboarding');
+        // 인증되지 않은 경우 역할 선택으로 (온보딩 스킵)
+        context.go('/role-select');
       }
     }
   }
