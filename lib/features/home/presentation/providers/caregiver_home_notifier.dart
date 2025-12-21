@@ -35,7 +35,7 @@ class CaregiverHomeNotifier extends _$CaregiverHomeNotifier {
 
     return CaregiverHomeState(
       connectedPatients: connectedPatients,
-      highRiskPatients: [],
+      highRiskPatients: connectedPatients,
       recentRecords: allRecords.take(5).toList(),
     );
   }

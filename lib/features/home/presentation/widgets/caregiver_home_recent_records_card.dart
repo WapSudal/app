@@ -12,10 +12,12 @@ class CaregiverHomeRecordElement extends StatelessWidget {
   const CaregiverHomeRecordElement({
     super.key,
     required this.record,
+    required this.patientName,
     this.onTap,
   });
 
   final HealthRecordEntity record;
+  final String patientName;
   final VoidCallback? onTap;
 
   @override
@@ -48,7 +50,7 @@ class CaregiverHomeRecordElement extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'record.patientName',
+                    patientName,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: AppColorScheme.black100,
                       fontWeight: FontWeight.w600,
@@ -95,6 +97,7 @@ class CaregiverHomeRecentRecordsCard extends StatelessWidget {
   const CaregiverHomeRecentRecordsCard({
     super.key,
     required this.records,
+    required this.patientNames,
     this.onRecordTap,
     this.onViewAllTap,
     this.maxDisplay = 4,
@@ -102,6 +105,9 @@ class CaregiverHomeRecentRecordsCard extends StatelessWidget {
 
   /// 최근 기록 목록
   final List<HealthRecordEntity> records;
+
+  /// 환자 이메일 -> 이름 매핑 (email -> displayName)
+  final Map<String, String> patientNames;
 
   /// 기록 탭 콜백
   final void Function(HealthRecordEntity record)? onRecordTap;
@@ -155,6 +161,7 @@ class CaregiverHomeRecentRecordsCard extends StatelessWidget {
           ...displayRecords.asMap().entries.map((entry) {
             final index = entry.key;
             final record = entry.value;
+            final patientName = patientNames[record.patientEmail] ?? '알 수 없음';
             return Column(
               children: [
                 if (index > 0)
@@ -164,6 +171,7 @@ class CaregiverHomeRecentRecordsCard extends StatelessWidget {
                   ),
                 CaregiverHomeRecordElement(
                   record: record,
+                  patientName: patientName,
                   onTap: onRecordTap != null
                       ? () => onRecordTap!(record)
                       : null,

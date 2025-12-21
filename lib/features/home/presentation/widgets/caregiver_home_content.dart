@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/presentation/widgets/no_data_card.dart';
+import '../../../health_record/domain/entities/health_record_entity.dart';
 import '../../../patients/presentation/widgets/patient_manage_bottom_sheet.dart';
 import '../providers/caregiver_home_notifier.dart';
 import '../providers/caregiver_home_state.dart';
@@ -21,6 +22,27 @@ class CaregiverHomeContent extends ConsumerWidget {
   const CaregiverHomeContent({super.key, this.displayName});
 
   final String? displayName;
+
+  /// 환자별 최근 건강 기록 맵 생성
+  Map<String, HealthRecordEntity> _buildPatientRecordsMap(
+    CaregiverHomeState state,
+  ) {
+    final Map<String, HealthRecordEntity> patientRecords = {};
+
+    // 각 고위험 환자에 대해 최근 기록 찾기
+    for (final patient in state.highRiskPatients) {
+      // recentRecords에서 해당 환자의 가장 최근 기록 찾기
+      final patientRecord = state.recentRecords
+          .where((record) => record.patientEmail == patient.email)
+          .firstOrNull;
+
+      if (patientRecord != null) {
+        patientRecords[patient.email] = patientRecord;
+      }
+    }
+
+    return patientRecords;
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -77,6 +99,7 @@ class CaregiverHomeContent extends ConsumerWidget {
                   state.hasHighRiskPatients) ...[
                 CaregiverHomeWarningPatientsCard(
                   patients: state.highRiskPatients,
+                  patientRecords: _buildPatientRecordsMap(state),
                 ),
                 const SizedBox(height: 8),
               ],
@@ -85,6 +108,10 @@ class CaregiverHomeContent extends ConsumerWidget {
               if (state.connectedPatients.isNotEmpty) ...[
                 CaregiverHomeRecentRecordsCard(
                   records: state.recentRecords,
+                  patientNames: {
+                    for (final patient in state.connectedPatients)
+                      patient.email: patient.displayName ?? '이름 없음',
+                  },
                   onRecordTap: (record) {
                     // 기록 탭 시 해당 데이터 상세 표시
                   },

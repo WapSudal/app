@@ -8,128 +8,107 @@ import '../../../health_record/domain/entities/health_record_entity.dart';
 /// 환자 정보 요소 위젯
 ///
 /// Figma: Home/PatientInfo/Element
-/// 환자 이름, 위험도 점수, 혈압, 데이터 건수를 표시
+/// 환자 이름, 위험도 점수, 혈압, 데이터 건수를 세로 카드 형태로 표시
 class CaregiverHomePatientInfoElement extends StatelessWidget {
   const CaregiverHomePatientInfoElement({
     super.key,
     required this.patient,
     required this.record,
+    this.isWarning = false,
   });
 
   final UserEntity patient;
   final HealthRecordEntity record;
+  final bool isWarning; // true: 노란색 주의, false: 빨간색 경고
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(12),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
-        child: Row(
-          children: [
-            // 프로필 이미지
-            _buildProfileImage(),
-            const SizedBox(width: 12),
-            // 이름 + 위험도 점수
-            Expanded(
-              flex: 2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    patient.displayName ?? '',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppColorScheme.black100,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  _buildRiskBadge(context),
-                ],
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColorScheme.white100,
+        border: Border.all(color: AppColorScheme.white300, width: 1.5),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 이름 + 아이콘
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                patient.displayName ?? '',
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(color: AppColorScheme.black100),
               ),
-            ),
-            // 혈압
-            _buildInfoColumn(
-              context,
-              label: '혈압',
-              value:
-                  '${record.systolicBP ?? '-'} / ${record.diastolicBP ?? '-'}',
-            ),
-            const SizedBox(width: 16),
-            // 데이터 건수
-            _buildInfoColumn(
-              context,
-              label: '데이터',
-              value: 'patient.dataCountDisplay',
-            ),
-            const SizedBox(width: 8),
-            // 화살표
-            Assets.icons.right.svg(
-              width: 12,
-              height: 12,
-              colorFilter: ColorFilter.mode(
-                AppColorScheme.grey400,
-                BlendMode.srcIn,
-              ),
-            ),
-          ],
+              _buildWarningIcon(),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // 위험도
+          _buildKeyValueRow(context, key: '위험도', value: '32점'),
+          const SizedBox(height: 4),
+          // 혈압
+          _buildKeyValueRow(
+            context,
+            key: '혈압',
+            value: '${record.systolicBP ?? '-'}/${record.diastolicBP ?? '-'}',
+          ),
+          const SizedBox(height: 4),
+          // 데이터
+          _buildKeyValueRow(context, key: '데이터', value: '3건'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWarningIcon() {
+    // 경고 아이콘 (빨간색 삼각형 또는 노란색 삼각형)
+    return Container(
+      width: 20,
+      height: 20,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: isWarning
+            ? const Color(0xFFFFA500).withValues(alpha: 0.2)
+            : const Color(0xFFFF4130).withValues(alpha: 0.2),
+      ),
+      child: Center(
+        child: Text(
+          '!',
+          style: TextStyle(
+            color: isWarning
+                ? const Color(0xFFFFA500)
+                : const Color(0xFFFF4130),
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildProfileImage() {
-    return Container(
-      width: 44,
-      height: 44,
-      decoration: BoxDecoration(
-        color: AppColorScheme.grey300,
-        shape: BoxShape.circle,
-        border: Border.all(color: AppColorScheme.grey300, width: 2),
-      ),
-      child: ClipOval(
-        child: Assets.icons.defaultProfile.svg(width: 44, height: 44),
-      ),
-    );
-  }
-
-  Widget _buildRiskBadge(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        color: AppColorScheme.grey300,
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Text(
-        '33점',
-        style: Theme.of(
-          context,
-        ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w600),
-      ),
-    );
-  }
-
-  Widget _buildInfoColumn(
+  Widget _buildKeyValueRow(
     BuildContext context, {
-    required String label,
+    required String key,
     required String value,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          label,
-          style: Theme.of(
-            context,
-          ).textTheme.labelSmall?.copyWith(color: AppColorScheme.grey300),
+          key,
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            color: AppColorScheme.black100.withValues(alpha: 0.5),
+          ),
         ),
-        const SizedBox(height: 2),
         Text(
           value,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: AppColorScheme.black100,
-            fontWeight: FontWeight.w500,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.labelMedium?.copyWith(color: AppColorScheme.black100),
         ),
       ],
     );
@@ -139,26 +118,25 @@ class CaregiverHomePatientInfoElement extends StatelessWidget {
 /// "주의가 필요한 환자" 섹션 카드
 ///
 /// Figma: Home/Warning Patients Card
+/// 2개의 환자 카드를 가로로 나란히 표시
 class CaregiverHomeWarningPatientsCard extends StatelessWidget {
   const CaregiverHomeWarningPatientsCard({
     super.key,
     required this.patients,
-    this.maxDisplay = 2,
+    this.patientRecords,
   });
 
   /// 고위험 환자 목록
   final List<UserEntity> patients;
 
-  /// 최대 표시 개수
-  final int maxDisplay;
+  /// 환자별 최근 건강 기록 맵 (patientEmail -> HealthRecordEntity)
+  final Map<String, HealthRecordEntity>? patientRecords;
 
   @override
   Widget build(BuildContext context) {
     if (patients.isEmpty) {
       return const SizedBox.shrink();
     }
-
-    final displayPatients = patients.take(maxDisplay).toList();
 
     return Container(
       width: double.infinity,
@@ -172,63 +150,80 @@ class CaregiverHomeWarningPatientsCard extends StatelessWidget {
         children: [
           // 헤더
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  color: AppColorScheme.warning,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              const SizedBox(width: 8),
               Text(
                 '주의가 필요한 환자',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: AppColorScheme.black100,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              Opacity(
+                opacity: 0.2,
+                child: Assets.icons.arrowRight.svg(width: 21, height: 21),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          // 환자 목록
-          ...displayPatients.asMap().entries.map((entry) {
-            final index = entry.key;
-            final patient = entry.value;
-            return Column(
-              children: [
-                if (index > 0)
-                  Divider(
-                    height: 1,
-                    color: AppColorScheme.black100.withValues(alpha: 0.1),
-                  ),
-                CaregiverHomePatientInfoElement(
-                  patient: patient,
-                  record: HealthRecordEntity(
-                    id: 'record-id',
-                    patientEmail: patient.email,
-                    recordedAt: DateTime.now(),
-                    systolicBP: 150,
-                    diastolicBP: 95,
-                  ), // 더미 데이터
-                ),
-              ],
-            );
-          }),
-          // 더 많은 환자가 있으면 표시
-          if (patients.length > maxDisplay)
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Text(
-                '외 ${patients.length - maxDisplay}명',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.copyWith(color: AppColorScheme.grey300),
+          // 환자 카드 가로로 배치 (실제 환자 수만큼만 표시, 1명이어도 1칸만 차지)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 첫 번째 환자 (경고 - 빨간색)
+              Expanded(
+                child: patients.isNotEmpty
+                    ? _buildPatientCard(
+                        context,
+                        index: 0,
+                        isWarning: false,
+                        defaultSystolicBP: 999,
+                        defaultDiastolicBP: 99,
+                      )
+                    : const SizedBox(),
               ),
-            ),
+              const SizedBox(width: 8),
+              // 두 번째 환자 (주의 - 노란색)
+              Expanded(
+                child: patients.length > 1
+                    ? _buildPatientCard(
+                        context,
+                        index: 1,
+                        isWarning: true,
+                        defaultSystolicBP: 145,
+                        defaultDiastolicBP: 90,
+                      )
+                    : const SizedBox(),
+              ),
+            ],
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildPatientCard(
+    BuildContext context, {
+    required int index,
+    required bool isWarning,
+    required int defaultSystolicBP,
+    required int defaultDiastolicBP,
+  }) {
+    final patient = patients[index];
+
+    // 해당 환자의 건강 기록 사용, 없으면 더미 데이터
+    final record = patientRecords?[patient.email];
+
+    final systolicBP = record?.systolicBP ?? defaultSystolicBP;
+    final diastolicBP = record?.diastolicBP ?? defaultDiastolicBP;
+
+    return CaregiverHomePatientInfoElement(
+      patient: patient,
+      record: HealthRecordEntity(
+        id: 'record-$index',
+        patientEmail: patient.email,
+        recordedAt: record?.recordedAt ?? DateTime.now(),
+        systolicBP: systolicBP,
+        diastolicBP: diastolicBP,
+      ),
+      isWarning: isWarning,
     );
   }
 }
