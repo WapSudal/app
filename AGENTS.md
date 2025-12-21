@@ -52,23 +52,17 @@ The project strictly follows Clean Architecture with MVVM pattern:
 ```
 lib/
 ├── core/                       # Common features and utilities
-│   ├── data/
-│   │   ├── models/             # Common data models (ApiResponseModel, etc.)
-│   │   └── repositories/       # Common repository implementations
 │   ├── domain/
 │   │   └── repositories/       # Common repository interfaces
 │   ├── presentation/
 │   │   └── widgets/            # Reusable widgets
 │   ├── router/                 # Router configuration
 │   │   └── router_provider.dart
-│   ├── network/                # API client and network configuration
-│   │   └── api_client_provider.dart
 │   ├── storage/                # Local storage
 │   │   └── storage_provider.dart
 │   ├── enums/                  # Global enums (UserRole, FarmType, etc.)
 │   ├── exceptions/             # Custom exception classes
-│   ├── theme/                  # App theme configuration
-│   └── utils/                  # Utility functions (JWT, Converters, etc.)
+│   └── theme/                  # App theme configuration
 │
 └── features/                   # Feature-First structure
     └── [feature_name]/         # Each feature module
