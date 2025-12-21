@@ -128,6 +128,7 @@ class ProfileView extends ConsumerWidget {
   Widget _buildMenuCard(BuildContext context) {
     final menuItems = [
       _MenuItem(emoji: '⚙️', title: '계정 관리', route: '/account-management'),
+      _MenuItem(emoji: '🗂️', title: '보고서 관리', route: '/report-management'),
     ];
 
     return Container(

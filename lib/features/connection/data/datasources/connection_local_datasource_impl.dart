@@ -182,11 +182,6 @@ class ConnectionLocalDataSourceImpl implements ConnectionLocalDataSource {
       status: ConnectionStatus.accepted,
     );
 
-    print(
-      'patientEmail: $patientEmail, email: $email, requiredScope: $requiredScope',
-    );
-    print(connections);
-
     return connections.any(
       (connection) =>
           connection.patientEmail == patientEmail &&

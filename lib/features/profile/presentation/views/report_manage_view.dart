@@ -70,15 +70,6 @@ class ReportManageView extends ConsumerWidget {
             height: 1,
             color: AppColorScheme.black100.withValues(alpha: 0.1),
           ),
-          _buildManageButton(
-            context,
-            icon: Assets.icons.data,
-            iconColor: AppColorScheme.black100.withValues(alpha: 0.1),
-            title: '전체 데이터 백업',
-            description: '데이터 복원용 (JSON)',
-            trailingText: '지원 예정',
-            onTap: () => {},
-          ),
         ],
       ),
     );
@@ -113,11 +104,23 @@ class ReportManageView extends ConsumerWidget {
             const SizedBox(width: 12),
             // 타이틀
             Expanded(
-              child: Text(
-                title,
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: AppColorScheme.black100,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: AppColorScheme.black100,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    description,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppColorScheme.grey400,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

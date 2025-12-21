@@ -11,6 +11,7 @@ import '../../features/profile/presentation/views/account_manage_view.dart';
 import '../../features/health_record/presentation/views/health_record_all_view.dart';
 import '../../features/health_record/presentation/views/health_record_input_view.dart';
 import '../../features/onboarding/presentation/views/onboarding_view.dart';
+import '../../features/profile/presentation/views/report_manage_view.dart';
 import '../../features/role_select/presentation/views/role_select_view.dart';
 import '../../features/splash/presentation/splash_screen.dart';
 import '../presentation/widgets/bottom_nav_shell.dart';
@@ -140,6 +141,11 @@ GoRouter router(Ref ref) {
         path: '/account-management',
         name: 'accountManagement',
         builder: (context, state) => const AccountManageView(),
+      ),
+      GoRoute(
+        path: '/report-management',
+        name: 'reportManagement',
+        builder: (context, state) => const ReportManageView(),
       ),
       GoRoute(
         path: '/patients/:patientEmail/detail',
