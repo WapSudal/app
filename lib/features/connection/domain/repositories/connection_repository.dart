@@ -9,6 +9,7 @@ import '../../../../core/enums/connection_status.dart';
 abstract class ConnectionRepository {
   Future<ConnectionEntity> requestConnection({
     required String targetPatientEmail,
+    required ConnectionType type,
     required SharingScope scope,
   });
   Future<List<ConnectionEntity>> getCurrentConnections({

@@ -213,6 +213,9 @@ class _AppOutlinedTextAreaState extends State<AppOutlinedTextArea> {
     final textTheme = Theme.of(context).textTheme;
     final minHeight = widget.minHeight ?? FormFieldTokens.height;
 
+    // maxLines가 null이면 expands를 true로 설정하여 부모 높이에 맞춰 확장
+    final shouldExpand = widget.maxLines == null;
+
     Widget textField = TextField(
       controller: _controller,
       focusNode: _focusNode,
@@ -222,8 +225,9 @@ class _AppOutlinedTextAreaState extends State<AppOutlinedTextArea> {
       textInputAction: widget.textInputAction,
       inputFormatters: widget.inputFormatters,
       maxLength: widget.maxLength,
-      maxLines: widget.maxLines,
-      minLines: widget.minLines,
+      maxLines: shouldExpand ? null : widget.maxLines,
+      minLines: shouldExpand ? null : widget.minLines,
+      expands: shouldExpand,
       onEditingComplete: widget.onEditingComplete,
       onSubmitted: widget.onSubmitted,
       onTap: widget.onTap,
@@ -254,29 +258,50 @@ class _AppOutlinedTextAreaState extends State<AppOutlinedTextArea> {
 
     Widget textArea = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: shouldExpand ? MainAxisSize.max : MainAxisSize.min,
       children: [
         // TextArea container
-        AnimatedContainer(
-          duration: FormFieldTokens.animationDuration,
-          height: null,
-          padding: EdgeInsets.symmetric(
-            horizontal: FormFieldTokens.outlinedHorizontalPadding,
-            vertical: FormFieldTokens.outlinedVerticalPadding,
-          ),
-          constraints: BoxConstraints(minHeight: minHeight),
-          decoration: BoxDecoration(
-            color: AppColorScheme.white100,
-            borderRadius: BorderRadius.circular(
-              FormFieldTokens.outlinedBorderRadius,
-            ),
-            border: Border.all(
-              color: _borderColor,
-              width: FormFieldTokens.strokeWidth,
-            ),
-          ),
-          child: textField,
-        ),
+        shouldExpand
+            ? Expanded(
+                child: AnimatedContainer(
+                  duration: FormFieldTokens.animationDuration,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: FormFieldTokens.outlinedHorizontalPadding,
+                    vertical: FormFieldTokens.outlinedVerticalPadding,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColorScheme.white100,
+                    borderRadius: BorderRadius.circular(
+                      FormFieldTokens.outlinedBorderRadius,
+                    ),
+                    border: Border.all(
+                      color: _borderColor,
+                      width: FormFieldTokens.strokeWidth,
+                    ),
+                  ),
+                  child: textField,
+                ),
+              )
+            : AnimatedContainer(
+                duration: FormFieldTokens.animationDuration,
+                height: null,
+                padding: EdgeInsets.symmetric(
+                  horizontal: FormFieldTokens.outlinedHorizontalPadding,
+                  vertical: FormFieldTokens.outlinedVerticalPadding,
+                ),
+                constraints: BoxConstraints(minHeight: minHeight),
+                decoration: BoxDecoration(
+                  color: AppColorScheme.white100,
+                  borderRadius: BorderRadius.circular(
+                    FormFieldTokens.outlinedBorderRadius,
+                  ),
+                  border: Border.all(
+                    color: _borderColor,
+                    width: FormFieldTokens.strokeWidth,
+                  ),
+                ),
+                child: textField,
+              ),
         // Error text
         if (_hasError) ...[
           const SizedBox(height: 4),

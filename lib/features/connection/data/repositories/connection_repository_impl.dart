@@ -14,10 +14,12 @@ class ConnectionRepositoryImpl implements ConnectionRepository {
   @override
   Future<ConnectionEntity> requestConnection({
     required String targetPatientEmail,
+    required ConnectionType type,
     required SharingScope scope,
   }) {
     final model = localDataSource.requestConnection(
       targetPatientEmail: targetPatientEmail,
+      type: type,
       scope: scope,
     );
 

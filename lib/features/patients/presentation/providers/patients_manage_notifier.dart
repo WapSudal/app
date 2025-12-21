@@ -1,7 +1,10 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/enums/connection_status.dart';
+import '../../../../core/enums/connection_type.dart';
 import '../../../../core/enums/sharing_scope.dart';
+import '../../../../core/enums/user_role.dart';
+import '../../../auth/applications/registered_user_notifier.dart';
 import '../../../auth/data/providers/auth_data_providers.dart';
 import '../../../connection/data/providers/connection_data_providers.dart';
 import '../../../home/presentation/providers/caregiver_home_notifier.dart';
@@ -42,6 +45,7 @@ class PatientsManageNotifier extends _$PatientsManageNotifier {
   }) async {
     final connectionRepository = ref.read(connectionRepositoryProvider);
     final userRepository = ref.read(userRepositoryProvider);
+    final currentRole = ref.read(registeredUserProvider).user!.role;
 
     // 사용자 존재 여부 확인
     final users = await userRepository.getAllUsers();
@@ -53,6 +57,9 @@ class PatientsManageNotifier extends _$PatientsManageNotifier {
 
     await connectionRepository.requestConnection(
       targetPatientEmail: patientEmail,
+      type: currentRole == UserRole.guardian
+          ? ConnectionType.guardian
+          : ConnectionType.doctor,
       scope: scope,
     );
 

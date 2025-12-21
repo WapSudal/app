@@ -25,6 +25,7 @@ class ConnectionLocalDataSourceImpl implements ConnectionLocalDataSource {
   @override
   Future<ConnectionModel> requestConnection({
     required String targetPatientEmail,
+    required ConnectionType type,
     required SharingScope scope,
   }) async {
     final email = _getCurrentUserEmail();
@@ -33,7 +34,7 @@ class ConnectionLocalDataSourceImpl implements ConnectionLocalDataSource {
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       patientEmail: targetPatientEmail,
       connectorEmail: email,
-      type: ConnectionType.guardian,
+      type: type,
       status: ConnectionStatus.pending,
       scope: scope,
       requestedAt: DateTime.now(),

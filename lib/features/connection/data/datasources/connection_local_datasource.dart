@@ -6,6 +6,7 @@ import '../models/connection_model.dart';
 abstract class ConnectionLocalDataSource {
   Future<ConnectionModel> requestConnection({
     required String targetPatientEmail,
+    required ConnectionType type,
     required SharingScope scope,
   });
   Future<List<ConnectionModel>> getCurrentConnections({

@@ -19,6 +19,7 @@ import '../../../health_record/presentation/widgets/health_record_detail_bottom_
 import '../../../health_record/presentation/widgets/health_record_recent_list_card.dart';
 import '../../../health_record/presentation/widgets/health_record_stats_card.dart';
 import '../../../health_record/presentation/widgets/health_record_status_card.dart';
+import '../../../memo/presentation/widgets/memo_bottom_sheet.dart';
 import '../providers/patient_detail_notifier.dart';
 import '../providers/patient_detail_state.dart';
 
@@ -147,7 +148,10 @@ class _PatientDetailViewState extends ConsumerState<PatientDetailView> {
                   child: AppFlatButton(
                     text: '메모 작성',
                     onPressed: () {
-                      // 새로운 건강 기록 추가 로직 추가
+                      MemoBottomSheet.show(
+                        context: context,
+                        patientEmail: widget.patientEmail,
+                      );
                     },
                     isExpanded: true,
                     style: ButtonStyle(
