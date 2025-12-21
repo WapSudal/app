@@ -28,6 +28,25 @@ class AnalysisMockDataSource implements AnalysisDataSource {
   }
 
   @override
+  Future<AnalysisAvailabilityModel> getAnalysisAvailabilityByEmail(
+    String patientEmail,
+  ) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    final healthRecords = await _healthRecordDataSource.getHealthRecordsByEmail(
+      patientEmail,
+    );
+    const requiredCount = 3;
+    final currentCount = healthRecords.length;
+
+    return AnalysisAvailabilityModel(
+      canAnalyze: currentCount >= requiredCount,
+      requiredRecordCount: requiredCount,
+      currentRecordCount: currentCount,
+    );
+  }
+
+  @override
   Future<RiskPredictionSummaryModel?> getRiskPredictionSummary() async {
     // 네트워크 지연 시뮬레이션
     await Future.delayed(const Duration(milliseconds: 500));
@@ -41,8 +60,8 @@ class AnalysisMockDataSource implements AnalysisDataSource {
   }
 
   @override
-  Future<RiskPredictionSummaryModel?> getRiskPredictionSummaryByUserId(
-    String userId,
+  Future<RiskPredictionSummaryModel?> getRiskPredictionSummaryByEmail(
+    String patientEmail,
   ) async {
     return getRiskPredictionSummary();
   }
@@ -82,8 +101,8 @@ class AnalysisMockDataSource implements AnalysisDataSource {
   }
 
   @override
-  Future<RiskAssessmentReportModel?> getRiskAssessmentReportByUserId(
-    String userId,
+  Future<RiskAssessmentReportModel?> getRiskAssessmentReportByEmail(
+    String patientEmail,
   ) async {
     return getRiskAssessmentReport();
   }
@@ -188,8 +207,8 @@ class AnalysisMockDataSource implements AnalysisDataSource {
   }
 
   @override
-  Future<WhatIfSimulationReportModel?> getWhatIfSimulationReportByUserId(
-    String userId,
+  Future<WhatIfSimulationReportModel?> getWhatIfSimulationReportByEmail(
+    String patientEmail,
   ) async {
     return getWhatIfSimulationReport();
   }

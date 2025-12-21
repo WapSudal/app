@@ -18,6 +18,17 @@ class AnalysisRepositoryImpl implements AnalysisRepository {
   }
 
   @override
+  Future<AnalysisAvailabilityEntity> getAnalysisAvailabilityByEmail(
+    String patientEmail,
+  ) async {
+    final model = await _dataSource.getAnalysisAvailabilityByEmail(
+      patientEmail,
+    );
+
+    return model.toEntity();
+  }
+
+  @override
   Future<RiskAssessmentReportEntity?> getRiskAssessmentReport() async {
     final model = await _dataSource.getRiskAssessmentReport();
 
@@ -25,10 +36,12 @@ class AnalysisRepositoryImpl implements AnalysisRepository {
   }
 
   @override
-  Future<RiskAssessmentReportEntity?> getRiskAssessmentReportByUserId(
-    String userId,
+  Future<RiskAssessmentReportEntity?> getRiskAssessmentReportByEmail(
+    String patientEmail,
   ) async {
-    final model = await _dataSource.getRiskAssessmentReportByUserId(userId);
+    final model = await _dataSource.getRiskAssessmentReportByEmail(
+      patientEmail,
+    );
 
     return model?.toEntity();
   }
@@ -41,10 +54,12 @@ class AnalysisRepositoryImpl implements AnalysisRepository {
   }
 
   @override
-  Future<RiskPredictionSummaryEntity?> getRiskPredictionSummaryByUserId(
-    String userId,
+  Future<RiskPredictionSummaryEntity?> getRiskPredictionSummaryByEmail(
+    String patientEmail,
   ) async {
-    final model = await _dataSource.getRiskPredictionSummaryByUserId(userId);
+    final model = await _dataSource.getRiskPredictionSummaryByEmail(
+      patientEmail,
+    );
 
     return model?.toEntity();
   }
@@ -57,10 +72,12 @@ class AnalysisRepositoryImpl implements AnalysisRepository {
   }
 
   @override
-  Future<WhatIfSimulationReportEntity?> getWhatIfSimulationReportByUserId(
-    String userId,
+  Future<WhatIfSimulationReportEntity?> getWhatIfSimulationReportByEmail(
+    String patientEmail,
   ) async {
-    final model = await _dataSource.getWhatIfSimulationReportByUserId(userId);
+    final model = await _dataSource.getWhatIfSimulationReportByEmail(
+      patientEmail,
+    );
 
     return model?.toEntity();
   }
