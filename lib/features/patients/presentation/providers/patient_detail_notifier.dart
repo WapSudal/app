@@ -21,7 +21,8 @@ class PatientDetailNotifier extends _$PatientDetailNotifier {
     final analysisRepository = ref.read(analysisRepositoryProvider);
     final healthRecordRepository = ref.read(healthRecordRepositoryProvider);
 
-    final availability = await analysisRepository.getAnalysisAvailability();
+    final availability = await analysisRepository
+        .getAnalysisAvailabilityByEmail(patientEmail);
 
     final healthRecords = await healthRecordRepository.getHealthRecordsByEmail(
       patientEmail,
