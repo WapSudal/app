@@ -17,6 +17,4 @@ abstract class AnalysisState with _$AnalysisState {
     /// What-if 시뮬레이션 결과 (분석 가능 시에만 존재)
     WhatIfSimulationReportEntity? whatIfSimulation,
   }) = _AnalysisState;
-
-  const AnalysisState._();
 }

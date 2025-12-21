@@ -112,6 +112,13 @@ class GeneralUserHomeContent extends ConsumerWidget {
 
     // 1~2개: 진행 상태 카드
     if (homeState.analysisAvailability.canAnalyze) {
+      return GeneralHomeRiskAnalysisCard(
+        riskSummary: homeState.riskSummary!,
+        onTap: () {
+          // TODO: 위험도 상세 페이지로 이동
+        },
+      );
+    } else {
       return HomeProgressCard(
         recordCount: homeState.recordCount,
         recordsNeeded:
@@ -120,21 +127,5 @@ class GeneralUserHomeContent extends ConsumerWidget {
         onInputPressed: () => context.push('/record/input'),
       );
     }
-
-    // 3개 이상: 위험도 분석 카드
-    if (homeState.riskSummary != null) {
-      return GeneralHomeRiskAnalysisCard(
-        riskSummary: homeState.riskSummary!,
-        onTap: () {
-          // TODO: 위험도 상세 페이지로 이동
-        },
-      );
-    }
-
-    // Fallback: 데이터 없음 카드
-    return const NoDataCard(
-      title: '아직 데이터가 없네요',
-      subtitle: '꾸준히 건강 데이터를 입력해주세요!',
-    );
   }
 }

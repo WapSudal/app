@@ -56,7 +56,7 @@ class CaregiverHomeRecordElement extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'record.primaryValueDisplay',
+                    '혈압 ${record.systolicBP}/${record.diastolicBP}, 혈당 ${record.bloodSugar}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: AppColorScheme.grey200,
                     ),
@@ -66,7 +66,7 @@ class CaregiverHomeRecordElement extends StatelessWidget {
             ),
             // 날짜
             Text(
-              'unknown',
+              '${record.recordedAt.month}월 ${record.recordedAt.day}일 (${['일', '월', '화', '수', '목', '금', '토'][record.recordedAt.weekday % 7]})',
               style: Theme.of(
                 context,
               ).textTheme.labelSmall?.copyWith(color: AppColorScheme.grey300),
